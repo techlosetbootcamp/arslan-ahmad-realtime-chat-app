@@ -1,4 +1,4 @@
-package com.realtimechatapp
+package com.techloset.textit
 
 import android.app.Application
 import com.facebook.react.PackageList
