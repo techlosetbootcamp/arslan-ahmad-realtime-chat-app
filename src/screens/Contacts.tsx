@@ -1,7 +1,8 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
+import { ContactsProps } from '../types/Contacts';
 
-const Contacts = ({navigation}: any) => {
+const Contacts:React.FC<ContactsProps> = ({navigation}: any) => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text
@@ -16,10 +17,7 @@ const Contacts = ({navigation}: any) => {
       <Button
         title="Go to Profile"
         onPress={() =>
-          navigation.navigate('Profile', {
-            username: 'Arslan Ahmad',
-            userId: 's4f6465',
-          })
+          navigation.navigate('Profile')
         }
       />
     </View>

@@ -1,7 +1,8 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
+import {ProfileProps} from '../types/Profile';
 
-const Profile = ({navigation, route}: any) => {
+const Profile: React.FC<ProfileProps> = ({navigation, route}) => {
   const {username, userId} = route.params;
   console.log('route', route);
   return (
@@ -16,12 +17,9 @@ const Profile = ({navigation, route}: any) => {
         Profile
       </Text>
 
-        <Text>Username: {username}</Text>
-        <Text>UserId: {userId}</Text>
-      <Button
-        title="Go Back"
-        onPress={() => navigation.goBack()}
-      />
+      <Text>Username: {username}</Text>
+      <Text>UserId: {userId}</Text>
+      <Button title="Go Back" onPress={() => navigation.goBack()} />
     </View>
   );
 };
