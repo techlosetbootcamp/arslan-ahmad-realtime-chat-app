@@ -1,12 +1,14 @@
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect} from 'react';
-import Home from './src/screens/Home';
-import Contacts from './src/screens/Contacts';
-import Profile from './src/screens/Profile';
 import {RootStackParamList} from './src/types/navigation';
 import firebase from '@react-native-firebase/app';
 import Chat from './src/screens/Chat';
+import Home from './src/screens/Home';
+import SignInScreen from './src/screens/SignInScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import Profile from './src/screens/Profile';
+import Contacts from './src/screens/Contacts';
 import Header from './src/components/Header';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,8 +35,10 @@ const App = () => {
         screenOptions={({route}) => ({
           header: () => <Header title={route.name} />,
         })}
-        initialRouteName="Home">
+        initialRouteName="SignIn">
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="Contacts" component={Contacts} />
         <Stack.Screen
           name="Profile"
