@@ -4,7 +4,7 @@ import {ProfileProps} from '../types/Profile';
 
 const Profile: React.FC<ProfileProps> = ({navigation, route}) => {
   const {username, userId} = route.params;
-  console.log('route', route);
+  
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text
@@ -19,7 +19,7 @@ const Profile: React.FC<ProfileProps> = ({navigation, route}) => {
 
       <Text>Username: {username}</Text>
       <Text>UserId: {userId}</Text>
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <Button title="Go to Contacts" onPress={() => navigation.navigate("Contacts")} />
     </View>
   );
 };

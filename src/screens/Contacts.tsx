@@ -1,29 +1,50 @@
-import React from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import { ContactsProps } from '../types/Contacts';
+import React, {useEffect, useState} from 'react';
+import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {fetchContacts} from '../services/firestoreService';
+import {HomeScreenProps} from '../types/Home';
+import {User} from '../types/firestoreService';
 
-const Contacts:React.FC<ContactsProps> = ({navigation}: any) => {
+const ContactsScreen: React.FC<HomeScreenProps> = ({navigation}) => {
+  const [contacts, setContacts] = useState<User[]>([]);
+
+  useEffect(() => {
+    const loadContacts = async () => {
+      const fetchedContacts = await fetchContacts();
+      setContacts(fetchedContacts);
+    };
+    loadContacts();
+  }, []);
+
+  const handleChat = (contact: User) => {
+    navigation.navigate('Chat', {contact});
+  };
+
+
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text
-        style={{
-          color: 'black',
-          textAlign: 'center',
-          fontSize: 20,
-          marginBottom: 15,
-        }}>
-        Contacts
-      </Text>
-      <Button
-        title="Go to Profile"
-        onPress={() =>
-          navigation.navigate('Profile')
-        }
+    <View style={{flex: 1, paddingTop: 20}}>
+      <Text>Hello from Contact page.</Text>
+      <FlatList
+        data={contacts}
+        style={{marginTop: 20, backgroundColor: 'tomato', borderTopLeftRadius: 40, borderTopRightRadius: 40, marginVertical: 10}}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <TouchableOpacity onPress={() => handleChat(item)}>
+            <View
+              style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
+              <Image
+                source={{uri: item.avatar}}
+                style={{width: 50, height: 50, borderRadius: 25}}
+              />
+              <View style={{marginLeft: 10}}>
+                <Text>{item.name}</Text>
+                <Text>{item.email}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
       />
     </View>
   );
 };
 
-export default Contacts;
-
-const styles = StyleSheet.create({});
+export default ContactsScreen;

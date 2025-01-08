@@ -1,12 +1,13 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React, {useEffect} from 'react';
-import {StyleSheet} from 'react-native';
 import Home from './src/screens/Home';
 import Contacts from './src/screens/Contacts';
 import Profile from './src/screens/Profile';
 import {RootStackParamList} from './src/types/navigation';
 import firebase from '@react-native-firebase/app';
+import Chat from './src/screens/Chat';
+import Header from './src/components/Header';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -28,7 +29,10 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={{headerShown: false}}
+        //  screenOptions={{headerShown: false}}
+        screenOptions={({route}) => ({
+          header: () => <Header title={route.name} />,
+        })}
         initialRouteName="Home">
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Contacts" component={Contacts} />
@@ -40,6 +44,7 @@ const App = () => {
           }}
           component={Profile}
         />
+        <Stack.Screen name="Chat" component={Chat} />
       </Stack.Navigator>
     </NavigationContainer>
   );
