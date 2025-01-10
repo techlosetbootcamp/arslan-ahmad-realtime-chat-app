@@ -1,11 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React from 'react';
-import RulerText from '../components/RulerText';
-import IconButton from '../components/IconButton';
-import ActionButton from '../components/ActionButton';
-import { signInWithGoogle } from '../services/authService';
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React from "react";
+import { Image } from "react-native";
+import RulerText from "../components/RulerText";
+import IconButton from "../components/IconButton";
+import ActionButton from "../components/ActionButton";
 
-const Welcome = ({navigation}: any) => {
+const Welcome = ({navigation}:any) => {
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>
@@ -14,36 +14,30 @@ const Welcome = ({navigation}: any) => {
         family.
       </Text>
 
-      <IconButton
-        src={require('../assets/imgs/google_icon.png')}
-        onPress={() => signInWithGoogle()}
-      />
+      <IconButton src={require("../assets/imgs/google_icon.png")} onPress={()=> console.log('"Google Icon" on Welcome clicled.')} />
 
       <RulerText textColor="white">OR</RulerText>
 
       <ActionButton
-        onClick={() => navigation.navigate('SignUp')}
+        onClick={() => navigation.navigate("SignUp")}
         loader={false}
         color="rgba(255, 255, 255, 0.30)"
-        onLoadText="Signing up...">
-        Sign up with mail
-      </ActionButton>
+        onLoadText="Signing up...">Sign up with mail</ActionButton>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => navigation.navigate('SignIn')}>
+      <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate("SignIn")}>
         <Text
           style={{
             ...styles.description,
             fontSize: 14,
-            color: 'white',
-            textAlign: 'center',
+            color: "white",
+            textAlign: "center",
             marginTop: 20,
-          }}>
-          Existing account?{' '}
-          <Text style={{color: 'white', fontWeight: 'bold', marginTop: 9}}>
+          }}
+        >
+          Existing account?{" "}
+          <Text style={{ color: "white", fontWeight: "bold", marginTop: 9 }}>
             Log in
-          </Text>{' '}
+          </Text>{" "}
         </Text>
       </TouchableOpacity>
     </View>
@@ -52,7 +46,7 @@ const Welcome = ({navigation}: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#050821',
+    backgroundColor: "#050821",
     flex: 1,
     padding: 20,
   },
@@ -61,30 +55,30 @@ const styles = StyleSheet.create({
     fontSize: 68,
     lineHeight: 80,
     fontWeight: 400,
-    color: 'white',
+    color: "white",
     paddingVertical: 15,
   },
   description: {
     fontSize: 16,
     lineHeight: 26,
     fontWeight: 400,
-    color: 'rgba(255, 255, 255, 0.5)',
+    color: "rgba(255, 255, 255, 0.5)",
     paddingVertical: 15,
   },
   ghostButton_text: {
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
     fontSize: 18,
   },
   ghostIcon: {
     paddingVertical: 5,
     width: 40,
     height: 40,
-    borderRadius: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignSelf: 'center',
+    borderRadius: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    alignSelf: "center",
   },
 });
 export default Welcome;

@@ -26,7 +26,7 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
     launchImageLibrary(
       {
         mediaType: 'photo',
-        quality: 1,
+        quality: 1, // High quality image
       },
       (response) => {
         if (response.didCancel) {
@@ -35,7 +35,7 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
           Alert.alert('Image Picker Error', response.errorMessage);
         } else {
           const source = response?.assets ?  response?.assets[0].uri : undefined;
-          setImageUri(source);
+          setImageUri(source); // Store image URI
         }
       },
     );
@@ -49,13 +49,11 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
 
     setLoading(true);
     try {
-      // TODO: Have to apply image upload and show feature.
-
       const uploadedImageUrl = await uploadProfileImage(imageUri);
-      // await updateUserProfile({photoURL: uploadedImageUrl});
+      await updateUserProfile({photoURL: uploadedImageUrl});
 
-      // dispatch(setUser({...user, photoURL: uploadedImageUrl}));
-      // Alert.alert('Success', 'Profile image uploaded successfully');
+      dispatch(setUser({...user, photoURL: uploadedImageUrl}));
+      Alert.alert('Success', 'Profile image uploaded successfully');
     } catch (error) {
       Alert.alert('Error', 'Failed to upload image');
     } finally {

@@ -1,19 +1,6 @@
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from 'firebase/storage';
+import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import {getAuth, updateProfile} from 'firebase/auth';
-import {
-  GoogleSignin,
-  SignInResponse,
-  SignInSuccessResponse,
-} from '@react-native-google-signin/google-signin';
-import {SignInResult} from '../types/auth';
-import {AppDispatch} from '../store/store';
-import {setUser} from '../store/slices/userSlice';
 
 export const observeAuthState = (
   callback: (user: FirebaseAuthTypes.User | null) => void,
@@ -49,6 +36,7 @@ export const logoutUser = async (): Promise<void> => {
   return await auth().signOut();
 };
 
+
 export const updateUserProfile = async ({
   name,
   email,
@@ -58,7 +46,7 @@ export const updateUserProfile = async ({
 }) => {
   const currentUser = auth().currentUser;
   if (!currentUser) {
-    throw new Error('No authenticated user');
+    throw new Error("No authenticated user");
   }
   await currentUser.updateProfile({
     displayName: name,
@@ -68,8 +56,10 @@ export const updateUserProfile = async ({
     await currentUser.updateEmail(email);
   }
 
-  console.log('User profile updated in Firebase');
+  console.log("User profile updated in Firebase");
 };
+
+
 
 export const uploadProfileImage = async (imageUri: string) => {
   const user = getAuth().currentUser;
@@ -88,34 +78,12 @@ export const uploadProfileImage = async (imageUri: string) => {
     uploadTask.on(
       'state_changed',
       null,
-      error => reject(error), // Handle upload errors
+      (error) => reject(error), // Handle upload errors
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           resolve(downloadURL); // Return the URL of the uploaded image
         });
       },
     );
   });
-};
-
-export const signInWithGoogle = async () => {
-  try {
-    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-    const signInResult: SignInResponse = await GoogleSignin.signIn();
-
-    console.log('signInResult:', signInResult.data?.user);
-
-    if (signInResult.data?.idToken) {
-      const idToken = signInResult.data?.idToken;
-
-      // Use the token with Firebase
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      return auth().signInWithCredential(googleCredential);
-    } else {
-      throw new Error('Google Sign-In failed to retrieve idToken');
-    }
-  } catch (error) {
-    console.error('Google Sign-In Error: ', error);
-    throw new Error('Google Sign-In failed');
-  }
 };
