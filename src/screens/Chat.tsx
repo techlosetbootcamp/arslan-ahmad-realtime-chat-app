@@ -6,11 +6,10 @@ import { RootState } from '../store/store';
 import { sendMessage, listenToMessages } from '../services/firestoreService';
 import { RootStackParamList } from '../types/navigation';
 
-// Typing the props passed to the ChatScreen
 type ChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chat'>;
 
 const ChatScreen: React.FC<ChatScreenProps> = ({ route, navigation }) => {
-  const { contact } = route.params; // Comes from the navigation route params
+  const { contact } = route.params; 
   const user = useSelector((state: RootState) => state.user);
   const [messages, setMessages] = useState<IMessage[]>([]);
 

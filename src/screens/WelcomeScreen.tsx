@@ -3,8 +3,9 @@ import React from "react";
 import { Image } from "react-native";
 import RulerText from "../components/RulerText";
 import IconButton from "../components/IconButton";
+import ActionButton from "../components/ActionButton";
 
-const Welcome = () => {
+const Welcome = ({navigation}:any) => {
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>
@@ -13,18 +14,17 @@ const Welcome = () => {
         family.
       </Text>
 
-      <IconButton src={require("../assets/imgs/search.png")} onPress={()=> console.log('"Google Icon" on Welcome clicled.')} />
+      <IconButton src={require("../assets/imgs/google_icon.png")} onPress={()=> console.log('"Google Icon" on Welcome clicled.')} />
 
       <RulerText textColor="white">OR</RulerText>
 
-      <TouchableOpacity
-        style={styles.ghostButton}
-        onPress={() => console.log("/signup")}
-      >
-        <Text style={styles.ghostButton_text}>Sign up with mail</Text>
-      </TouchableOpacity>
+      <ActionButton
+        onClick={() => navigation.navigate("SignUp")}
+        loader={false}
+        color="rgba(255, 255, 255, 0.30)"
+        onLoadText="Signing up...">Sign up with mail</ActionButton>
 
-      <TouchableOpacity onPress={() => console.log("/signin")}>
+      <TouchableOpacity activeOpacity={0.9} onPress={() => navigation.navigate("SignIn")}>
         <Text
           style={{
             ...styles.description,
@@ -64,12 +64,6 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     color: "rgba(255, 255, 255, 0.5)",
     paddingVertical: 15,
-  },
-  ghostButton: {
-    marginTop: 15,
-    paddingVertical: 15,
-    backgroundColor: "rgba(255, 255, 255, 0.30)",
-    borderRadius: 10,
   },
   ghostButton_text: {
     textAlign: "center",

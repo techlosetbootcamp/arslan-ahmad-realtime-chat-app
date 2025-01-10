@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 interface UserState {
   uid: string | null;
@@ -18,11 +19,18 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<UserState>) {
-      state.uid = action.payload.uid;
-      state.name = action.payload.name;
-      state.email = action.payload.email;
-      state.avatar = action.payload.avatar;
+    setUser(state, action: PayloadAction<FirebaseAuthTypes.User | null>) {
+      if (action.payload) {
+        state.uid = action.payload.uid;
+        state.name = action.payload.displayName || null;
+        state.email = action.payload.email || null;
+        state.avatar = action.payload.photoURL || null;
+      } else {
+        state.uid = null;
+        state.name = null;
+        state.email = null;
+        state.avatar = null;
+      }
     },
     clearUser(state) {
       state.uid = null;

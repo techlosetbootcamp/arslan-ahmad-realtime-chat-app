@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, KeyboardTypeOptions } from "react-native";
+import { View, Text, TextInput, KeyboardTypeOptions } from "react-native";
 
 interface InputFieldProps {
   type: KeyboardTypeOptions;
   title: string;
   placeholder?: string;
   secureTextEntry?: boolean;
+  setVal: (val: string) => void;
+  val: string;
 }
 
-function InputField({ placeholder, type, title, secureTextEntry = false }: InputFieldProps) {
-  const [val, setVal] = useState("");
+function InputField({ placeholder, type, title, secureTextEntry = false, setVal, val }: InputFieldProps) {
   const [error, setError] = useState("");
 
   const handleChange = (text: string) => {
@@ -28,8 +29,10 @@ function InputField({ placeholder, type, title, secureTextEntry = false }: Input
           borderBottomWidth: 1,
           borderBottomColor: "#CDD1D0",
           paddingInlineStart: 0,
+          color: "#3D4A7A",
         }}
         placeholder={placeholder || ""}
+        placeholderTextColor="#CDD1D0"
         value={val}
         secureTextEntry={secureTextEntry} 
         onChangeText={(text) => handleChange(text)}
