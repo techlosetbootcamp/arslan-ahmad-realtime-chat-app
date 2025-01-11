@@ -1,10 +1,10 @@
 import { Timestamp } from '@react-native-firebase/firestore';
 
 export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
+  uid: string,
+  displayName: string,
+  email: string,
+  photoURL: string | null,
 }
 
 export interface FirestoreMessage {

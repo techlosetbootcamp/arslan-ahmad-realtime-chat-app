@@ -3,43 +3,48 @@ import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 
 interface UserState {
   uid: string | null;
-  name: string | null;
+  displayName: string | null;
   email: string | null;
-  avatar: string | null;
+  photoURL: string | null;
+  isLoading: boolean;
 }
 
 const initialState: UserState = {
   uid: null,
-  name: null,
+  displayName: null,
   email: null,
-  avatar: null,
+  photoURL: null,
+  isLoading: true,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<FirebaseAuthTypes.User | null>) {
-      if (action.payload) {
-        state.uid = action.payload.uid;
-        state.name = action.payload.displayName || null;
-        state.email = action.payload.email || null;
-        state.avatar = action.payload.photoURL || null;
-      } else {
-        state.uid = null;
-        state.name = null;
-        state.email = null;
-        state.avatar = null;
-      }
+    // Change the payload type to only accept serializable fields
+    setUser(state, action: PayloadAction<{
+      uid: string;
+      displayName: string | null;
+      email: string | null;
+      photoURL: string | null;
+    }>) {
+      const { uid, displayName, email, photoURL } = action.payload;
+      state.uid = uid;
+      state.displayName = displayName;
+      state.email = email;
+      state.photoURL = photoURL;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
     },
     clearUser(state) {
       state.uid = null;
-      state.name = null;
+      state.displayName = null;
       state.email = null;
-      state.avatar = null;
+      state.photoURL = null;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, setLoading } = userSlice.actions;
 export default userSlice.reducer;

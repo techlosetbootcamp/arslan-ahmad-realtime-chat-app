@@ -1,15 +1,9 @@
 export type RootStackParamList = {
-  Home: undefined;
-  Contacts: undefined;
   WelcomeScreen: undefined;
+  Home: undefined;
   SignIn: undefined;
   SignUp: undefined;
-  Chat: {
-    contact: {
-      chatId: string;
-      name: string;
-      avatar: string;
-    };
-  };
-  Profile: {userId: string; username: string};
+  Contacts: undefined;
+  Profile: undefined;
+  Chat: { chatId: string };
 };

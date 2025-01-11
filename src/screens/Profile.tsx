@@ -1,12 +1,20 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Image, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../store/slices/userSlice';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import { updateUserProfile, uploadProfileImage } from '../services/authService';
+import {updateUserProfile, uploadProfileImage} from '../services/authService';
 import useAuth from '../hook/useAuth';
-import { launchImageLibrary } from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 interface ProfileProps {
   navigation: any;
@@ -16,26 +24,39 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
   const {user} = useAuth();
   const dispatch = useDispatch();
 
-  const [name, setName] = useState(user?.displayName || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | undefined>(undefined);
 
+  console.log('User:', user);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.displayName || '');
+      setEmail(user.email || '');
+      setImageUri(user.photoURL || undefined);
+    }
+  }, [user]);
+  
   const handlePickImage = () => {
     launchImageLibrary(
       {
         mediaType: 'photo',
-        quality: 1, // High quality image
+        quality: 1,
       },
-      (response) => {
+      response => {
         if (response.didCancel) {
           console.log('User canceled image picker');
         } else if (response.errorCode) {
-          Alert.alert('Image Picker Error', response.errorMessage);
+          Alert.alert(
+            'Image Picker Error',
+            response.errorMessage || 'Unknown error',
+          );
         } else {
-          const source = response?.assets ?  response?.assets[0].uri : undefined;
-          setImageUri(source); // Store image URI
+          const source = response?.assets ? response.assets[0].uri : undefined;
+          setImageUri(source);
         }
       },
     );
@@ -50,12 +71,50 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
     setLoading(true);
     try {
       const uploadedImageUrl = await uploadProfileImage(imageUri);
-      await updateUserProfile({photoURL: uploadedImageUrl});
 
-      dispatch(setUser({...user, photoURL: uploadedImageUrl}));
+      if (user) {
+        const updatedUser = {
+          uid: user.uid,
+          displayName: user.displayName || null,
+          email: user.email || null,
+          photoURL: uploadedImageUrl || null,  // Use photoURL here
+        };
+
+        dispatch(setUser(updatedUser));
+        console.log('User:', updatedUser);
+      }
+
       Alert.alert('Success', 'Profile image uploaded successfully');
     } catch (error) {
+      console.error('Failed to upload image:', error);
       Alert.alert('Error', 'Failed to upload image');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await updateUserProfile({name, email});
+
+      if (user) {
+        const updatedUser = {
+          uid: user.uid,
+          displayName: name || null,  // Use displayName here
+          email: email || null,
+          photoURL: user.photoURL || null,  // Use photoURL here
+        };
+
+        dispatch(setUser(updatedUser));
+      }
+
+      Alert.alert('Success', 'Profile updated successfully');
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      setError('Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -63,27 +122,20 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
 
   return (
     <View style={{flex: 1, paddingHorizontal: 12}}>
-      <View
-        style={{
-          flex: 2,
-          backgroundColor: 'pink',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}></View>
-        <View style={{alignItems: 'center'}}>
-          <Image
-            source={user?.photoURL ? {uri: user.photoURL} : require('../assets/imgs/profile_placeholder_image.png')}
-            style={{width: 100, height: 100, borderRadius: 50}}
-          />
-          <ActionButton
-          onClick={handleUploadImage}
-          loader={loading}
-          color="#3D4A7A"
-          onLoadText="Uploading...">
-          Upload Profile Image
-        </ActionButton>
-        </View>
+      <TouchableOpacity onPress={handlePickImage} style={styles.header}>
+        <Image
+          source={
+            imageUri
+              ? {uri: imageUri}
+              : require('../assets/imgs/profile_placeholder_image.png')
+          }
+          style={styles.profileImage}
+        />
+      </TouchableOpacity>
+
       <View style={{flex: 6, gap: 40, padding: 20}}>
+        <Text style={styles.nameText}>{user?.displayName || 'No Name'}</Text>
+        <Text style={styles.emailText}>{user?.email || 'No Email'}</Text>
         <InputField
           title="Name"
           placeholder="Enter your name"
@@ -100,9 +152,10 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
         />
         {error && <Text style={styles.error}>{error}</Text>}
       </View>
+
       <View style={{flex: 2}}>
         <ActionButton
-          onClick={() => console.log('Update profile')}
+          onClick={handleUpdateProfile}
           loader={loading}
           color="#3D4A7A"
           onLoadText="Updating...">
@@ -114,12 +167,27 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
+  header: {
+    flex: 2,
+    backgroundColor: 'pink',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  nameText: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 10,
     color: '#3D4A7A',
-    marginBottom: 20,
-    textAlign: 'center',
+  },
+  emailText: {
+    fontSize: 16,
+    color: '#3D4A7A',
+    marginBottom: 10,
   },
   error: {
     color: 'red',

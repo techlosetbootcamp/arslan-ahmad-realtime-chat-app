@@ -1,6 +1,17 @@
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
-import {getAuth, updateProfile} from 'firebase/auth';
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from 'firebase/storage';
+import {getAuth} from 'firebase/auth';
+import {
+  getUserFromStorage,
+  removeUserFromStorage,
+  saveUserToStorage,
+} from './authHelpers';
+import {User} from '../types/firestoreService';
 
 export const observeAuthState = (
   callback: (user: FirebaseAuthTypes.User | null) => void,
@@ -12,7 +23,22 @@ export const login = async (
   email: string,
   password: string,
 ): Promise<FirebaseAuthTypes.UserCredential> => {
-  return await auth().signInWithEmailAndPassword(email, password);
+  try {
+    const userCredential = await auth().signInWithEmailAndPassword(
+      email,
+      password,
+    );
+
+    const user = userCredential.user;
+    if (user) {
+      await saveUserToStorage(user as User);
+    }
+
+    return userCredential;
+  } catch (error) {
+    console.error('Login failed:', error);
+    throw error;
+  }
 };
 
 export const signUp = async (
@@ -20,22 +46,31 @@ export const signUp = async (
   password: string,
   name: string,
 ): Promise<FirebaseAuthTypes.UserCredential> => {
-  const userCredential = await auth().createUserWithEmailAndPassword(
-    email,
-    password,
-  );
+  try {
+    const userCredential = await auth().createUserWithEmailAndPassword(
+      email,
+      password,
+    );
 
-  if (userCredential.user) {
-    await userCredential.user.updateProfile({displayName: name});
+    if (userCredential.user) {
+      await userCredential.user.updateProfile({displayName: name}); // Update user's display name
+    }
+
+    return userCredential;
+  } catch (error: any) {
+    console.error('Sign-up failed:', error.message);
+    throw new Error(error.message || 'Sign-up failed');
   }
-
-  return userCredential;
 };
 
 export const logoutUser = async (): Promise<void> => {
-  return await auth().signOut();
+  try {
+    await auth().signOut();
+    await removeUserFromStorage();
+  } catch (error) {
+    throw error;
+  }
 };
-
 
 export const updateUserProfile = async ({
   name,
@@ -46,7 +81,7 @@ export const updateUserProfile = async ({
 }) => {
   const currentUser = auth().currentUser;
   if (!currentUser) {
-    throw new Error("No authenticated user");
+    throw new Error('No authenticated user');
   }
   await currentUser.updateProfile({
     displayName: name,
@@ -56,10 +91,10 @@ export const updateUserProfile = async ({
     await currentUser.updateEmail(email);
   }
 
-  console.log("User profile updated in Firebase");
+  await currentUser.reload();
+
+  console.log('User profile updated in Firebase');
 };
-
-
 
 export const uploadProfileImage = async (imageUri: string) => {
   const user = getAuth().currentUser;
@@ -78,12 +113,27 @@ export const uploadProfileImage = async (imageUri: string) => {
     uploadTask.on(
       'state_changed',
       null,
-      (error) => reject(error), // Handle upload errors
+      error => reject(error), // Handle upload errors
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
           resolve(downloadURL); // Return the URL of the uploaded image
         });
       },
     );
   });
+};
+
+export const getCurrentUserProfile = async () => {
+  try {
+    const user = await getUserFromStorage();
+    if (user) {
+      console.log('Retrieved user from storage:', user);
+    } else {
+      console.log('No user profile found in storage.');
+    }
+    return user;
+  } catch (error) {
+    console.error('Failed to get user profile from storage:', error);
+    throw error;
+  }
 };
