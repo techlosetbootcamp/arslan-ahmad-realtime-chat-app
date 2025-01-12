@@ -1,28 +1,51 @@
-import React from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
-import {HomeScreenProps} from '../types/Home';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import { RootState } from '../store/store';
+import { setChats } from '../store/slices/chatSlice';
+import { HomeScreenProps } from '../types/Home';
 
-const Home: React.FC<HomeScreenProps> = ({navigation}) => {
+const Home: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const chats = useSelector((state: RootState) => state.chat.chats);
+  const user = useSelector((state: RootState) => state.user);
+
+  useEffect(() => {
+    const userId = user.uid;
+    const chatsCollection = firestore().collection('Chats');
+
+    const unsubscribe = chatsCollection
+      .where('participants', 'array-contains', userId)
+      .orderBy('lastMessageTimestamp', 'desc')
+      .onSnapshot(snapshot => {
+        const fetchedChats: Record<string, any> = {};
+        snapshot.forEach(doc => {
+          fetchedChats[doc.id] = { id: doc.id, ...doc.data() };
+        });
+        dispatch(setChats(fetchedChats));
+      });
+
+    return () => unsubscribe(); // Unsubscribe on unmount
+  }, [dispatch]);
+
+  const renderChatItem = ({ item }: { item: any }) => (
+    <TouchableOpacity
+      style={styles.chatItem}
+      onPress={() => navigation.navigate('Chat', { chatId: item.id })}
+    >
+      <Text style={styles.chatText}>Chat with {item.members.join(', ')}</Text>
+      <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text
-        style={{
-          color: 'black',
-          textAlign: 'center',
-          fontSize: 20,
-          marginBottom: 15,
-        }}>
-        Home
-      </Text>
-      <View style={{marginVertical: 15}}>
-        <Button
-          title="Go to Contacts"
-          onPress={() => navigation.navigate('Contacts', {})}
-        />
-      </View>
-      <Button
-        title="Go to Chats"
-        onPress={() => navigation.navigate('Chat', {})}
+    <View style={styles.container}>
+      <FlatList
+        data={Object.values(chats)}
+        keyExtractor={item => item.id}
+        renderItem={renderChatItem}
+        ListEmptyComponent={<Text style={styles.emptyText}>No chats yet.</Text>}
       />
     </View>
   );
@@ -30,4 +53,28 @@ const Home: React.FC<HomeScreenProps> = ({navigation}) => {
 
 export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 16,
+  },
+  chatItem: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  chatText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  lastMessage: {
+    fontSize: 14,
+    color: '#555',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#888',
+  },
+});
