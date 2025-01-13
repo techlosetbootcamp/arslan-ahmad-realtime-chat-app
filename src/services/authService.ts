@@ -12,6 +12,8 @@ import {
   saveUserToStorage,
 } from './authHelpers';
 import {User} from '../types/firestoreService';
+import { clearUser } from '../store/slices/userSlice';
+import { useDispatch } from 'react-redux';
 
 export const observeAuthState = (
   callback: (user: FirebaseAuthTypes.User | null) => void,
@@ -28,9 +30,10 @@ export const login = async (
       email,
       password,
     );
-
     const user = userCredential.user;
+
     if (user) {
+      console.log('Logged-in user:', user);
       await saveUserToStorage(user as User);
     }
 
@@ -64,13 +67,17 @@ export const signUp = async (
 };
 
 export const logoutUser = async (): Promise<void> => {
+  const dispatch = useDispatch();
   try {
     await auth().signOut();
     await removeUserFromStorage();
+    dispatch(clearUser());
   } catch (error) {
+    console.error('Error during logout:', error);
     throw error;
   }
 };
+
 
 export const updateUserProfile = async ({
   name,
@@ -126,9 +133,7 @@ export const uploadProfileImage = async (imageUri: string) => {
 export const getCurrentUserProfile = async () => {
   try {
     const user = await getUserFromStorage();
-    if (user) {
-      console.log('Retrieved user from storage:', user);
-    } else {
+    if (!user) {
       console.log('No user profile found in storage.');
     }
     return user;

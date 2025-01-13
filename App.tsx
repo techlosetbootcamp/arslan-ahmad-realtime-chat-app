@@ -5,23 +5,25 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Navigation from './src/navigation/StackNavigation';
 import { getUserFromStorage } from './src/services/authHelpers';
 import { setLoading, setUser } from './src/store/slices/userSlice';
+import useAuth from './src/hook/useAuth';
+import Header from './src/components/Header';
 
 const AppContent = () => {
   const dispatch = useDispatch();
+  const {user} = useAuth();
 
   useEffect(() => {
     const checkUserSession = async () => {
       const storedUser = await getUserFromStorage();
       if (storedUser) {
-        dispatch(setUser(storedUser)); // Use your custom User type here
+        dispatch(setUser(storedUser));
       }
       dispatch(setLoading(false));
     };
-
     checkUserSession();
   }, [dispatch]);
 
-  return <Navigation />;
+  return user?.email && user.uid ? <Header><Navigation /></Header> : <Navigation />;
 };
 
 const App = () => {

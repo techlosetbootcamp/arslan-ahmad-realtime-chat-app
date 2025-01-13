@@ -11,7 +11,7 @@ import {useDispatch} from 'react-redux';
 import {setUser} from '../store/slices/userSlice';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {updateUserProfile, uploadProfileImage} from '../services/authService';
+import {logoutUser, updateUserProfile, uploadProfileImage} from '../services/authService';
 import useAuth from '../hook/useAuth';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -23,6 +23,8 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({navigation}) => {
   const {user} = useAuth();
   const dispatch = useDispatch();
+
+  console.log('User => ', user);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -153,13 +155,20 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
         {error && <Text style={styles.error}>{error}</Text>}
       </View>
 
-      <View style={{flex: 2}}>
+      <View style={{flex: 2, rowGap: 10}}>
         <ActionButton
           onClick={handleUpdateProfile}
           loader={loading}
           color="#3D4A7A"
           onLoadText="Updating...">
           Update Profile
+        </ActionButton>
+
+        <ActionButton
+          onClick={logoutUser}
+          color="tomato"
+          onLoadText="Logging out...">
+          Logout
         </ActionButton>
       </View>
     </View>

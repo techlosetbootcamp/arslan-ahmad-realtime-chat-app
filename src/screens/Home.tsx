@@ -12,33 +12,42 @@ const Home: React.FC<HomeScreenProps> = ({ navigation }) => {
   const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
+    if (!user?.uid) {
+      console.warn('User ID is missing. Unable to fetch chats.');
+      return;
+    }
+
     const userId = user.uid;
     const chatsCollection = firestore().collection('Chats');
 
     const unsubscribe = chatsCollection
       .where('participants', 'array-contains', userId)
       .orderBy('lastMessageTimestamp', 'desc')
-      .onSnapshot(snapshot => {
-        const fetchedChats: Record<string, any> = {};
-        snapshot.forEach(doc => {
-          fetchedChats[doc.id] = { id: doc.id, ...doc.data() };
-        });
-        dispatch(setChats(fetchedChats));
-      });
+      .onSnapshot(
+        snapshot => {
+          const fetchedChats: Record<string, any> = {};
+          snapshot.forEach(doc => {
+            fetchedChats[doc.id] = { id: doc.id, ...doc.data() };
+          });
+          dispatch(setChats(fetchedChats));
+        },
+        error => {
+          console.error('Error fetching chats:', error);
+        }
+      );
 
     return () => unsubscribe(); // Unsubscribe on unmount
-  }, [dispatch]);
+  }, [dispatch, user?.uid]);
 
   const renderChatItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.chatItem}
       onPress={() => navigation.navigate('Chat', { chatId: item.id })}
     >
-      <Text style={styles.chatText}>Chat with {item.members.join(', ')}</Text>
-      <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+      <Text style={styles.chatText}>Chat with {item.members?.join(', ')}</Text>
+      <Text style={styles.lastMessage}>{item.lastMessage || 'No messages yet.'}</Text>
     </TouchableOpacity>
   );
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -73,8 +82,9 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   emptyText: {
+    flex: 1,
     textAlign: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
     color: '#888',
   },
 });

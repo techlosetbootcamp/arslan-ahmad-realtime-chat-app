@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 interface ActionButtonProps {
   onClick: () => void;
-  loader: boolean;
+  loader?: boolean;
   children: string;
   onLoadText: string;
   color?: string;

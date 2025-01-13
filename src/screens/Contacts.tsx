@@ -3,8 +3,9 @@ import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {fetchContacts} from '../services/firestoreService';
 import {HomeScreenProps} from '../types/Home';
 import {User} from '../types/firestoreService';
+import { ContactsProps } from '../types/Contacts';
 
-const ContactsScreen: React.FC<HomeScreenProps> = ({navigation}) => {
+const ContactsScreen: React.FC<ContactsProps> = ({navigation}) => {
   const [contacts, setContacts] = useState<User[]>([]);
 
   useEffect(() => {
@@ -26,17 +27,17 @@ const ContactsScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       <FlatList
         data={contacts}
         style={{marginTop: 20, backgroundColor: 'tomato', borderTopLeftRadius: 40, borderTopRightRadius: 40, marginVertical: 10}}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.uid}
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => handleChat(item)}>
             <View
               style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
-              <Image
-                source={{uri: item.avatar}}
+              {/* <Image
+                source={{uri: item.photoURL}}
                 style={{width: 50, height: 50, borderRadius: 25}}
-              />
+              /> */}
               <View style={{marginLeft: 10}}>
-                <Text>{item.name}</Text>
+                <Text>{item.displayName}</Text>
                 <Text>{item.email}</Text>
               </View>
             </View>

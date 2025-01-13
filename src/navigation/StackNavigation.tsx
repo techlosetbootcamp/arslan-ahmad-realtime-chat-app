@@ -1,8 +1,8 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
@@ -11,12 +11,14 @@ import Profile from '../screens/Profile';
 import Contacts from '../screens/Contacts';
 import Chat from '../screens/Chat';
 import Header from '../components/Header';
-import { RootStackParamList } from '../types/navigation';
+import {RootStackParamList} from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const { isLoading: loading, ...user } = useSelector((state: RootState) => state.user);
+  const {isLoading: loading, ...user} = useSelector(
+    (state: RootState) => state.user,
+  );
 
   if (loading) {
     return null;
@@ -25,12 +27,11 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        screenOptions={({ route }) => ({
-          header: () => <Header title={route.name} />,
-        })}
-        initialRouteName={user ? 'Home' : 'WelcomeScreen'}
-      >
-        {user ? (
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={user.uid && user.email ? 'Home' : 'WelcomeScreen'}>
+        {user.uid && user.email ? (
           <>
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Profile" component={Profile} />
@@ -42,17 +43,17 @@ const Navigation = () => {
             <Stack.Screen
               name="WelcomeScreen"
               component={WelcomeScreen}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
             <Stack.Screen
               name="SignUp"
               component={SignUp}
-              options={{ headerShown: false }}
+              options={{headerShown: false}}
             />
           </>
         )}

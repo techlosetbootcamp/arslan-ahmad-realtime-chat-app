@@ -10,6 +10,6 @@ type ChatScreenNavigationProp = NativeStackNavigationProp<
 type ChatScreenRouteProp = RouteProp<RootStackParamList, 'Chat'>;
 
 export type ChatProps = {
-  navigation: ChatScreenNavigationProp;
-  route: ChatScreenRouteProp;
+  navigation?: ChatScreenNavigationProp;
+  route?: ChatScreenRouteProp;
 };

@@ -1,36 +1,37 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface HeaderProps {
-  title: string; 
+  title?: string;
+  children: React.ReactNode; // Allow React components as children
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title, children }) => {
   const navigation = useNavigation<any>();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.iconContainer}>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.iconContainer}>
           <Image
             source={require('../assets/imgs/search.png')}
             style={styles.iconText}
           />
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
 
-      <TouchableOpacity
-        // style={styles.iconContainer}
-        onPress={() => navigation.navigate("Profile")} 
-      >
-        <Image
-          source={require('../assets/imgs/profile_placeholder_image.png')}
-          style={styles.profileImage}
-        />
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Image
+            source={require('../assets/imgs/profile_placeholder_image.png')}
+            style={styles.profileImage}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     padding: 8,
     backgroundColor: '#ccc',
-    borderRadius: "50%",
+    borderRadius: '50%',
   },
   iconText: {
     width: 20,

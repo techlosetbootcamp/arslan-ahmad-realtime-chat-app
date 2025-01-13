@@ -1,12 +1,8 @@
-// import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-// import { RootStackParamList } from "./navigation";
-// import { RouteProp } from "@react-navigation/native";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation'; 
 
-// type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
-// type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
-export interface HomeScreenProps {
-  navigation: {
-    navigate: (screen: string, params: any) => void;
-  };
-}
+export type HomeScreenProps = {
+  navigation: HomeScreenNavigationProp;
+};

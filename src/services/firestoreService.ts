@@ -4,22 +4,27 @@ import {FirestoreChat, FirestoreMessage, User} from '../types/firestoreService';
 export const fetchContacts = async (): Promise<User[]> => {
   const snapshot = await firestore().collection('users').get();
   return snapshot.docs.map(doc => ({
-    id: doc.id,
+    uid: doc.id,
     ...doc.data(),
   })) as User[];
 };
 
 export const fetchChats = async (userId: string): Promise<FirestoreChat[]> => {
+  console.log('Fetching chats for userId:', userId);
+
   const snapshot = await firestore()
     .collection('chats')
     .where('members', 'array-contains', userId)
     .get();
 
+  console.log('Fetched chats:', snapshot.docs);
   return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
   })) as FirestoreChat[];
 };
+
+
 
 export const sendMessage = async (
   chatId: string,

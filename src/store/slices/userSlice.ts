@@ -21,7 +21,6 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // Change the payload type to only accept serializable fields
     setUser(state, action: PayloadAction<{
       uid: string;
       displayName: string | null;
