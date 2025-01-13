@@ -6,6 +6,9 @@ import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
+import android.os.Bundle;
+Import org.devio.rn.splashscreen.Splashscreen;
+
 class MainActivity : ReactActivity() {
 
   /**
@@ -15,7 +18,8 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "RealtimeChatApp"
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)
+      SplashScreen.show(this)
+      super.onCreate(savedInstanceState)
   }
 
   /**
