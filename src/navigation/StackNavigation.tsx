@@ -1,8 +1,10 @@
+// Navigation.tsx
+
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useSelector} from 'react-redux';
-import {RootState} from '../store/store';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
@@ -10,13 +12,13 @@ import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Contacts from '../screens/Contacts';
 import Chat from '../screens/Chat';
-import Header from '../components/Header';
-import {RootStackParamList} from '../types/navigation';
+import Header from '../components/Header';  // Import your custom Header
+import { RootStackParamList } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {isLoading: loading, ...user} = useSelector(
+  const { isLoading: loading, ...user } = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -25,10 +27,9 @@ const Navigation = () => {
   }
 
   return (
-    <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: false,
+          header: () => <Header />, // Custom header
         }}
         initialRouteName={user.uid && user.email ? 'Home' : 'WelcomeScreen'}>
         {user.uid && user.email ? (
@@ -43,22 +44,21 @@ const Navigation = () => {
             <Stack.Screen
               name="WelcomeScreen"
               component={WelcomeScreen}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
             <Stack.Screen
               name="SignUp"
               component={SignUp}
-              options={{headerShown: false}}
+              options={{ headerShown: false }}
             />
           </>
         )}
       </Stack.Navigator>
-    </NavigationContainer>
   );
 };
 

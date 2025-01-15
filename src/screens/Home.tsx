@@ -4,9 +4,17 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import firestore from '@react-native-firebase/firestore';
 import { RootState } from '../store/store';
 import { setChats } from '../store/slices/chatSlice';
-import { HomeScreenProps } from '../types/Home';
+// import { HomeScreenProps } from '../types/Home';
+import { RootStackParamList } from '../types/navigation';
+import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 
-const Home: React.FC<HomeScreenProps> = ({ navigation }) => {
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+interface HomeScreenProps {
+  navigation: HomeScreenNavigationProp;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const chats = useSelector((state: RootState) => state.chat.chats);
   const user = useSelector((state: RootState) => state.user);
@@ -60,7 +68,7 @@ const Home: React.FC<HomeScreenProps> = ({ navigation }) => {
   );
 };
 
-export default Home;
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {

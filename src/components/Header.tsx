@@ -1,37 +1,52 @@
+// Header.tsx
+
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../types/navigation';
 
-interface HeaderProps {
-  title?: string;
-  children: React.ReactNode; // Allow React components as children
-}
+const Header: React.FC = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute();
 
-const Header: React.FC<HeaderProps> = ({ title, children }) => {
-  const navigation = useNavigation<any>();
+  const handlePressLeft = () => {
+    if (route.name === 'Chat') {
+      navigation.goBack();
+    } else {
+      navigation.navigate('Search');
+    }
+  };
+
+  const isChatScreen = route.name === 'Chat';
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.iconContainer}>
-          <Image
-            source={require('../assets/imgs/search.png')}
-            style={styles.iconText}
-          />
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.iconContainer} onPress={handlePressLeft}>
+        <Image
+          source={
+            isChatScreen
+              ? require('../assets/imgs/back.png')
+              : require('../assets/imgs/search.png')
+          }
+          style={styles.iconText}
+        />
+      </TouchableOpacity>
 
-        <Text style={styles.title}>{title}</Text>
+      {/* Title in the center */}
+      {!isChatScreen && <Text style={styles.title}>{route.name}</Text>}
 
+      {/* Right button - Profile image */}
+      {!isChatScreen && (
         <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Image
             source={require('../assets/imgs/profile_placeholder_image.png')}
             style={styles.profileImage}
           />
         </TouchableOpacity>
-      </View>
-      <ScrollView style={{ flex: 1 }}>{children}</ScrollView>
-    </SafeAreaView>
+      )}
+    </View>
   );
 };
 
