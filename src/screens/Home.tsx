@@ -4,9 +4,9 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import firestore from '@react-native-firebase/firestore';
 import { RootState } from '../store/store';
 import { setChats } from '../store/slices/chatSlice';
-// import { HomeScreenProps } from '../types/Home';
 import { RootStackParamList } from '../types/navigation';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
+import Loader from '../components/Loader';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 

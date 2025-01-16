@@ -6,7 +6,6 @@ import Navigation from './src/navigation/StackNavigation';
 import {getUserFromStorage} from './src/services/authHelpers';
 import {setLoading, setUser} from './src/store/slices/userSlice';
 import useAuth from './src/hook/useAuth';
-import Header from './src/components/Header';
 import {NavigationContainer} from '@react-navigation/native';
 
 const AppContent = () => {

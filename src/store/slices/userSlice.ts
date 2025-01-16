@@ -7,6 +7,7 @@ interface UserState {
   email: string | null;
   photoURL: string | null;
   isLoading: boolean;
+  status: string  | null;
 }
 
 const initialState: UserState = {
@@ -14,6 +15,7 @@ const initialState: UserState = {
   displayName: null,
   email: null,
   photoURL: null,
+  status: null,
   isLoading: true,
 };
 
@@ -26,12 +28,14 @@ const userSlice = createSlice({
       displayName: string | null;
       email: string | null;
       photoURL: string | null;
+      status: string | null;
     }>) {
       const { uid, displayName, email, photoURL } = action.payload;
       state.uid = uid;
       state.displayName = displayName;
       state.email = email;
       state.photoURL = photoURL;
+      state.status = action.payload.status;
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -41,6 +45,7 @@ const userSlice = createSlice({
       state.displayName = null;
       state.email = null;
       state.photoURL = null;
+      state.status = null;
     },
   },
 });

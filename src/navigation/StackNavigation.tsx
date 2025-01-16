@@ -1,7 +1,4 @@
-// Navigation.tsx
-
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
@@ -12,7 +9,7 @@ import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Contacts from '../screens/Contacts';
 import Chat from '../screens/Chat';
-import Header from '../components/Header';  // Import your custom Header
+import Header from '../components/Header';  
 import { RootStackParamList } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,7 +26,7 @@ const Navigation = () => {
   return (
       <Stack.Navigator
         screenOptions={{
-          header: () => <Header />, // Custom header
+          header: () => <Header />, 
         }}
         initialRouteName={user.uid && user.email ? 'Home' : 'WelcomeScreen'}>
         {user.uid && user.email ? (

@@ -48,6 +48,7 @@ export const signUp = async (
   email: string,
   password: string,
   name: string,
+  status: string,
 ): Promise<FirebaseAuthTypes.UserCredential> => {
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(
