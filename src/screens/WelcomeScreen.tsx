@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
-import { Image } from "react-native";
 import RulerText from "../components/RulerText";
 import IconButton from "../components/IconButton";
 import ActionButton from "../components/ActionButton";
+import { color } from '../constants/Colors';
 
 const Welcome = ({navigation}:any) => {
   return (
@@ -14,7 +14,7 @@ const Welcome = ({navigation}:any) => {
         family.
       </Text>
 
-      <IconButton src={require("../assets/imgs/google_icon.png")} onPress={()=> console.log('"Google Icon" on Welcome clicled.')} />
+      <IconButton src={require("../assets/icons/google_icon.png")} onPress={()=> console.log('"Google Icon" on Welcome clicled.')} />
 
       <RulerText textColor="white">OR</RulerText>
 
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 26,
     fontWeight: 400,
-    color: "rgba(255, 255, 255, 0.5)",
+    color: color.light_grey,
     paddingVertical: 15,
   },
   ghostButton_text: {
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: "50%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: color.ghost,
     alignSelf: "center",
   },
 });

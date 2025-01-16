@@ -12,16 +12,11 @@ import {setUser} from '../store/slices/userSlice';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
 import {logoutUser, updateUserProfile, uploadProfileImage} from '../services/authService';
-import useAuth from '../hook/useAuth';
+import useAuth from '../hooks/useAuth';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
-interface ProfileProps {
-  navigation: any;
-}
-
-const Profile: React.FC<ProfileProps> = ({navigation}) => {
-  const {user} = useAuth();
+const Profile: React.FC = () => {
+  const {user, handleLogout} = useAuth();
   const dispatch = useDispatch();
 
   console.log('User => ', user);
@@ -82,7 +77,7 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
           photoURL: uploadedImageUrl || null,  // Use photoURL here
         };
 
-        dispatch(setUser(updatedUser));
+        // dispatch(setUser(updatedUser));
         console.log('User:', updatedUser);
       }
 
@@ -105,12 +100,13 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
       if (user) {
         const updatedUser = {
           uid: user.uid,
-          displayName: name || null,  // Use displayName here
+          displayName: name || null,
           email: email || null,
-          photoURL: user.photoURL || null,  // Use photoURL here
+          photoURL: user.photoURL || null,
         };
 
-        dispatch(setUser(updatedUser));
+        console.log('User (inProfile):', updatedUser);
+        // dispatch(setUser(updatedUser));
       }
 
       Alert.alert('Success', 'Profile updated successfully');
@@ -165,7 +161,7 @@ const Profile: React.FC<ProfileProps> = ({navigation}) => {
         </ActionButton>
 
         <ActionButton
-          onClick={logoutUser}
+          onClick={handleLogout}
           color="tomato"
           onLoadText="Logging out...">
           Logout

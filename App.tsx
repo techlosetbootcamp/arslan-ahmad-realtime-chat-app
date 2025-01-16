@@ -5,12 +5,12 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Navigation from './src/navigation/StackNavigation';
 import {getUserFromStorage} from './src/services/authHelpers';
 import {setLoading, setUser} from './src/store/slices/userSlice';
-import useAuth from './src/hook/useAuth';
+import useAuth from './src/hooks/useAuth';
 import {NavigationContainer} from '@react-navigation/native';
+import {BottomTabsNavigator} from './src/navigation/BottomTabsNavigator';
 
 const AppContent = () => {
   const dispatch = useDispatch();
-  const {user} = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -27,18 +27,19 @@ const AppContent = () => {
 
   return (
     <>
-      <NavigationContainer>
-          <Navigation />
-      </NavigationContainer>
+      <Navigation />
     </>
   );
 };
 
 const App = () => {
+  const {user} = useAuth();
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Provider store={store}>
-        <AppContent />
+        <NavigationContainer>
+          {user ? <AppContent /> : <BottomTabsNavigator />}
+        </NavigationContainer>
       </Provider>
     </GestureHandlerRootView>
   );

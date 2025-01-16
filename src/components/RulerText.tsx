@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { RulerTextProps } from "../types/RulerText";
+import { RulerTextProps } from "../types/rulerText";
 
 const RulerText: React.FC<RulerTextProps> = ({
   children,

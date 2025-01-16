@@ -12,13 +12,44 @@ import {
   saveUserToStorage,
 } from './authHelpers';
 import {User} from '../types/firestoreService';
-import { clearUser } from '../store/slices/userSlice';
-import { useDispatch } from 'react-redux';
+import {clearUser} from '../store/slices/userSlice';
+import {useDispatch} from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
 
 export const observeAuthState = (
-  callback: (user: FirebaseAuthTypes.User | null) => void,
+  callback: (user: User | null) => void,
 ): (() => void) => {
-  return auth().onAuthStateChanged(callback);
+  return auth().onAuthStateChanged(async firebaseUser => {
+    if (firebaseUser) {
+      try {
+        const userDoc = await firestore()
+          .collection('Users')
+          .doc(firebaseUser.uid)
+          .get();
+        if (!userDoc.exists) {
+          throw new Error('User document not found in Firestore.');
+        }
+        const userData = userDoc.data();
+
+        const user: User = {
+          uid: firebaseUser.uid,
+          displayName: userData?.displayName || '',
+          email: firebaseUser.email || '',
+          photoURL: userData?.photoURL || null,
+          status: userData?.status || null,
+          createdAt:
+            userData?.createdAt || firestore.FieldValue.serverTimestamp(),
+        };
+
+        callback(user); // Pass the converted user object to the callback
+      } catch (error) {
+        console.error('Error mapping Firebase user to custom User:', error);
+        callback(null);
+      }
+    } else {
+      callback(null); // Pass null if no user is logged in
+    }
+  });
 };
 
 export const login = async (
@@ -30,11 +61,36 @@ export const login = async (
       email,
       password,
     );
-    const user = userCredential.user;
+    const firebaseUser = userCredential.user;
 
-    if (user) {
-      console.log('Logged-in user:', user);
-      await saveUserToStorage(user as User);
+    if (firebaseUser) {
+      const userDoc = await firestore()
+        .collection('Users')
+        .doc(firebaseUser.uid)
+        .get();
+
+      if (!userDoc.exists) {
+        throw new Error('User document not found in Firestore.');
+      }
+
+      const userData = userDoc.data();
+
+      const user: User = {
+        uid: firebaseUser.uid,
+        displayName: userData?.displayName || '',
+        email: firebaseUser.email || '',
+        photoURL: userData?.photoURL || null,
+        status: userData?.status || null,
+        createdAt:
+          userData?.createdAt || firestore.FieldValue.serverTimestamp(),
+      };
+
+      console.log(
+        'User logged in:',
+        user.displayName + ' (' + user.email + ')',
+      );
+
+      await saveUserToStorage(user); // Store the mapped custom User type
     }
 
     return userCredential;
@@ -48,7 +104,6 @@ export const signUp = async (
   email: string,
   password: string,
   name: string,
-  status: string,
 ): Promise<FirebaseAuthTypes.UserCredential> => {
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(
@@ -60,6 +115,19 @@ export const signUp = async (
       await userCredential.user.updateProfile({displayName: name}); // Update user's display name
     }
 
+    const userId = userCredential.user.uid;
+    const userDoc: User = {
+      uid: userId,
+      displayName: name,
+      email,
+      photoURL: null,
+      createdAt: firestore.FieldValue.serverTimestamp(),
+    };
+
+    await firestore().collection('Users').doc(userId).set(userDoc);
+
+    console.log('User saved in Database...');
+    await saveUserToStorage(userDoc); // Store the mapped custom User type
     return userCredential;
   } catch (error: any) {
     console.error('Sign-up failed:', error.message);
@@ -78,7 +146,6 @@ export const logoutUser = async (): Promise<void> => {
     throw error;
   }
 };
-
 
 export const updateUserProfile = async ({
   name,

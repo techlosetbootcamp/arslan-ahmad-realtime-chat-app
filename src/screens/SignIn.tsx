@@ -12,7 +12,7 @@ import IconButton from '../components/IconButton';
 import RulerText from '../components/RulerText';
 import InputField from '../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
-import useAuth from '../hook/useAuth';
+import useAuth from '../hooks/useAuth';
 import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
 import ActionButton from '../components/ActionButton';
 
@@ -93,7 +93,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
 
         <View style={{flex: 6}}>
           <IconButton
-            src={require('../assets/imgs/google_icon.png')}
+            src={require('../assets/icons/google_icon.png')}
             onPress={() => console.log("'Google Icon' on Sign Clicked")}
           />
           <View style={styles.gapVertical}>

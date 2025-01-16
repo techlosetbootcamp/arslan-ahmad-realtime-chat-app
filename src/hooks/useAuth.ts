@@ -5,11 +5,14 @@ import {
   logoutUser as logout,
   signUp,
   observeAuthState,
-} from './../services/authService';
+  logoutUser,
+} from '../services/authService';
 import {UseAuthReturn} from '../types/auth';
+import {User} from '../types/firestoreService';
+import {Alert} from 'react-native';
 
 const useAuth = (): UseAuthReturn => {
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +33,21 @@ const useAuth = (): UseAuthReturn => {
 
     try {
       const userCredential = await login(email, password);
-      setUser(userCredential.user);
+      const firebaseUser = userCredential.user;
+
+      if (firebaseUser) {
+        const userData: User = {
+          uid: firebaseUser.uid,
+          displayName: firebaseUser.displayName || '',
+          email: firebaseUser.email || '',
+          photoURL: firebaseUser.photoURL || null,
+          status: null,
+          createdAt: null,
+        };
+
+        setUser(userData);
+      }
+
       return userCredential;
     } catch (err: any) {
       setError(mapFirebaseError(err.code));
@@ -50,7 +67,21 @@ const useAuth = (): UseAuthReturn => {
 
     try {
       const userCredential = await signUp(email, password, name);
-      setUser(userCredential.user);
+
+      const firebaseUser = userCredential.user;
+
+      if (firebaseUser) {
+        const userData: User = {
+          uid: firebaseUser.uid,
+          displayName: name,
+          email: firebaseUser.email || '',
+          photoURL: firebaseUser.photoURL || null,
+          createdAt: null,
+        };
+
+        setUser(userData);
+      }
+
       return userCredential;
     } catch (err: any) {
       setError(mapFirebaseError(err.code));
@@ -60,17 +91,12 @@ const useAuth = (): UseAuthReturn => {
     }
   };
 
-  const handleLogout = async (): Promise<void> => {
-    setLoading(true);
-
+  const handleLogout = async () => {
     try {
-      await logout();
-      setUser(null);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
-      console.error('Logout Error:', err);
-    } finally {
-      setLoading(false);
+      await logoutUser();
+    } catch (error) {
+      console.error('Failed to log out:', error);
+      Alert.alert('Error', 'Failed to log out');
     }
   };
 
@@ -91,11 +117,11 @@ const useAuth = (): UseAuthReturn => {
 
   return {
     user,
+    handleLogin,
+    handleSignUp,
     loading,
     error,
     observeAuth: () => () => {},
-    handleLogin,
-    handleSignUp,
     handleLogout,
   };
 };
