@@ -1,27 +1,24 @@
-import {
-  FirebaseFirestoreTypes,
-  Timestamp,
-} from '@react-native-firebase/firestore';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 export interface User {
   uid: string;
-  displayName: string;
-  email: string;
+  displayName: string | null;
+  email: string | null;
   photoURL: string | null;
-  status?: string | null;
-  createdAt: FirebaseFirestoreTypes.FieldValue | Timestamp | null;
+  status: string | null;
+  createdAt: FirebaseFirestoreTypes.Timestamp | FirebaseFirestoreTypes.FieldValue | null;
 }
 
 export interface FirestoreMessage {
   id?: string;
   senderId: string;
   text: string;
-  timestamp: FirebaseFirestoreTypes.FieldValue | Timestamp | null;
+  timestamp: FirebaseFirestoreTypes.Timestamp | null;
 }
 
 export interface FirestoreChat {
   id?: string;
   members: string[];
   messages?: FirestoreMessage[];
-  createdAt?: FirebaseFirestoreTypes.FieldValue | Timestamp | null;
+  createdAt: FirebaseFirestoreTypes.Timestamp | null;
 }

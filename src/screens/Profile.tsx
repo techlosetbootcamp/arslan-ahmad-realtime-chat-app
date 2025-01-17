@@ -11,9 +11,10 @@ import {useDispatch} from 'react-redux';
 import {setUser} from '../store/slices/userSlice';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {logoutUser, updateUserProfile, uploadProfileImage} from '../services/authService';
+import {logoutUser, updateUserProfile, uploadProfileImage} from '../services/auth';
 import useAuth from '../hooks/useAuth';
 import {launchImageLibrary} from 'react-native-image-picker';
+import ContentViewer from '../components/ContentViewer';
 
 const Profile: React.FC = () => {
   const {user, handleLogout} = useAuth();
@@ -23,6 +24,7 @@ const Profile: React.FC = () => {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUri, setImageUri] = useState<string | undefined>(undefined);
@@ -119,6 +121,7 @@ const Profile: React.FC = () => {
   };
 
   return (
+    <ContentViewer title="Profile">
     <View style={{flex: 1, paddingHorizontal: 12}}>
       <TouchableOpacity onPress={handlePickImage} style={styles.header}>
         <Image
@@ -132,8 +135,6 @@ const Profile: React.FC = () => {
       </TouchableOpacity>
 
       <View style={{flex: 6, gap: 40, padding: 20}}>
-        <Text style={styles.nameText}>{user?.displayName || 'No Name'}</Text>
-        <Text style={styles.emailText}>{user?.email || 'No Email'}</Text>
         <InputField
           title="Name"
           placeholder="Enter your name"
@@ -147,6 +148,13 @@ const Profile: React.FC = () => {
           type="email-address"
           val={email}
           setVal={setEmail}
+        />
+        <InputField
+          title="Your Status"
+          placeholder="Enter your status"
+          type="default"
+          val={status}
+          setVal={setStatus}
         />
         {error && <Text style={styles.error}>{error}</Text>}
       </View>
@@ -168,13 +176,13 @@ const Profile: React.FC = () => {
         </ActionButton>
       </View>
     </View>
+    </ContentViewer>
   );
 };
 
 const styles = StyleSheet.create({
   header: {
     flex: 2,
-    backgroundColor: 'pink',
     alignItems: 'center',
     justifyContent: 'center',
   },

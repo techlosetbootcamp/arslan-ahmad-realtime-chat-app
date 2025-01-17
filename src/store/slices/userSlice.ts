@@ -1,13 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { AppThunk } from '../store';
+import { createUser, fetchUser } from '../../services/firebase';
+import { User } from '../../types/firestoreService';
 
-interface UserState {
+export interface UserState {
   uid: string | null;
   displayName: string | null;
   email: string | null;
-  photoURL: string | null;
+  photoURL?: string | null;
+  description: string | null;
+  status: string | null;
+  contacts: string[];
+  chats: string[];
   isLoading: boolean;
-  status: string  | null;
 }
 
 const initialState: UserState = {
@@ -15,40 +20,69 @@ const initialState: UserState = {
   displayName: null,
   email: null,
   photoURL: null,
+  description: null,
   status: null,
-  isLoading: true,
+  contacts: [],
+  chats: [],
+  isLoading: false,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<{
-      uid: string;
-      displayName: string | null;
-      email: string | null;
-      photoURL: string | null;
-      status: string | null;
-    }>) {
-      const { uid, displayName, email, photoURL } = action.payload;
-      state.uid = uid;
-      state.displayName = displayName;
-      state.email = email;
-      state.photoURL = photoURL;
-      state.status = action.payload.status;
+    setUser(
+      state,
+      action: PayloadAction<Partial<UserState> & { uid: string }>
+    ) {
+      Object.assign(state, action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
     clearUser(state) {
-      state.uid = null;
-      state.displayName = null;
-      state.email = null;
-      state.photoURL = null;
-      state.status = null;
+      Object.assign(state, initialState);
     },
   },
 });
 
-export const { setUser, clearUser, setLoading } = userSlice.actions;
+export const { setUser, setLoading, clearUser } = userSlice.actions;
+
+// Thunk to fetch user data from Firestore
+export const fetchUserData = (uid: string): AppThunk => async dispatch => {
+  dispatch(setLoading(true));
+  const userData = await fetchUser(uid);
+
+  if (userData) {
+    dispatch(
+      setUser({
+        uid,
+        displayName: userData.displayName || null,
+        email: userData.email || null,
+        photoURL: userData.photoURL || null,
+        description: userData.description || null,
+        status: userData.status || null,
+        contacts: userData.contacts || [],
+        chats: userData.chats || [],
+      })
+    );
+  }
+
+  dispatch(setLoading(false));
+};
+
+export const createUserProfile = (
+  uid: string,
+  userData: Partial<UserState>
+): AppThunk => async dispatch => {
+  const userPayload: Partial<User> = {
+    ...userData,
+    uid: userData.uid !== null ? userData.uid : uid, // Ensure `uid` is valid
+  };
+
+  await createUser(uid, userPayload);
+  dispatch(fetchUserData(uid));
+};
+
+
 export default userSlice.reducer;

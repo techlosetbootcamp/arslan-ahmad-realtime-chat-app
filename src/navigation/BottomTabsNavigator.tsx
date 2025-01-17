@@ -6,10 +6,13 @@ import {RootStackParamList} from '../types/navigation';
 import Settings from '../screens/Settings';
 import {color} from '../constants/Colors';
 import {Image} from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Profile from '../screens/Profile';
+import Search from '../screens/Search';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
-export const BottomTabsNavigator = () => {
+const BottomTabsNavigator = () => {
   let textColor = color.light_grey;
   return (
     <Tab.Navigator
@@ -53,9 +56,23 @@ export const BottomTabsNavigator = () => {
   );
 };
 
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+const AppStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="Search" component={Search} />
+    </Stack.Navigator>
+  );
+};
+
 const styles = {
   icon: {
     width: 24,
     height: 24,
   },
 };
+
+export default AppStack;

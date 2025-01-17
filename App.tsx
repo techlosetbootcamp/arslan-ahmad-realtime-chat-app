@@ -7,7 +7,7 @@ import {getUserFromStorage} from './src/services/authHelpers';
 import {setLoading, setUser} from './src/store/slices/userSlice';
 import useAuth from './src/hooks/useAuth';
 import {NavigationContainer} from '@react-navigation/native';
-import {BottomTabsNavigator} from './src/navigation/BottomTabsNavigator';
+import BottomTabsNavigator from './src/navigation/BottomTabsNavigator';
 
 const AppContent = () => {
   const dispatch = useDispatch();
@@ -39,6 +39,7 @@ const App = () => {
       <Provider store={store}>
         <NavigationContainer>
           {user ? <AppContent /> : <BottomTabsNavigator />}
+          {/* <AppContent />  */}
         </NavigationContainer>
       </Provider>
     </GestureHandlerRootView>

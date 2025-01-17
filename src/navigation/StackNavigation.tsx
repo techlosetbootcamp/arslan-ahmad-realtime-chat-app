@@ -1,7 +1,7 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
@@ -9,13 +9,15 @@ import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Contacts from '../screens/Contacts';
 import Chat from '../screens/Chat';
-import Header from '../components/ContentViewer';  
-import { RootStackParamList } from '../types/navigation';
+import Header from '../components/ContentViewer';
+import {RootStackParamList} from '../types/navigation';
+import Settings from '../screens/Settings';
+import Search from '../screens/Search';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const { isLoading: loading, ...user } = useSelector(
+  const {isLoading: loading, ...user} = useSelector(
     (state: RootState) => state.user,
   );
 
@@ -24,30 +26,26 @@ const Navigation = () => {
   }
 
   return (
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false, 
-        }}>
-        {(
-          <>
-            <Stack.Screen
-              name="WelcomeScreen"
-              component={WelcomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignIn"
-              component={SignInScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignUp"
-              component={SignUp}
-              options={{ headerShown: false }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <Stack.Screen
+        name="WelcomeScreen"
+        component={WelcomeScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SignIn"
+        component={SignInScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SignUp"
+        component={SignUp}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
   );
 };
 

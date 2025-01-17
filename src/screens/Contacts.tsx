@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
-import {fetchContacts} from '../services/firestoreService';
+import {fetchContacts} from '../services/firebase';
 import {User} from '../types/firestoreService';
 import {ContactsProps} from '../types/contacts';
 import ContentViewer from '../components/ContentViewer';

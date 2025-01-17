@@ -6,7 +6,7 @@ import {
   signUp,
   observeAuthState,
   logoutUser,
-} from '../services/authService';
+} from '../services/auth';
 import {UseAuthReturn} from '../types/auth';
 import {User} from '../types/firestoreService';
 import {Alert} from 'react-native';
@@ -75,6 +75,7 @@ const useAuth = (): UseAuthReturn => {
           uid: firebaseUser.uid,
           displayName: name,
           email: firebaseUser.email || '',
+          status: null,
           photoURL: firebaseUser.photoURL || null,
           createdAt: null,
         };

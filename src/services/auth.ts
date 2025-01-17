@@ -14,7 +14,9 @@ import {
 import {User} from '../types/firestoreService';
 import {clearUser} from '../store/slices/userSlice';
 import {useDispatch} from 'react-redux';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 
 export const observeAuthState = (
   callback: (user: User | null) => void,
@@ -23,7 +25,7 @@ export const observeAuthState = (
     if (firebaseUser) {
       try {
         const userDoc = await firestore()
-          .collection('Users')
+          .collection('users')
           .doc(firebaseUser.uid)
           .get();
         if (!userDoc.exists) {
@@ -38,16 +40,18 @@ export const observeAuthState = (
           photoURL: userData?.photoURL || null,
           status: userData?.status || null,
           createdAt:
-            userData?.createdAt || firestore.FieldValue.serverTimestamp(),
+            userData?.createdAt instanceof FirebaseFirestoreTypes.Timestamp
+              ? userData.createdAt
+              : null,
         };
 
-        callback(user); // Pass the converted user object to the callback
+        callback(user);
       } catch (error) {
         console.error('Error mapping Firebase user to custom User:', error);
         callback(null);
       }
     } else {
-      callback(null); // Pass null if no user is logged in
+      callback(null);
     }
   });
 };
@@ -65,7 +69,7 @@ export const login = async (
 
     if (firebaseUser) {
       const userDoc = await firestore()
-        .collection('Users')
+        .collection('users')
         .doc(firebaseUser.uid)
         .get();
 
@@ -90,7 +94,7 @@ export const login = async (
         user.displayName + ' (' + user.email + ')',
       );
 
-      await saveUserToStorage(user); // Store the mapped custom User type
+      await saveUserToStorage(user);
     }
 
     return userCredential;
@@ -112,7 +116,7 @@ export const signUp = async (
     );
 
     if (userCredential.user) {
-      await userCredential.user.updateProfile({displayName: name}); // Update user's display name
+      await userCredential.user.updateProfile({displayName: name});
     }
 
     const userId = userCredential.user.uid;
@@ -120,14 +124,15 @@ export const signUp = async (
       uid: userId,
       displayName: name,
       email,
+      status: null,
       photoURL: null,
       createdAt: firestore.FieldValue.serverTimestamp(),
     };
 
-    await firestore().collection('Users').doc(userId).set(userDoc);
+    await firestore().collection('users').doc(userId).set(userDoc);
 
     console.log('User saved in Database...');
-    await saveUserToStorage(userDoc); // Store the mapped custom User type
+    await saveUserToStorage(userDoc);
     return userCredential;
   } catch (error: any) {
     console.error('Sign-up failed:', error.message);
@@ -176,7 +181,7 @@ export const uploadProfileImage = async (imageUri: string) => {
   if (!user) throw new Error('No user is logged in');
 
   const storage = getStorage();
-  const imageName = user.uid + '_profile_image'; // Create a unique file name for the user's image
+  const imageName = user.uid + '_profile_image';
   const imageRef = ref(storage, 'profile_images/' + imageName);
 
   const response = await fetch(imageUri);
@@ -188,10 +193,10 @@ export const uploadProfileImage = async (imageUri: string) => {
     uploadTask.on(
       'state_changed',
       null,
-      error => reject(error), // Handle upload errors
+      error => reject(error),
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-          resolve(downloadURL); // Return the URL of the uploaded image
+          resolve(downloadURL);
         });
       },
     );

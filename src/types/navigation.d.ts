@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Contacts: undefined;
   Profile: undefined;
   Search: undefined;
+  MainTabs: undefined;
   Settings: undefined;
   Chat: { chatId: string };
 };
