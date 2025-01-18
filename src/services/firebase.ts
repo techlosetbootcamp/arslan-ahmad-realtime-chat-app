@@ -2,7 +2,10 @@ import firestore from '@react-native-firebase/firestore';
 import { Chat, Message } from '../store/slices/chatSlice';
 import { User } from '../types/firestoreService';
 
-// Fetch all users
+
+/*
+  TODO: Implement the following functions on 'User.contacts', Now it is only implemented on 'User'
+*/
 export const fetchContacts = async (): Promise<User[]> => {
   const snapshot = await firestore().collection('users').get();
   return snapshot.docs.map(doc => {

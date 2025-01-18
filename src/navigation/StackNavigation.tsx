@@ -1,18 +1,17 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
-import Home from '../screens/Home';
 import Profile from '../screens/Profile';
-import Contacts from '../screens/Contacts';
-import Chat from '../screens/Chat';
-import Header from '../components/ContentViewer';
 import {RootStackParamList} from '../types/navigation';
-import Settings from '../screens/Settings';
 import Search from '../screens/Search';
+import BottomTabsNavigator from './BottomTabsNavigator';
+import {getUserFromStorage} from '../services/authHelpers';
+import {setLoading, setUser} from '../store/slices/userSlice';
+import Loader from '../components/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,30 +20,44 @@ const Navigation = () => {
     (state: RootState) => state.user,
   );
 
+  console.log('User:(stackNavigation)', user.uid);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const checkUserSession = async () => {
+      const storedUser = await getUserFromStorage();
+
+      if (storedUser.uid) {
+        dispatch(setUser(storedUser));
+      }
+      dispatch(setLoading(false));
+    };
+    checkUserSession();
+  }, [dispatch]);
+
   if (loading) {
-    return null;
+    <Loader />;
   }
 
-  return (
+  return user.uid ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-      }}>
-      <Stack.Screen
-        name="WelcomeScreen"
-        component={WelcomeScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SignIn"
-        component={SignInScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="SignUp"
-        component={SignUp}
-        options={{headerShown: false}}
-      />
+      }}
+      initialRouteName="MainTabs">
+      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
+      <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="Search" component={Search} />
+    </Stack.Navigator>
+  ) : (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="WelcomeScreen">
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="SignUp" component={SignUp} />
     </Stack.Navigator>
   );
 };

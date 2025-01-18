@@ -1,3 +1,4 @@
+import { Chat } from './../store/slices/chatSlice';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   getStorage,
@@ -23,10 +24,11 @@ export const observeAuthState = (
 ): (() => void) => {
   return auth().onAuthStateChanged(async firebaseUser => {
     if (firebaseUser) {
+      console.log('firebaseUser.uid', firebaseUser)
       try {
         const userDoc = await firestore()
           .collection('users')
-          .doc(firebaseUser.uid)
+          .doc(firebaseUser?.uid)
           .get();
         if (!userDoc.exists) {
           throw new Error('User document not found in Firestore.');
@@ -126,6 +128,8 @@ export const signUp = async (
       email,
       status: null,
       photoURL: null,
+      chats: [],
+      contacts: [],
       createdAt: firestore.FieldValue.serverTimestamp(),
     };
 

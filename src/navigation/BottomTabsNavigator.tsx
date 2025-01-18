@@ -57,17 +57,6 @@ const BottomTabsNavigator = () => {
 };
 
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const AppStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="Search" component={Search} />
-    </Stack.Navigator>
-  );
-};
-
 const styles = {
   icon: {
     width: 24,
@@ -75,4 +64,4 @@ const styles = {
   },
 };
 
-export default AppStack;
+export default BottomTabsNavigator;

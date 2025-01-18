@@ -50,7 +50,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
       if (userCredential) {
         Alert.alert('Success', 'You are successfully logged in!');
         setSignInData(initialState);
-        navigation.navigate('Home');
+        navigation.navigate('MainTabs');
       }
     } catch {
       Alert.alert('Error', error || 'An unknown error occurred');

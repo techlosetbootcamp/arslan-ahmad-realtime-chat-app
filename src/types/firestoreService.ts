@@ -6,6 +6,8 @@ export interface User {
   email: string | null;
   photoURL: string | null;
   status: string | null;
+  chats?: string[];
+  contacts?: string[];
   createdAt: FirebaseFirestoreTypes.Timestamp | FirebaseFirestoreTypes.FieldValue | null;
 }
 

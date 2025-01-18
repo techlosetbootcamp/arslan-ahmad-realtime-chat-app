@@ -10,6 +10,7 @@ import {
 import {UseAuthReturn} from '../types/auth';
 import {User} from '../types/firestoreService';
 import {Alert} from 'react-native';
+import { removeUserFromStorage } from '../services/authHelpers';
 
 const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
@@ -95,6 +96,7 @@ const useAuth = (): UseAuthReturn => {
   const handleLogout = async () => {
     try {
       await logoutUser();
+      removeUserFromStorage();
     } catch (error) {
       console.error('Failed to log out:', error);
       Alert.alert('Error', 'Failed to log out');

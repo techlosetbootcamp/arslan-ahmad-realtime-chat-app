@@ -6,39 +6,51 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
-import {setUser} from '../store/slices/userSlice';
+import {useDispatch, useSelector} from 'react-redux';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {logoutUser, updateUserProfile, uploadProfileImage} from '../services/auth';
+import {updateUserProfile, uploadProfileImage} from '../services/auth';
 import useAuth from '../hooks/useAuth';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
+import {RootState} from '../store/store';
+import { ScrollView } from 'react-native-gesture-handler';
+
+const initialState = {
+  name: '',
+  email: '',
+  status: '',
+  imageUri: null as string | null,
+};
 
 const Profile: React.FC = () => {
-  const {user, handleLogout} = useAuth();
+  const {handleLogout} = useAuth();
+  const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
 
-  console.log('User => ', user);
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState('');
+  const [userData, setUserData] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imageUri, setImageUri] = useState<string | undefined>(undefined);
 
-  console.log('User:', user);
+  console.log('User (Profile) => ', user);
 
   useEffect(() => {
     if (user) {
-      setName(user.displayName || '');
-      setEmail(user.email || '');
-      setImageUri(user.photoURL || undefined);
+      setUserData({
+        name: user.displayName || '',
+        email: user.email || '',
+        status: user.status || '',
+        imageUri: user.photoURL || null,
+      });
     }
   }, [user]);
-  
+
+  const handleInputChange = (field: string, value: string | null) => {
+    setUserData(prevState => ({...prevState, [field]: value}));
+  };
+
   const handlePickImage = () => {
     launchImageLibrary(
       {
@@ -55,31 +67,28 @@ const Profile: React.FC = () => {
           );
         } else {
           const source = response?.assets ? response.assets[0].uri : undefined;
-          setImageUri(source);
+          setUserData(prevState => ({...prevState, imageUri: source || null}));
         }
       },
     );
   };
 
   const handleUploadImage = async () => {
-    if (!imageUri) {
+    if (!userData.imageUri) {
       Alert.alert('Error', 'No image selected');
       return;
     }
 
     setLoading(true);
     try {
-      const uploadedImageUrl = await uploadProfileImage(imageUri);
+      const uploadedImageUrl = await uploadProfileImage(userData.imageUri);
 
       if (user) {
         const updatedUser = {
-          uid: user.uid,
-          displayName: user.displayName || null,
-          email: user.email || null,
-          photoURL: uploadedImageUrl || null,  // Use photoURL here
+          ...user,
+          photoURL: uploadedImageUrl,
         };
 
-        // dispatch(setUser(updatedUser));
         console.log('User:', updatedUser);
       }
 
@@ -97,18 +106,21 @@ const Profile: React.FC = () => {
     setError(null);
 
     try {
-      await updateUserProfile({name, email});
+      await updateUserProfile({
+        name: userData.name,
+        email: userData.email,
+      });
 
       if (user) {
         const updatedUser = {
-          uid: user.uid,
-          displayName: name || null,
-          email: email || null,
-          photoURL: user.photoURL || null,
+          ...user,
+          displayName: userData.name || null,
+          email: userData.email || null,
+          photoURL: userData.imageUri || null,
+          status: userData.status || null,
         };
 
         console.log('User (inProfile):', updatedUser);
-        // dispatch(setUser(updatedUser));
       }
 
       Alert.alert('Success', 'Profile updated successfully');
@@ -122,63 +134,64 @@ const Profile: React.FC = () => {
 
   return (
     <ContentViewer title="Profile">
-    <View style={{flex: 1, paddingHorizontal: 12}}>
-      <TouchableOpacity onPress={handlePickImage} style={styles.header}>
-        <Image
-          source={
-            imageUri
-              ? {uri: imageUri}
-              : require('../assets/imgs/profile_placeholder_image.png')
-          }
-          style={styles.profileImage}
-        />
-      </TouchableOpacity>
+      <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
+        <TouchableOpacity onPress={handlePickImage} style={styles.header}>
+          <Image
+            source={
+              userData.imageUri
+                ? {uri: userData.imageUri}
+                : require('../assets/imgs/profile_placeholder_image.png')
+            }
+            style={styles.profileImage}
+          />
+        </TouchableOpacity>
 
-      <View style={{flex: 6, gap: 40, padding: 20}}>
-        <InputField
-          title="Name"
-          placeholder="Enter your name"
-          type="default"
-          val={name}
-          setVal={setName}
-        />
-        <InputField
-          title="Email"
-          placeholder="Enter your email"
-          type="email-address"
-          val={email}
-          setVal={setEmail}
-        />
-        <InputField
-          title="Your Status"
-          placeholder="Enter your status"
-          type="default"
-          val={status}
-          setVal={setStatus}
-        />
-        {error && <Text style={styles.error}>{error}</Text>}
-      </View>
+        <KeyboardAvoidingView style={{flex: 6, gap: 40, padding: 20}}>
+          <InputField
+            title="Name"
+            placeholder="Enter your name"
+            type="default"
+            val={userData.name}
+            setVal={value => handleInputChange('name', value)}
+          />
+          <InputField
+            title="Email"
+            placeholder="Enter your email"
+            type="email-address"
+            val={userData.email}
+            setVal={value => handleInputChange('email', value)}
+          />
+          <InputField
+            title="Your Status"
+            placeholder="Enter your status"
+            type="default"
+            val={userData.status}
+            setVal={value => handleInputChange('status', value)}
+          />
+          {error && <Text style={styles.error}>{error}</Text>}
+        </KeyboardAvoidingView>
 
-      <View style={{flex: 2, rowGap: 10}}>
-        <ActionButton
-          onClick={handleUpdateProfile}
-          loader={loading}
-          color="#3D4A7A"
-          onLoadText="Updating...">
-          Update Profile
-        </ActionButton>
+        <View style={{flex: 2, rowGap: 10}}>
+          <ActionButton
+            onClick={handleUpdateProfile}
+            loader={loading}
+            color="#3D4A7A"
+            onLoadText="Updating...">
+            Update Profile
+          </ActionButton>
 
-        <ActionButton
-          onClick={handleLogout}
-          color="tomato"
-          onLoadText="Logging out...">
-          Logout
-        </ActionButton>
-      </View>
-    </View>
+          <ActionButton
+            onClick={handleLogout}
+            color="tomato"
+            onLoadText="Logging out...">
+            Logout
+          </ActionButton>
+        </View>
+      </ScrollView>
     </ContentViewer>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {
