@@ -15,5 +15,4 @@ export interface UseAuthReturn {
     password: string,
     name: string,
   ) => Promise<FirebaseAuthTypes.UserCredential | void>;
-  handleLogout: () => Promise<void>;
 }

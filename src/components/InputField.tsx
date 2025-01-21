@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, KeyboardTypeOptions } from "react-native";
+import { InputFieldProps } from "../types/inputField";
 
-interface InputFieldProps {
-  type: KeyboardTypeOptions;
-  title: string;
-  placeholder?: string;
-  secureTextEntry?: boolean;
-  setVal: (val: string) => void;
-  val: string;
-}
 
 function InputField({ placeholder, type, title, secureTextEntry = false, setVal, val }: InputFieldProps) {
   const [error, setError] = useState("");

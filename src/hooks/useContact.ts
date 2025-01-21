@@ -1,19 +1,23 @@
 import {useEffect, useState} from 'react';
 import {fetchContacts} from '../services/firebase';
 import {User} from '../types/firestoreService';
+import useAuth from './useAuth';
 
-const useContacts = () => {
+const userContacts = () => {
   const [contacts, setContacts] = useState<User[]>([]);
   const [sections, setSections] = useState<{title: string; data: User[]}[]>([]);
+  const {user} = useAuth();
 
   useEffect(() => {
     const loadContacts = async () => {
-      try {
-        const fetchedContacts = await fetchContacts();
-        setContacts(fetchedContacts);
-        setSections(groupContactsByAlphabet(fetchedContacts));
-      } catch (error) {
-        console.error('Error fetching contacts:', error);
+      if (user?.uid) {
+        try {
+          const fetchedContacts = await fetchContacts(user?.uid);
+          setContacts(fetchedContacts);
+          setSections(groupContactsByAlphabet(fetchedContacts));
+        } catch (error) {
+          console.error('Error fetching contacts:', error);
+        }
       }
     };
 
@@ -44,4 +48,4 @@ const groupContactsByAlphabet = (contacts: User[]) => {
     }));
 };
 
-export default useContacts;
+export default userContacts;

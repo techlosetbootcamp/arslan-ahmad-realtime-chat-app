@@ -1,4 +1,3 @@
-import { Chat } from './../store/slices/chatSlice';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   getStorage,
@@ -24,7 +23,6 @@ export const observeAuthState = (
 ): (() => void) => {
   return auth().onAuthStateChanged(async firebaseUser => {
     if (firebaseUser) {
-      console.log('firebaseUser.uid', firebaseUser)
       try {
         const userDoc = await firestore()
           .collection('users')
@@ -41,10 +39,6 @@ export const observeAuthState = (
           email: firebaseUser.email || '',
           photoURL: userData?.photoURL || null,
           status: userData?.status || null,
-          createdAt:
-            userData?.createdAt instanceof FirebaseFirestoreTypes.Timestamp
-              ? userData.createdAt
-              : null,
         };
 
         callback(user);
@@ -87,8 +81,6 @@ export const login = async (
         email: firebaseUser.email || '',
         photoURL: userData?.photoURL || null,
         status: userData?.status || null,
-        createdAt:
-          userData?.createdAt || firestore.FieldValue.serverTimestamp(),
       };
 
       console.log(
@@ -130,7 +122,6 @@ export const signUp = async (
       photoURL: null,
       chats: [],
       contacts: [],
-      createdAt: firestore.FieldValue.serverTimestamp(),
     };
 
     await firestore().collection('users').doc(userId).set(userDoc);
@@ -145,11 +136,8 @@ export const signUp = async (
 };
 
 export const logoutUser = async (): Promise<void> => {
-  const dispatch = useDispatch();
   try {
-    await auth().signOut();
-    await removeUserFromStorage();
-    dispatch(clearUser());
+    console.log('User had logged-out.');
   } catch (error) {
     console.error('Error during logout:', error);
     throw error;

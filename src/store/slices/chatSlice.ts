@@ -1,39 +1,22 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../store';
+import firestore from '@react-native-firebase/firestore';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {AppThunk} from '../store';
 import {
-  createChat,
+  createNewChat as createChat,
   fetchChats,
-  sendMessage,
-  fetchMessages,
+  createNewChat,
 } from '../../services/firebase';
-
-export interface Message {
-  id: string;
-  senderId: string;
-  text: string;
-  contentType: 'text' | 'image';
-  timestamp: string;
-  status: string;
-  imageURL?: string;
-}
-
-export interface Chat {
-  id: string;
-  participants: string[];
-  lastMessage: string;
-  lastActive: string;
-  messages: Message[];
-  unreadMessages: number;
-  notificationStatus: 'allowed' | 'silent';
-}
+import {Chat, Message} from '../../types/firestoreService';
 
 interface ChatState {
   chats: Record<string, Chat>;
+  messages: Record<string, Message[]>;
   isLoading: boolean;
 }
 
 const initialState: ChatState = {
   chats: {},
+  messages: {},
   isLoading: false,
 };
 
@@ -42,31 +25,45 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     setChats(state, action: PayloadAction<Record<string, Chat>>) {
-      state.chats = action.payload;
+      const chats = action.payload;
+      state.chats = Object.entries(chats).reduce((acc: any, [chatId, chat]) => {
+        acc[chatId] = {
+          ...chat,
+          lastActive: chat.lastActive
+            ? new Date(chat.lastActive).toISOString()
+            : null,
+          // participantsDetails,
+        };
+        return acc;
+      }, {});
     },
-    addChat(state, action: PayloadAction<Partial<Chat> & { id: string }>) {
-      const chat = action.payload;
-      state.chats[chat.id] = {
-        id: chat.id,
-        participants: chat.participants || [],
-        lastMessage: chat.lastMessage || '',
-        lastActive: chat.lastActive || '',
-        messages: chat.messages || [],
-        unreadMessages: chat.unreadMessages || 0,
-        notificationStatus: chat.notificationStatus || 'allowed',
-      };
+    setMessages(
+      state,
+      action: PayloadAction<{chatId: string; messages: Message[]}>,
+    ) {
+      state.messages[action.payload.chatId] = action.payload.messages.map(
+        message => ({
+          ...message,
+          timestamp: message.timestamp
+            ? new Date(message.timestamp).toISOString()
+            : null,
+        }),
+      );
     },
     addMessage(
       state,
-      action: PayloadAction<{ chatId: string; message: Message }>
+      action: PayloadAction<{chatId: string; message: Message}>,
     ) {
-      const { chatId, message } = action.payload;
-
-      if (state.chats[chatId]) {
-        state.chats[chatId].messages.push(message);
-        state.chats[chatId].lastMessage = message.text;
-        state.chats[chatId].lastActive = message.timestamp;
-      }
+      const {chatId, message} = action.payload;
+      state.messages[chatId] = [
+        ...(state.messages[chatId] || []),
+        {
+          ...message,
+          timestamp: message.timestamp
+            ? new Date(message.timestamp).toISOString()
+            : null,
+        },
+      ];
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -74,33 +71,40 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setChats, addChat, addMessage, setLoading } = chatSlice.actions;
+export const fetchUserChats =
+  (userId: string): AppThunk =>
+  async dispatch => {
+    dispatch(setLoading(true));
+    const chats = await fetchChats(userId);
+    const chatMap = chats.reduce((acc, chat) => {
+      acc[chat.id] = chat;
+      return acc;
+    }, {} as Record<string, Chat>);
+    dispatch(setChats(chatMap));
+    dispatch(setLoading(false));
+  };
 
-// Thunk to fetch chats for the user
-export const fetchUserChats = (userId: string): AppThunk => async dispatch => {
-  dispatch(setLoading(true));
+export const startChat =
+  (userId: string, contactId: string): AppThunk =>
+  async dispatch => {
+    dispatch(setLoading(true));
 
-  const chats = await fetchChats(userId); // Fetch chats from Firebase
-  const chatMap = chats.reduce((acc, chat) => {
-    acc[chat.id] = {
-      ...chat,
-      messages: [], // You can load messages separately if needed
-      unreadMessages: chat.unreadMessages || 0,
-      notificationStatus: chat.notificationStatus || 'allowed',
-    };
-    return acc;
-  }, {} as Record<string, Chat>);
+    const chats = await fetchChats(userId);
+    const existingChat = chats.find(chat =>
+      chat.participants.includes(contactId),
+    );
+    let chatId = existingChat?.id;
 
-  dispatch(setChats(chatMap));
-  dispatch(setLoading(false));
-};
+    if (!chatId) {
+      chatId = await createNewChat([userId, contactId]);
+    }
 
-export const createNewChat = (
-  chatId: string,
-  participants: string[]
-): AppThunk => async dispatch => {
-  await createChat(chatId, participants);
-  dispatch(fetchUserChats(participants[0])); // Reload chats for the first user
-};
+    dispatch(fetchUserChats(userId));
+    dispatch(setLoading(false));
 
+    return chatId;
+  };
+
+export const {setChats, setMessages, addMessage, setLoading} =
+  chatSlice.actions;
 export default chatSlice.reducer;

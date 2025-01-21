@@ -9,24 +9,32 @@ import {
   ImageBackground,
   Dimensions,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {RootStackParamList} from '../types/navigation';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {useRoute} from '@react-navigation/native';
+import useNavigation from '../hooks/useNavigation';
+import {addContact} from '../services/firebase';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
-  const navigation =
-    useNavigation<BottomTabNavigationProp<RootStackParamList>>();
   const route = useRoute();
+  const isFullNav = route.name === 'Home' || route.name === 'Contacts';
+  const {navigation} = useNavigation();
 
-  const handlePressLeft = () => {
-    if (route.name === 'Chat') {
-      navigation.goBack();
-    } else {
+  const handlePressLeft = async () => {
+    if (isFullNav) {
       navigation.navigate('Search');
+    } else if (route.name === 'Contacts') {
+      try {
+        // await addContact();
+        console.log('Added Contact... Clicked (ContentViewer.tsx)');
+      } catch (error) {
+        console.error(
+          'Got error while Added Contact (ContentViewer.tsx)',
+          error,
+        );
+      }
+    } else {
+      navigation.goBack();
     }
   };
-
-  const isChatScreen = route.name === 'Chat';
 
   return (
     <SafeAreaView style={styles.Maincontainer}>
@@ -35,27 +43,37 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
         style={styles.bgImage}></ImageBackground>
       <View style={styles.Maincontainer}>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.iconContainer}
-            onPress={handlePressLeft}>
-            <Image
-              source={
-                isChatScreen
-                  ? require('../assets/icons/back.png')
-                  : require('../assets/icons/search.png')
-              }
-              style={styles.iconText}
-            />
-          </TouchableOpacity>
-          {!isChatScreen && <Text style={styles.title}>{title}</Text>}
-          {!isChatScreen && (
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <View style={styles.childView}>
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={handlePressLeft}>
               <Image
-                source={require('../assets/imgs/profile_placeholder_image.png')}
-                style={styles.profileImage}
+                source={
+                  !isFullNav
+                    ? require('../assets/icons/back.png')
+                    : require('../assets/icons/search.png')
+                }
+                style={styles.iconText}
               />
             </TouchableOpacity>
-          )}
+          </View>
+          <View style={styles.childView}>
+            <Text style={styles.title}>{title}</Text>
+          </View>
+          <View style={{...styles.childView, alignItems: 'flex-end'}}>
+            {isFullNav && (
+              <TouchableOpacity onPress={route.name !== 'Contacts' ?  () => navigation.navigate('Profile') : () => navigation.navigate('Search')}>
+                <Image
+                  source={
+                    route.name !== 'Contacts'
+                      ? require('../assets/imgs/profile_placeholder_image.png')
+                      : require('../assets/icons/add_user.png')
+                  }
+                  style={styles.profileImage}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <View style={styles.content}>{children}</View>
       </View>
@@ -93,8 +111,12 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     padding: 8,
+    width: 35,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: '50%',
+    borderRadius: 25,
   },
   iconText: {
     width: 20,
@@ -105,12 +127,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#ffffff',
+    textAlign: 'center',
   },
   profileImage: {
     width: 34,
     height: 34,
     borderRadius: 20,
-    backgroundColor: '#ccc',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  childView: {
+    width: '33.33%',
   },
 });
 

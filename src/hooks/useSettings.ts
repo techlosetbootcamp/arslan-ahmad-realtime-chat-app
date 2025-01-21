@@ -6,7 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {RootStackParamList} from '../types/navigation';
 
-const useSettings = () => {
+const appSettings = () => {
   const user = useSelector((state: RootState) => state.user);
 
   const navigation =
@@ -17,6 +17,6 @@ const useSettings = () => {
   };
 };
 
-export default useSettings;
+export default appSettings;
 
 const styles = StyleSheet.create({});

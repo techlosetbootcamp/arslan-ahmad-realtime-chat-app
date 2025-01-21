@@ -15,6 +15,8 @@ import {ScrollView} from 'react-native-gesture-handler';
 import useAuth from '../hooks/useAuth';
 import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
 import ActionButton from '../components/ActionButton';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store/store';
 
 type SignInProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -28,6 +30,7 @@ const initialState = {
 const SignIn: React.FC<SignInProps> = ({navigation}) => {
   const [signInData, setSignInData] = useState(initialState);
   const {handleLogin, loading, error, observeAuth} = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     const unsubscribe = observeAuth();
@@ -50,7 +53,6 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
       if (userCredential) {
         Alert.alert('Success', 'You are successfully logged in!');
         setSignInData(initialState);
-        navigation.navigate('MainTabs');
       }
     } catch {
       Alert.alert('Error', error || 'An unknown error occurred');

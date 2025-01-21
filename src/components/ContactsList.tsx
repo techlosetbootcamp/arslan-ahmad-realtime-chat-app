@@ -1,24 +1,61 @@
 import React from 'react';
-import {View, Text, SectionList, StyleSheet, Image} from 'react-native';
-import {User} from '../types/firestoreService';
-
-interface ContactsProps {
-  sections: {title: string; data: User[]}[];
-}
+import {
+  View,
+  Text,
+  SectionList,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {startChat} from '../store/slices/chatSlice';
+import appNavigate from '../hooks/useNavigation';
+import appAuth from '../hooks/useAuth';
+import {AppDispatch} from '../store/store';
+import {ContactsProps} from '../types/contactList';
+import {userProfile} from '../types/profile';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
+  const {user} = appAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const {navigation} = appNavigate();
+
+  const handleContactClick = async (
+    contactId: string,
+    participant: userProfile,
+  ) => {
+    if (user?.uid) {
+      const chatId = dispatch(
+        startChat(user?.uid, contactId),
+      ) as unknown as string;
+
+      navigation.navigate('Chat', {
+        chatId,
+        participant: {
+          uid: participant.uid,
+          displayName: participant.displayName,
+          photoURL: participant.photoURL || null,
+          status: participant.status || 'Offline',
+        },
+      });
+    }
+  };
   return (
     <SectionList
       sections={sections}
-      keyExtractor={item => item.uid}
+      keyExtractor={item => item.uid as string}
       renderItem={({item}) => (
-        <View style={styles.contactContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            handleContactClick(item.uid as string, item as userProfile)
+          }
+          style={styles.contactContainer}>
           <Image
             source={
-                item.photoURL
-                  ? { uri: item.photoURL } 
-                  : require('../assets/imgs/profile_placeholder_image.png')
-              }
+              item.photoURL
+                ? {uri: item.photoURL}
+                : require('../assets/imgs/profile_placeholder_image.png')
+            }
             style={styles.contactImage}
           />
           <View>
@@ -27,7 +64,7 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
               <Text style={styles.contactStatus}>{item.status}</Text>
             )}
           </View>
-        </View>
+        </TouchableOpacity>
       )}
       renderSectionHeader={({section: {title}}) => (
         <Text style={styles.header}>{title}</Text>

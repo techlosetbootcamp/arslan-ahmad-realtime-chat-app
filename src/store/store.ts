@@ -1,14 +1,19 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice';
 import chatReducer from './slices/chatSlice';
-import contactReducer from './slices/contactSlice';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     chat: chatReducer,
-    contact: contactReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['chat/setMessages'],  
+        ignoredPaths: ['chat.chats.*.lastActive', 'chat.chats.*.participantsDetails.*.createdAt'], 
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

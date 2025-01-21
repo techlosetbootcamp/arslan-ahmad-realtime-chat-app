@@ -1,14 +1,7 @@
 import {View, Text, TouchableOpacity} from 'react-native';
 import React, {ReactChildren} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-
-interface ActionButtonProps {
-  onClick: () => void;
-  loader?: boolean;
-  children: string;
-  onLoadText: string;
-  color?: string;
-}
+import { ActionButtonProps } from '../types/actionButton';
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,

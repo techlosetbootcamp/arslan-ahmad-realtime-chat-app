@@ -1,27 +1,25 @@
+import {RootState} from './../store/store';
 import {useEffect, useState} from 'react';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {
-  login,
-  logoutUser as logout,
-  signUp,
-  observeAuthState,
-  logoutUser,
-} from '../services/auth';
+import {login, signUp, observeAuthState} from '../services/auth';
 import {UseAuthReturn} from '../types/auth';
-import {User} from '../types/firestoreService';
-import {Alert} from 'react-native';
-import { removeUserFromStorage } from '../services/authHelpers';
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoading, setUser, UserState} from '../store/slices/userSlice';
+import {AppDispatch} from '../store/store';
+import useNavigate from './useNavigation';
 
-const useAuth = (): UseAuthReturn => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+const appAuth = (): UseAuthReturn => {
+  const user = useSelector((state: RootState) => state.user);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const {navigation} = useNavigate();
+  const loading = user.isLoading;
 
   useEffect(() => {
     const unsubscribe = observeAuthState(currentUser => {
-      setUser(currentUser);
+      if (currentUser)
+        dispatch(setUser(currentUser as Partial<UserState> & {uid: string}));
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -29,24 +27,23 @@ const useAuth = (): UseAuthReturn => {
     email: string,
     password: string,
   ): Promise<FirebaseAuthTypes.UserCredential | void> => {
-    setLoading(true);
-    setError(null);
-
     try {
       const userCredential = await login(email, password);
       const firebaseUser = userCredential.user;
 
       if (firebaseUser) {
-        const userData: User = {
+        const userData: Partial<UserState> & {uid: string} = {
           uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName || '',
-          email: firebaseUser.email || '',
+          displayName: firebaseUser.displayName || null,
+          email: firebaseUser.email || null,
           photoURL: firebaseUser.photoURL || null,
           status: null,
-          createdAt: null,
+          chats: [],
+          contacts: [],
         };
 
-        setUser(userData);
+        dispatch(setUser(userData));
+        navigation.navigate('MainTabs');
       }
 
       return userCredential;
@@ -72,16 +69,16 @@ const useAuth = (): UseAuthReturn => {
       const firebaseUser = userCredential.user;
 
       if (firebaseUser) {
-        const userData: User = {
+        const userData = {
           uid: firebaseUser.uid,
           displayName: name,
           email: firebaseUser.email || '',
           status: null,
           photoURL: firebaseUser.photoURL || null,
-          createdAt: null,
         };
 
-        setUser(userData);
+        dispatch(setUser(userData));
+        navigation.navigate('MainTabs');
       }
 
       return userCredential;
@@ -90,16 +87,6 @@ const useAuth = (): UseAuthReturn => {
       console.error('Sign-Up Error:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      removeUserFromStorage();
-    } catch (error) {
-      console.error('Failed to log out:', error);
-      Alert.alert('Error', 'Failed to log out');
     }
   };
 
@@ -122,11 +109,10 @@ const useAuth = (): UseAuthReturn => {
     user,
     handleLogin,
     handleSignUp,
-    loading,
     error,
+    loading,
     observeAuth: () => () => {},
-    handleLogout,
   };
 };
 
-export default useAuth;
+export default appAuth;

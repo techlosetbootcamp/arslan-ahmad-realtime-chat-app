@@ -11,12 +11,19 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {updateUserProfile, uploadProfileImage} from '../services/auth';
-import useAuth from '../hooks/useAuth';
+import {
+  logoutUser,
+  updateUserProfile,
+  uploadProfileImage,
+} from '../services/auth';
+import appAuth from '../hooks/useAuth';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
-import {RootState} from '../store/store';
-import { ScrollView } from 'react-native-gesture-handler';
+import {AppDispatch, RootState} from '../store/store';
+import {ScrollView} from 'react-native-gesture-handler';
+import auth from '@react-native-firebase/auth';
+import {removeUserFromStorage} from '../services/authHelpers';
+import {clearUser} from '../store/slices/userSlice';
 
 const initialState = {
   name: '',
@@ -26,9 +33,8 @@ const initialState = {
 };
 
 const Profile: React.FC = () => {
-  const {handleLogout} = useAuth();
   const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [userData, setUserData] = useState(initialState);
   const [loading, setLoading] = useState(false);
@@ -119,8 +125,6 @@ const Profile: React.FC = () => {
           photoURL: userData.imageUri || null,
           status: userData.status || null,
         };
-
-        console.log('User (inProfile):', updatedUser);
       }
 
       Alert.alert('Success', 'Profile updated successfully');
@@ -129,6 +133,17 @@ const Profile: React.FC = () => {
       setError('Failed to update profile');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth().signOut();
+      await removeUserFromStorage();
+      dispatch(clearUser());
+    } catch (error) {
+      console.error('Failed to log out:', error);
+      Alert.alert('Error', 'Failed to log out');
     }
   };
 
@@ -181,7 +196,7 @@ const Profile: React.FC = () => {
           </ActionButton>
 
           <ActionButton
-            onClick={handleLogout}
+            onClick={() => handleLogout()}
             color="tomato"
             onLoadText="Logging out...">
             Logout
@@ -191,7 +206,6 @@ const Profile: React.FC = () => {
     </ContentViewer>
   );
 };
-
 
 const styles = StyleSheet.create({
   header: {

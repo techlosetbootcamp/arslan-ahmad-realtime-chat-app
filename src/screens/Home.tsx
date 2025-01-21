@@ -1,84 +1,43 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import firestore from '@react-native-firebase/firestore';
-import {RootState} from '../store/store';
-import {setChats} from '../store/slices/chatSlice';
-import {RootStackParamList} from '../types/navigation';
-import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
-import Loader from '../components/Loader';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
+import {AppDispatch, RootState} from '../store/store';
+import {setChats, setLoading} from '../store/slices/chatSlice';
 import ContentViewer from '../components/ContentViewer';
+import {HomeScreenProps} from '../types/Home';
+import {fetchChats} from '../services/firebase';
+import {Chat} from '../types/firestoreService';
+import RenderChatItem from '../components/RenderChatItem';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Home'
->;
-
-interface HomeScreenProps {
-  navigation: HomeScreenNavigationProp;
-}
-
-const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const dispatch = useDispatch();
+const HomeScreen: React.FC<HomeScreenProps> = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const chats = useSelector((state: RootState) => state.chat.chats);
   const user = useSelector((state: RootState) => state.user);
+  const userId = user?.uid;
 
-  // useEffect(() => {
-  //   if (!user?.uid) {
-  //     console.warn('User ID is missing. Unable to fetch chats.');
-  //     return;
-  //   }
+  useEffect(() => {
+    setLoading(true);
+    const fetchData = async () => {
+      if (!userId) return;
 
-  //   const userId = user.uid;
-  //   const chatsCollection = firestore().collection('Chats');
+      const fetchedChats = await fetchChats(userId);
+      const chatMap = fetchedChats.reduce((acc, chat) => {
+        acc[chat.id] = chat;
+        return acc;
+      }, {} as Record<string, Chat>);
+      dispatch(setChats(chatMap));
+    };
+    fetchData();
+    setLoading(false);
+  }, [dispatch, userId]);
 
-  //   const unsubscribe = chatsCollection
-  //     .where('Users', 'array-contains', userId)
-  //     .orderBy('lastMessageTimestamp', 'desc')
-  //     .onSnapshot(
-  //       snapshot => {
-  //         const fetchedChats: Record<string, any> = {};
-  //         snapshot.forEach(doc => {
-  //           fetchedChats[doc.id] = { id: doc.id, ...doc.data() };
-  //         });
-  //         dispatch(setChats(fetchedChats));
-  //       },
-  //       error => {
-  //         console.error('Error fetching chats:', error);
-  //       }
-  //     );
-
-  //   return () => unsubscribe(); // Unsubscribe on unmount
-  // }, [dispatch, user?.uid]);
-
-  const renderChatItem = ({item}: {item: any}) => (
-    <TouchableOpacity
-      style={styles.chatItem}
-      onPress={() => navigation.navigate('Chat', {chatId: item.id})}>
-      <Text style={styles.chatText}>Chat with {item.members?.join(', ')}</Text>
-      <Text style={styles.lastMessage}>
-        {item.lastMessage || 'No messages yet.'}
-      </Text>
-    </TouchableOpacity>
-  );
   return (
     <ContentViewer title="Home">
       <View style={styles.content}>
         <FlatList
-          data={Object.values(chats)}
+          data={Object.values(chats)} // Convert chat object to array
           keyExtractor={item => item.id}
-          renderItem={renderChatItem}
+          renderItem={({item}) => <RenderChatItem item={item} />}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No chats yet.</Text>
           }
@@ -87,8 +46,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     </ContentViewer>
   );
 };
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -140,3 +97,5 @@ const styles = StyleSheet.create({
     color: '#888',
   },
 });
+
+export default HomeScreen;

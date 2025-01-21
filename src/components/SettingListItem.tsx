@@ -1,9 +1,8 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {color} from '../constants/Colors';
 import {SettingsItemProps} from '../types/settingsListItem';
-import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import appNavigate from '../hooks/useNavigation';
 
 const SettingsItem: React.FC<SettingsItemProps> = ({
   title,
@@ -11,12 +10,15 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   subtext,
   link,
 }) => {
-  const navigation =
-    useNavigation<BottomTabNavigationProp<RootStackParamList>>();
-  const route = {screen: link};
-  const imgSrc: string = icon;
+  const {navigation} = appNavigate();
+
+    const handlePress = () => {
+        if (link !== null) {
+          navigation.navigate(link);
+        }
+      };
   return (
-    <TouchableOpacity activeOpacity={0.9}
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.9}
       //   onPress={() => navigation.navigate(link)}
       style={ItemStyles.container}>
       <View style={ItemStyles.notificationCircle}>

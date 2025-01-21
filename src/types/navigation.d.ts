@@ -1,3 +1,5 @@
+import { userProfile } from "./profile";
+
 export type RootStackParamList = {
   WelcomeScreen: undefined;
   SignIn: undefined;
@@ -8,5 +10,10 @@ export type RootStackParamList = {
   Search: undefined;
   MainTabs: undefined;
   Settings: undefined;
-  Chat: { chatId: string };
+  ForgetPassword: undefined;
+  ChangePassword: undefined;
+  Chat: {
+    chatId: string;
+    participant: userProfile;
+  };
 };

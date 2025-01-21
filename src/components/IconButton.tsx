@@ -2,11 +2,11 @@ import React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { IconButtonProps } from "../types/IconButton";
 
-const IconButton: React.FC<IconButtonProps> = ({ src, size}) => {
+const IconButton: React.FC<IconButtonProps> = ({ src, size, onPress}) => {
   return (
     <TouchableOpacity
       style={styles.ghostIcon}
-      onPress={() => console.log("'Google Icon' is clicked")}
+      onPress={() => onPress()}
     >
       <Image
         source={src}
