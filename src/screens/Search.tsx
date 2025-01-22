@@ -7,12 +7,12 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {addContact, fetchContacts, fetchUsers} from '../services/firebase';
+import {addContact, fetchUsers} from '../services/firebase';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../store/store';
+import {useDispatch} from 'react-redux';
+import {AppDispatch} from '../store/store';
 import {fetchUserData} from '../store/slices/userSlice';
 import useContacts from '../hooks/useContact';
 
@@ -21,7 +21,7 @@ const Search = () => {
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
-  const {contacts}  = useContacts();
+  const {contacts} = useContacts();
   const {user} = useAuth();
   const dispatch: AppDispatch = useDispatch();
 
@@ -72,7 +72,9 @@ const Search = () => {
   }, [searchText]);
 
   const renderUserItem = ({item}: {item: User}) => {
-    const isContact = item?.uid ? contacts.map(contact => contact.uid).includes(item?.uid) : false;
+    const isContact = item?.uid
+      ? contacts.map(contact => contact.uid).includes(item?.uid)
+      : false;
     return (
       <View style={styles.itemContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>

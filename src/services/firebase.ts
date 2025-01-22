@@ -189,6 +189,7 @@ export const sendMessage = async (
       {
         lastMessage: text,
         lastActive: firestore.FieldValue.serverTimestamp(),
+        unreadCount: firestore.FieldValue.increment(1),
       },
       {merge: true},
     );

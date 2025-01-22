@@ -8,7 +8,6 @@ const chatScreenStyles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -24,7 +23,9 @@ const chatScreenStyles = StyleSheet.create({
     marginLeft: 5,
     borderRadius: 20,
     paddingHorizontal: 10,
-    backgroundColor: 'rgb(231, 231, 231)',
+    height: 45, 
+    textAlignVertical: 'top',
+    backgroundColor: 'rgba(231, 231, 231,0.4)',
   },
   input: {
     fontSize: 16,

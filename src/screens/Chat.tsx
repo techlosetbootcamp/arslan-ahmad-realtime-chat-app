@@ -11,19 +11,7 @@ import MessageBubble from '../components/MessageBubble';
 import ChatInput from '../components/ChatInput';
 import useAuth from '../hooks/useAuth';
 import ChatHeader from '../components/ChatHeader';
-
-type ChatScreenProps = {
-  name: string;
-  params: {
-    chatId: string;
-    participant: {
-      uid: string;
-      displayName: string;
-      photoURL: string;
-      status: string;
-    };
-  };
-};
+import {ChatScreenProps} from '../types/chatScreenProps';
 
 const ChatScreen: React.FC<{
   route: ChatScreenProps;
@@ -84,7 +72,6 @@ const ChatScreen: React.FC<{
       setNewMessage('');
     }
   };
-  console.log(participant);
 
   return (
     <View style={styles.container}>
@@ -106,7 +93,6 @@ const ChatScreen: React.FC<{
           />
         )}
         keyExtractor={item => item.id}
-        inverted
       />
       <ChatInput
         value={newMessage}
