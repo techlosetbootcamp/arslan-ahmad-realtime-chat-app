@@ -7,6 +7,7 @@ import Contacts from '../components/ContactsList';
 const ContactsScreen: React.FC = () => {
   const {contacts, sections} = useContacts();
 
+
   return (
     <ContentViewer title="Contacts">
       <Text style={styles.pageHead}>My Contacts</Text>

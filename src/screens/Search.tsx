@@ -1,20 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, FlatList, Text, Image} from 'react-native';
-import {fetchUsers} from '../services/firebase';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Text,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {addContact, fetchContacts, fetchUsers} from '../services/firebase';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
-import {color} from '../constants/Colors';
+import useAuth from '../hooks/useAuth';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../store/store';
+import {fetchUserData} from '../store/slices/userSlice';
+import useContacts from '../hooks/useContact';
 
 const Search = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
+  const {contacts}  = useContacts();
+  const {user} = useAuth();
+  const dispatch: AppDispatch = useDispatch();
 
   const fetchAllUsers = async () => {
-    const users = await fetchUsers();
-    setAllUsers(users);
-    setFilteredUsers(users);
+    if (user?.uid) {
+      const users = await fetchUsers(user?.uid);
+      setAllUsers(users);
+      setFilteredUsers(users);
+    }
   };
 
   const handleSearch = (text: string) => {
@@ -34,6 +50,17 @@ const Search = () => {
     setGroups(filteredGroups);
   };
 
+  const handleAddContact = async (contactId: string) => {
+    try {
+      if (contactId) {
+        await addContact(user?.uid || '', contactId);
+        dispatch(fetchUserData(user?.uid || ''));
+      }
+    } catch (error) {
+      console.error('Error adding contact:', error);
+    }
+  };
+
   useEffect(() => {
     fetchAllUsers();
   }, []);
@@ -44,19 +71,33 @@ const Search = () => {
     }
   }, [searchText]);
 
-  const renderUserItem = ({item}: {item: User}) => (
-    <View style={styles.itemContainer}>
-      <Image
-        source={{
-          uri: item.photoURL || '../assets/imgs/profile_placeholder_image.png',
-        }}
-        style={styles.userImage}
-      />
-      <View>
-        <Text style={styles.userName}>{item.displayName}</Text>
+  const renderUserItem = ({item}: {item: User}) => {
+    const isContact = item?.uid ? contacts.map(contact => contact.uid).includes(item?.uid) : false;
+    return (
+      <View style={styles.itemContainer}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            source={{
+              uri:
+                item.photoURL || '../assets/imgs/profile_placeholder_image.png',
+            }}
+            style={styles.userImage}
+          />
+          <Text style={styles.userName}>{item.displayName}</Text>
+        </View>
+        {!isContact && (
+          <TouchableOpacity
+            onPress={() => handleAddContact(item?.uid || '')}
+            style={styles.addContactButton}>
+            <Image
+              source={require('../assets/icons/add_user.png')}
+              style={{width: 25, height: 25}}
+            />
+          </TouchableOpacity>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderGroupItem = ({item}: {item: any}) => (
     <View style={styles.itemContainer}>
@@ -75,15 +116,14 @@ const Search = () => {
     <View style={styles.container}>
       <SearchBar
         searchText={searchText}
-        setSearchText={(text: string) => handleSearch(text)}
+        setSearchText={text => handleSearch(text as string)}
       />
       <View style={styles.resultsContainer}>
-        {/* User Results */}
         <Text style={styles.sectionTitle}>Users</Text>
         {filteredUsers.length > 0 ? (
           <FlatList
             data={filteredUsers}
-            keyExtractor={item => item.uid}
+            keyExtractor={(item, index) => item.uid || `key-${index}`}
             renderItem={renderUserItem}
           />
         ) : (
@@ -120,10 +160,20 @@ const styles = StyleSheet.create({
     color: '#333',
     marginVertical: 10,
   },
+  addContactButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: '#ccc',
+    width: 40,
+    height: 40,
+  },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    justifyContent: 'space-between',
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },

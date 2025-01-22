@@ -14,32 +14,54 @@ import appAuth from '../hooks/useAuth';
 import {AppDispatch} from '../store/store';
 import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
+import {createNewChat} from '../services/firebase';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
   const {user} = appAuth();
   const dispatch = useDispatch<AppDispatch>();
   const {navigation} = appNavigate();
 
-  const handleContactClick = async (
-    contactId: string,
-    participant: userProfile,
-  ) => {
-    if (user?.uid) {
-      const chatId = dispatch(
-        startChat(user?.uid, contactId),
-      ) as unknown as string;
+const handleContactClick = async (
+  contactId: string,
+  participant: userProfile,
+) => {
+  if (user?.uid) {
+    try {
+      const userChats = user.chats;
 
-      navigation.navigate('Chat', {
-        chatId,
-        participant: {
-          uid: participant.uid,
-          displayName: participant.displayName,
-          photoURL: participant.photoURL || null,
-          status: participant.status || 'Offline',
-        },
-      });
+      const existingChat = userChats?.find(chatId =>
+        chatId.includes(contactId),
+      );
+
+      if (existingChat) {
+        navigation.navigate('Chat', {
+          chatId: existingChat,
+          participant: {
+            uid: participant.uid,
+            displayName: participant.displayName,
+            photoURL: participant.photoURL || null,
+            status: participant.status || 'Offline',
+          },
+        });
+      } else {
+        const chatId = await createNewChat([user?.uid, contactId]);
+        navigation.navigate('Chat', {
+          chatId,
+          participant: {
+            uid: participant.uid,
+            displayName: participant.displayName,
+            photoURL: participant.photoURL || null,
+            status: participant.status || 'Offline',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error starting or navigating to chat:', error);
     }
-  };
+  }
+};
+
+
   return (
     <SectionList
       sections={sections}

@@ -1,4 +1,3 @@
-import firestore from '@react-native-firebase/firestore';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from '../store';
 import {
@@ -12,6 +11,7 @@ interface ChatState {
   chats: Record<string, Chat>;
   messages: Record<string, Message[]>;
   isLoading: boolean;
+  error?: string | null;
 }
 
 const initialState: ChatState = {
@@ -32,7 +32,6 @@ const chatSlice = createSlice({
           lastActive: chat.lastActive
             ? new Date(chat.lastActive).toISOString()
             : null,
-          // participantsDetails,
         };
         return acc;
       }, {});
@@ -68,6 +67,9 @@ const chatSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
   },
 });
 
@@ -75,36 +77,54 @@ export const fetchUserChats =
   (userId: string): AppThunk =>
   async dispatch => {
     dispatch(setLoading(true));
-    const chats = await fetchChats(userId);
-    const chatMap = chats.reduce((acc, chat) => {
-      acc[chat.id] = chat;
-      return acc;
-    }, {} as Record<string, Chat>);
-    dispatch(setChats(chatMap));
-    dispatch(setLoading(false));
+    dispatch(setError(null));
+    try {
+      const chats = await fetchChats(userId);
+      const chatMap = chats.reduce((acc, chat) => {
+        acc[chat.id] = chat;
+        return acc;
+      }, {} as Record<string, Chat>);
+      dispatch(setChats(chatMap));
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to fetch chats',
+        ),
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
 export const startChat =
   (userId: string, contactId: string): AppThunk =>
   async dispatch => {
     dispatch(setLoading(true));
+    dispatch(setError(null));
+    try {
+      const chats = await fetchChats(userId);
+      const existingChat = chats.find(chat =>
+        chat.participants.includes(contactId),
+      );
+      let chatId = existingChat?.id;
 
-    const chats = await fetchChats(userId);
-    const existingChat = chats.find(chat =>
-      chat.participants.includes(contactId),
-    );
-    let chatId = existingChat?.id;
+      if (!chatId) {
+        chatId = await createNewChat([userId, contactId]);
+      }
 
-    if (!chatId) {
-      chatId = await createNewChat([userId, contactId]);
+      dispatch(fetchUserChats(userId));
+      return chatId;
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to start chat',
+        ),
+      );
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
     }
-
-    dispatch(fetchUserChats(userId));
-    dispatch(setLoading(false));
-
-    return chatId;
   };
-
-export const {setChats, setMessages, addMessage, setLoading} =
+export const {setChats, setMessages, addMessage, setLoading, setError} =
   chatSlice.actions;
 export default chatSlice.reducer;

@@ -1,30 +1,33 @@
 import {useEffect, useState} from 'react';
-import {fetchContacts} from '../services/firebase';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchContactsThunk} from '../store/slices/contactsSlice';
 import {User} from '../types/firestoreService';
 import useAuth from './useAuth';
+import {AppDispatch, RootState} from '../store/store';
 
-const userContacts = () => {
-  const [contacts, setContacts] = useState<User[]>([]);
+const useContacts = () => {
   const [sections, setSections] = useState<{title: string; data: User[]}[]>([]);
   const {user} = useAuth();
+  const dispatch: AppDispatch = useDispatch();
+
+  const {contacts, loading, error} = useSelector(
+    (state: RootState) => state.contacts,
+  );
+
 
   useEffect(() => {
-    const loadContacts = async () => {
-      if (user?.uid) {
-        try {
-          const fetchedContacts = await fetchContacts(user?.uid);
-          setContacts(fetchedContacts);
-          setSections(groupContactsByAlphabet(fetchedContacts));
-        } catch (error) {
-          console.error('Error fetching contacts:', error);
-        }
-      }
-    };
+    if (user?.uid) {
+      dispatch(fetchContactsThunk(user?.uid));
+    }
+  }, [user?.uid, dispatch]);
 
-    loadContacts();
-  }, []);
+  useEffect(() => {
+    if (contacts.length > 0) {
+      setSections(groupContactsByAlphabet(contacts));
+    }
+  }, [contacts]);
 
-  return {contacts, sections};
+  return {contacts, sections, loading, error};
 };
 
 const groupContactsByAlphabet = (contacts: User[]) => {
@@ -48,4 +51,4 @@ const groupContactsByAlphabet = (contacts: User[]) => {
     }));
 };
 
-export default userContacts;
+export default useContacts;

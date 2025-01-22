@@ -29,7 +29,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchText, setSearchText }) => {
           placeholderTextColor="#888"
           placeholder="Find new people or groups"
           value={searchText}
-          onChangeText={setSearchText}
+          onChangeText={(text) => setSearchText(text)}
         />
       </View>
       <TouchableOpacity onPress={handleClear} style={styles.clearButton}>

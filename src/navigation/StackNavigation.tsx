@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store/store';
@@ -14,7 +14,6 @@ import {setLoading, setUser} from '../store/slices/userSlice';
 import Loader from '../components/Loader';
 import ForgetPassword from '../screens/ForgetPassword';
 import ChatScreen from '../screens/Chat';
-import ChatHeader from '../components/ChatHeader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

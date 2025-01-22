@@ -6,7 +6,9 @@ import Navigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 
 const App = () => {
+
   return (
+    <>
     <GestureHandlerRootView style={{flex: 1}}>
       <Provider store={store}>
         <NavigationContainer>
@@ -14,6 +16,7 @@ const App = () => {
         </NavigationContainer>
       </Provider>
     </GestureHandlerRootView>
+    </>
   );
 };
 

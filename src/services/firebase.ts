@@ -1,13 +1,16 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, {FieldPath, FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 import {Chat, Message} from '../types/firestoreService';
 import {User} from '../types/firestoreService';
-import { setLoading } from '../store/slices/chatSlice';
 
-/*
-  TODO: Implement the following functions on 'User.contacts', Now it is only implemented on 'User'
-*/
-export const fetchUsers = async (): Promise<User[]> => {
-  const snapshot = await firestore().collection('users').get();
+export const fetchUsers = async (userId?: string): Promise<User[]> => {
+  let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('users');
+
+  if (userId) {
+    query = query.where('uid', '!=', userId);
+  }
+
+  const snapshot = await query.get();
+
   return snapshot.docs.map(doc => {
     const data = doc.data();
     return {
@@ -21,18 +24,16 @@ export const fetchUsers = async (): Promise<User[]> => {
   }) as User[];
 };
 
-// Create or update a user
+
 export const createUser = async (uid: string, userData: Partial<User>) => {
   await firestore().collection('users').doc(uid).set(userData, {merge: true});
 };
 
-// Fetch user by ID
 export const fetchUser = async (uid: string) => {
   const userDoc = await firestore().collection('users').doc(uid).get();
   return userDoc.exists ? userDoc.data() : null;
 };
 
-// Fetch chats for a user
 export const fetchChats = async (userId: string): Promise<Chat[]> => {
   const snapshot = await firestore()
     .collection('chats')
@@ -42,21 +43,25 @@ export const fetchChats = async (userId: string): Promise<Chat[]> => {
   const chats = snapshot.docs.map(doc => {
     const chatData = doc.data();
 
-    const lastActive = chatData.lastActive ? chatData.lastActive.toDate().toISOString() : null;
+    const lastActive = chatData.lastActive
+      ? chatData.lastActive.toDate().toISOString()
+      : null;
     const participants = chatData.participants || [];
-    const lastMessage = chatData.lastMessage || ''; 
-    const unreadMessages = chatData.unreadMessages || 0; 
+    const lastMessage = chatData.lastMessage || '';
+    const unreadMessages = chatData.unreadMessages || 0;
     const notificationStatus = chatData.notificationStatus ?? true;
 
-    // Initialize participantsDetails to an empty array
     let participantsDetails: any[] = [];
 
-    // Ensure participantsDetails is populated with full participant data
     if (chatData.participantsDetails) {
-      participantsDetails = chatData.participantsDetails.map((participant: any) => ({
-        ...participant,
-        createdAt: participant.createdAt ? participant.createdAt.toDate().toISOString() : null,
-      }));
+      participantsDetails = chatData.participantsDetails.map(
+        (participant: any) => ({
+          ...participant,
+          createdAt: participant.createdAt
+            ? participant.createdAt.toDate().toISOString()
+            : null,
+        }),
+      );
     }
 
     return {
@@ -66,27 +71,22 @@ export const fetchChats = async (userId: string): Promise<Chat[]> => {
       unreadMessages,
       notificationStatus,
       lastActive,
-      participantsDetails, // Attach the full details of participants
+      participantsDetails,
     };
   });
-  
 
-  // Fetch user details for all participants
   const userPromises = chats.map(async chat => {
     const userDetails = await Promise.all(
       chat.participants.map(async (participantId: string) => {
-        // Fetch user data by their ID
         const user = await fetchUser(participantId);
-        return { uid: participantId, ...user };
-      })
+        return {uid: participantId, ...user};
+      }),
     );
-    return { ...chat, participantsDetails: userDetails };
+    return {...chat, participantsDetails: userDetails};
   });
 
-  // Wait for all the user promises to resolve and return the chats
   return Promise.all(userPromises);
 };
-
 
 export const fetchContacts = async (userId: string): Promise<User[]> => {
   const userDoc = await firestore().collection('users').doc(userId).get();
@@ -112,68 +112,95 @@ export const fetchContacts = async (userId: string): Promise<User[]> => {
 };
 
 export const addContact = async (userId: string, contactId: string) => {
-  await firestore().collection('users').doc(userId).update({
-    contacts: firestore.FieldValue.arrayUnion(contactId),
-  });
+  await firestore()
+    .collection('users')
+    .doc(userId)
+    .update({
+      contacts: firestore.FieldValue.arrayUnion(contactId),
+    });
 
-  await firestore().collection('users').doc(contactId).update({
-    contacts: firestore.FieldValue.arrayUnion(userId),
-  });
+  await firestore()
+    .collection('users')
+    .doc(contactId)
+    .update({
+      contacts: firestore.FieldValue.arrayUnion(userId),
+    });
 };
-
-
 
 export const createNewChat = async (
   participants: string[],
 ): Promise<string> => {
-  const chatRef = firestore().collection('chats').doc();
-  const chatId = chatRef.id;
+  const [user1, user2] = participants.sort();
+  const chatId = user1 + user2;
 
-  await chatRef.set({
-    participants,
-    lastMessage: '',
-    lastActive: firestore.FieldValue.serverTimestamp(),
-    unreadMessages: 0,
-    notificationStatus: 'allowed',
-    messages: [],
-  });
-
+  const chatRef = firestore().collection('chats').doc(chatId);
   const usersRef = firestore().collection('users');
-  await Promise.all(
-    participants.map(uid =>
-      usersRef.doc(uid).update({
-        chats: firestore.FieldValue.arrayUnion(chatId),
-      }),
-    ),
-  );
 
-  return chatId;
+  try {
+    const chatDoc = await chatRef.get();
+
+    if (!chatDoc.exists) {
+      await chatRef.set({
+        participants,
+        lastMessage: '',
+        lastActive: firestore.FieldValue.serverTimestamp(),
+        notificationStatus: 'allowed',
+        unreadCount: {[user1]: 0, [user2]: 0},
+      });
+
+      await Promise.all(
+        participants.map(uid =>
+          usersRef.doc(uid).update({
+            chats: firestore.FieldValue.arrayUnion(chatId),
+          }),
+        ),
+      );
+    }
+
+    return chatId;
+  } catch (error) {
+    console.error('Error creating chat:', error);
+    throw error;
+  }
 };
 
 export const sendMessage = async (
-  chatId: string,
+  receiverId: string,
   senderId: string,
   text: string,
 ) => {
-  const messageRef = firestore()
-    .collection('chats')
-    .doc(chatId)
-    .collection('messages')
-    .doc();
+  const chatId =
+    senderId < receiverId ? senderId + receiverId : receiverId + senderId;
 
-  await messageRef.set({
-    id: messageRef.id,
-    senderId,
-    text,
-    contentType: 'text',
-    timestamp: firestore.FieldValue.serverTimestamp(),
-    status: {sender: 'sent', receiver: 'unread'},
-  });
+  const chatRef = firestore().collection('chats').doc(chatId);
+  const messageRef = chatRef.collection('messages').doc();
 
-  await firestore().collection('chats').doc(chatId).update({
-    lastMessage: text,
-    lastActive: firestore.FieldValue.serverTimestamp(),
-  });
+  try {
+    await messageRef.set({
+      id: messageRef.id,
+      senderId,
+      text,
+      contentType: 'text',
+      timestamp: firestore.FieldValue.serverTimestamp(),
+      status: {sender: 'sent', receiver: 'unread'},
+    });
+
+    await chatRef.set(
+      {
+        lastMessage: text,
+        lastActive: firestore.FieldValue.serverTimestamp(),
+      },
+      {merge: true},
+    );
+
+    await chatRef.update(
+      new FieldPath('unreadCount', receiverId),
+      firestore.FieldValue.increment(1),
+    );
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
 };
 
 export const fetchMessages = async (chatId: string): Promise<Message[]> => {
@@ -183,6 +210,7 @@ export const fetchMessages = async (chatId: string): Promise<Message[]> => {
     .collection('messages')
     .orderBy('timestamp', 'asc')
     .get();
+
   return snapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data(),
@@ -190,7 +218,6 @@ export const fetchMessages = async (chatId: string): Promise<Message[]> => {
   })) as Message[];
 };
 
-// Listen to real-time messages
 export const listenToMessages = (
   chatId: string,
   callback: (messages: Message[]) => void,
@@ -200,12 +227,31 @@ export const listenToMessages = (
     .doc(chatId)
     .collection('messages')
     .orderBy('timestamp', 'asc')
-    .onSnapshot(snapshot => {
-      const messages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        timestamp: doc.data().timestamp?.toDate().toISOString(),
-        ...doc.data(),
-      })) as Message[];
-      callback(messages);
-    });
+    .onSnapshot(
+      snapshot => {
+        const messages = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          timestamp: doc.data().timestamp?.toDate().toISOString(),
+        })) as Message[];
+        callback(messages);
+      },
+      error => {
+        console.error('Error listening to messages:', error);
+        callback([]);
+      },
+    );
+};
+
+export const deleteMessage = async (
+  chatId: string,
+  messageId: string,
+): Promise<void> => {
+  const messageRef = firestore()
+    .collection('chats')
+    .doc(chatId)
+    .collection('messages')
+    .doc(messageId);
+
+  await messageRef.delete();
 };
