@@ -3,7 +3,7 @@ import React from "react";
 import RulerText from "../components/RulerText";
 import IconButton from "../components/IconButton";
 import ActionButton from "../components/ActionButton";
-import { color } from '../constants/Colors';
+import { color } from '../constants/colors';
 
 const Welcome = ({navigation}:any) => {
   return (

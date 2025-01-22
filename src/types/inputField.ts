@@ -1,7 +1,7 @@
-import { KeyboardTypeOptions } from "react-native";
+import { KeyboardType } from "react-native";
 
 export interface InputFieldProps {
-  type: KeyboardTypeOptions;
+  type?: KeyboardType;
   title: string;
   placeholder?: string;
   secureTextEntry?: boolean;

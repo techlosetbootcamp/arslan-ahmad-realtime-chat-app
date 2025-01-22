@@ -11,33 +11,28 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {
-  logoutUser,
-  updateUserProfile,
-  uploadProfileImage,
-} from '../services/auth';
-import appAuth from '../hooks/useAuth';
+import {updateUserProfile} from '../services/auth';
+import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
 import {AppDispatch, RootState} from '../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import {removeUserFromStorage} from '../services/authHelpers';
-import {clearUser} from '../store/slices/userSlice';
+import {clearUser, setLoading} from '../store/slices/userSlice';
 
 const initialState = {
   name: '',
   email: '',
   status: '',
-  imageUri: null as string | null,
+  imageUri: '',
 };
 
 const Profile: React.FC = () => {
-  const user = useSelector((state: RootState) => state.user);
+  const {isLoading, ...user} = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
   const [userData, setUserData] = useState(initialState);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   console.log('User (Profile) => ', user);
@@ -48,7 +43,7 @@ const Profile: React.FC = () => {
         name: user.displayName || '',
         email: user.email || '',
         status: user.status || '',
-        imageUri: user.photoURL || null,
+        imageUri: user.photoURL || '',
       });
     }
   }, [user]);
@@ -57,50 +52,67 @@ const Profile: React.FC = () => {
     setUserData(prevState => ({...prevState, [field]: value}));
   };
 
-  const handlePickImage = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 1,
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User canceled image picker');
-        } else if (response.errorCode) {
-          Alert.alert(
-            'Image Picker Error',
-            response.errorMessage || 'Unknown error',
-          );
-        } else {
-          const source = response?.assets ? response.assets[0].uri : undefined;
-          setUserData(prevState => ({...prevState, imageUri: source || null}));
-        }
-      },
-    );
-  };
-
-  const handleUploadImage = async () => {
-    if (!userData.imageUri) {
-      Alert.alert('Error', 'No image selected');
-      return;
-    }
-
+  const handlePickAndUploadImage = async () => {
     setLoading(true);
     try {
-      const uploadedImageUrl = await uploadProfileImage(userData.imageUri);
+      const response = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+        includeBase64: true,
+      });
+
+      if (response.didCancel) {
+        console.log('User canceled image picker');
+        setLoading(false);
+        return;
+      }
+
+      if (response.errorCode) {
+        Alert.alert(
+          'Image Picker Error',
+          response.errorMessage || 'Unknown error',
+        );
+        setLoading(false);
+        return;
+      }
+
+      const imageBase64 = response.assets?.[0].base64;
+      if (!imageBase64) {
+        Alert.alert('Error', 'Failed to get image data');
+        setLoading(false);
+        return;
+      }
+
+      const imageDataUri = `data:image/jpeg;base64,${imageBase64}`;
+
+      const userId = user?.uid;
+      if (!userId) {
+        throw new Error('User ID is not available');
+      }
+
+      await firestore().collection('users').doc(userId).set(
+        {
+          photoURL: imageDataUri,
+        },
+        {merge: true},
+      );
 
       if (user) {
         const updatedUser = {
           ...user,
-          photoURL: uploadedImageUrl,
+          photoURL: imageDataUri,
         };
 
-        console.log('User:', updatedUser);
+        console.log('Updated User:', updatedUser);
+        setUserData(prevState => ({
+          ...prevState,
+          imageUri: imageDataUri,
+        }));
       }
 
-      Alert.alert('Success', 'Profile image uploaded successfully');
+      Alert.alert('Success', 'Profile image updated successfully');
     } catch (error) {
-      console.error('Failed to upload image:', error);
+      console.error('Error handling image:', error);
       Alert.alert('Error', 'Failed to upload image');
     } finally {
       setLoading(false);
@@ -113,19 +125,28 @@ const Profile: React.FC = () => {
 
     try {
       await updateUserProfile({
-        name: userData.name,
-        email: userData.email,
+        name: userData.name || '',
+        email: userData.email || '',
       });
 
-      if (user) {
-        const updatedUser = {
-          ...user,
-          displayName: userData.name || null,
-          email: userData.email || null,
-          photoURL: userData.imageUri || null,
-          status: userData.status || null,
-        };
+      const userId = user?.uid;
+      if (userId) {
+        await firestore()
+          .collection('users')
+          .doc(userId)
+          .update({
+            displayName: userData.name || '',
+            email: userData.email || '',
+            status: userData.status || '',
+          });
       }
+
+      setUserData(prevState => ({
+        ...prevState,
+        name: userData.name || '',
+        email: userData.email || '',
+        status: userData.status || '',
+      }));
 
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error) {
@@ -150,7 +171,9 @@ const Profile: React.FC = () => {
   return (
     <ContentViewer title="Profile">
       <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
-        <TouchableOpacity onPress={handlePickImage} style={styles.header}>
+        <TouchableOpacity
+          onPress={handlePickAndUploadImage}
+          style={styles.header}>
           <Image
             source={
               userData.imageUri
@@ -189,7 +212,7 @@ const Profile: React.FC = () => {
         <View style={{flex: 2, rowGap: 10}}>
           <ActionButton
             onClick={handleUpdateProfile}
-            loader={loading}
+            loader={isLoading}
             color="#3D4A7A"
             onLoadText="Updating...">
             Update Profile

@@ -1,4 +1,4 @@
-import { color } from './../constants/Colors';
+import { color } from '../constants/colors';
 import { StyleSheet } from "react-native";
 
 export 

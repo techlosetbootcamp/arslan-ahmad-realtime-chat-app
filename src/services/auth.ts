@@ -144,29 +144,25 @@ export const logoutUser = async (): Promise<void> => {
   }
 };
 
-export const updateUserProfile = async ({
-  name,
-  email,
-}: {
-  name: string;
-  email: string;
-}) => {
+export const updateUserProfile = async ({name, email}: {name: string; email: string}) => {
   const currentUser = auth().currentUser;
-  if (!currentUser) {
-    throw new Error('No authenticated user');
-  }
+
+  if (!currentUser) throw new Error('User is not authenticated');
+
   await currentUser.updateProfile({
     displayName: name,
   });
 
-  if (email !== currentUser.email) {
+  if (email && email !== currentUser.email) {
     await currentUser.updateEmail(email);
   }
 
-  await currentUser.reload();
-
-  console.log('User profile updated in Firebase');
+  await firestore().collection('users').doc(currentUser.uid).update({
+    displayName: name,
+    email: email,
+  });
 };
+
 
 export const uploadProfileImage = async (imageUri: string) => {
   const user = getAuth().currentUser;

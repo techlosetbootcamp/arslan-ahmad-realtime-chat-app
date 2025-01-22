@@ -3,7 +3,7 @@ import { View, Text, TextInput, KeyboardTypeOptions } from "react-native";
 import { InputFieldProps } from "../types/inputField";
 
 
-function InputField({ placeholder, type, title, secureTextEntry = false, setVal, val }: InputFieldProps) {
+function InputField({ placeholder, type = "default", title, secureTextEntry = false, setVal, val }: InputFieldProps) {
   const [error, setError] = useState("");
 
   const handleChange = (text: string) => {
@@ -29,7 +29,7 @@ function InputField({ placeholder, type, title, secureTextEntry = false, setVal,
         value={val}
         secureTextEntry={secureTextEntry} 
         onChangeText={(text) => handleChange(text)}
-        keyboardType={type || "default"} 
+        keyboardType={type} 
         autoCapitalize="none"
       />
       {error && (

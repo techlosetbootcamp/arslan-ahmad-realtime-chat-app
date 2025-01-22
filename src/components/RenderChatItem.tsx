@@ -1,50 +1,49 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
-import {User} from '../types/firestoreService';
+import {Chat, User} from '../types/firestoreService';
 import {RootState} from '../store/store';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ChatNavigatorStyles} from '../styles/chatNavigator';
 import appNavigate from '../hooks/useNavigation';
+import {getRelativeTime} from '../constants/sideFucntions';
+import { color } from '../constants/colors';
 
 interface RenderChatItemProps {
-  item: {
-    id: string;
-    lastMessage: string;
-    participantsDetails?: User[];
-  };
+  item: Chat;
 }
 
 const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
-  const {navigation} = appNavigate(); 
-  const user = useSelector((state: RootState) => state.user); 
+  const {navigation} = appNavigate();
+  const user = useSelector((state: RootState) => state.user);
   const userId = user?.uid;
 
-  
   const participants = item.participantsDetails?.filter(
     (participant: User) => participant.uid !== userId,
   );
-  console.log('participants ()', item.participantsDetails);
+  console.log('Item (RenderChatItem.tsx)', item);
 
   const participant = participants?.[0];
   const participantImage = participant?.photoURL;
   const participantName = participant?.displayName || 'Unknown';
+  const handleChatPress = () => {
+    navigation.navigate('Chat', {
+      chatId: item.id,
+      participant: {
+        uid: participant?.uid || '',
+        displayName: participantName,
+        photoURL: participantImage,
+        status: participant?.status || 'Offline',
+      },
+    });
+  };
+
+  const lastActivityTime = getRelativeTime(item.lastActive);
 
   return (
     <TouchableOpacity
       style={ChatNavigatorStyles.chatItem}
-      onPress={() =>
-        navigation.navigate('Chat', {
-          chatId: item.id,
-          participant: {
-            uid: participant?.uid || '',
-            displayName: participantName,
-            photoURL: participantImage,
-            status: participant?.status || 'Offline',
-          },
-        })
-      }>
+      onPress={handleChatPress}>
       <View style={ChatNavigatorStyles.chatRow}>
-        {/* Display profile picture or default avatar */}
         {participantImage ? (
           <Image
             source={{uri: participantImage}}
@@ -57,12 +56,15 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
             </Text>
           </View>
         )}
-        {/* Chat details */}
         <View style={ChatNavigatorStyles.chatDetails}>
           <Text style={ChatNavigatorStyles.chatText}>{participantName}</Text>
           <Text style={ChatNavigatorStyles.lastMessage}>
             {item.lastMessage || 'No messages yet.'}
           </Text>
+        </View>
+        <View style={{height: '100%', justifyContent: 'space-between'}}>
+          <Text style={{color: "#ccc", fontSize: 12}}>{lastActivityTime}</Text>
+          {item.unreadMessages && <Text>{item.unreadMessages}</Text>}
         </View>
       </View>
     </TouchableOpacity>

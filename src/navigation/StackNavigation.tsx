@@ -12,7 +12,7 @@ import BottomTabsNavigator from './BottomTabsNavigator';
 import {getUserFromStorage} from '../services/authHelpers';
 import {setLoading, setUser} from '../store/slices/userSlice';
 import Loader from '../components/Loader';
-import ForgetPassword from '../screens/ForgetPassword';
+import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -50,7 +50,7 @@ const Navigation = () => {
       <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="Chat" component={ChatScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
     </Stack.Navigator>

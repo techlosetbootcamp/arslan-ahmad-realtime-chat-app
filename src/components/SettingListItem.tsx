@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {color} from '../constants/Colors';
+import {color} from '../constants/colors';
 import {SettingsItemProps} from '../types/settingsListItem';
 import {RootStackParamList} from '../types/navigation';
 import appNavigate from '../hooks/useNavigation';

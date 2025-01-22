@@ -4,7 +4,7 @@ import Home from '../screens/Home';
 import ContactsScreen from '../screens/Contacts';
 import {RootStackParamList} from '../types/navigation';
 import Settings from '../screens/Settings';
-import {color} from '../constants/Colors';
+import {color} from '../constants/colors';
 import {Image} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Profile from '../screens/Profile';

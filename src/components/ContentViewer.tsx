@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import useNavigation from '../hooks/useNavigation';
-import {addContact} from '../services/firebase';
+import useAuth from '../hooks/useAuth';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   const route = useRoute();
+  const {user} = useAuth();
   const isFullNav = route.name === 'Home' || route.name === 'Contacts';
   const {navigation} = useNavigation();
 
@@ -23,7 +24,6 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
       navigation.navigate('Search');
     } else if (route.name === 'Contacts') {
       try {
-        // await addContact();
         console.log('Added Contact... Clicked (ContentViewer.tsx)');
       } catch (error) {
         console.error(
@@ -57,16 +57,23 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.childView}>
+          <View style={styles.tabTitle}>
             <Text style={styles.title}>{title}</Text>
           </View>
           <View style={{...styles.childView, alignItems: 'flex-end'}}>
             {isFullNav && (
-              <TouchableOpacity onPress={route.name !== 'Contacts' ?  () => navigation.navigate('Profile') : () => navigation.navigate('Search')}>
+              <TouchableOpacity
+                onPress={
+                  route.name !== 'Contacts'
+                    ? () => navigation.navigate('Profile')
+                    : () => navigation.navigate('Search')
+                }>
                 <Image
                   source={
                     route.name !== 'Contacts'
-                      ? require('../assets/imgs/profile_placeholder_image.png')
+                      ? user?.photoURL
+                        ? {uri: user.photoURL}
+                        : require('../assets/imgs/profile_placeholder_image.png')
                       : require('../assets/icons/add_user.png')
                   }
                   style={styles.profileImage}
@@ -136,8 +143,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   childView: {
-    width: '33.33%',
+    width: '20%',
   },
+  tabTitle: {
+    width: '60%',
+  }
 });
 
 export default Header;

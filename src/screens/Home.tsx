@@ -35,7 +35,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     <ContentViewer title="Home">
       <View style={styles.content}>
         <FlatList
-          data={Object.values(chats)} // Convert chat object to array
+          data={Object.values(chats)} 
           keyExtractor={item => item.id}
           renderItem={({item}) => <RenderChatItem item={item} />}
           ListEmptyComponent={
@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 1)',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    padding: 30,
   },
   bgImage: {
     position: 'absolute',
