@@ -79,10 +79,11 @@ const Search = () => {
       <View style={styles.itemContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image
-            source={{
-              uri:
-                item.photoURL || '../assets/imgs/profile_placeholder_image.png',
-            }}
+            source={
+              item.photoURL
+                ? { uri: item.photoURL }
+                : require('../assets/imgs/profile_placeholder_image.png')
+            }
             style={styles.userImage}
           />
           <Text style={styles.userName}>{item.displayName}</Text>
@@ -108,7 +109,7 @@ const Search = () => {
     </View>
   );
 
-  const renderNoResultsMessage = (type: 'User' | 'Group') => (
+  const renderNoResultsMessage = (type: 'People' | 'Group') => (
     <View style={styles.noResultsContainer}>
       <Text style={styles.noResultsText}>No {type} found</Text>
     </View>
@@ -121,7 +122,7 @@ const Search = () => {
         setSearchText={text => handleSearch(text as string)}
       />
       <View style={styles.resultsContainer}>
-        <Text style={styles.sectionTitle}>Users</Text>
+        <Text style={styles.sectionTitle}>People</Text>
         {filteredUsers.length > 0 ? (
           <FlatList
             data={filteredUsers}
@@ -129,7 +130,7 @@ const Search = () => {
             renderItem={renderUserItem}
           />
         ) : (
-          renderNoResultsMessage('User')
+          renderNoResultsMessage('People')
         )}
 
         {/* Group Results */}
@@ -184,8 +185,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 10,
-    borderColor: '#ff0000',
-    borderWidth: 1,
+    backgroundColor: '#ccc',
   },
   userName: {
     fontSize: 16,

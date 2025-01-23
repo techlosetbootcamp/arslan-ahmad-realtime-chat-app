@@ -38,6 +38,7 @@ export const fetchChats = async (userId: string): Promise<Chat[]> => {
   const snapshot = await firestore()
     .collection('chats')
     .where('participants', 'array-contains', userId)
+    .orderBy('lastActive', 'desc')
     .get();
 
   const chats = snapshot.docs.map(doc => {

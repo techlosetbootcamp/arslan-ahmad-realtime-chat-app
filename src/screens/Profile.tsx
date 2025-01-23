@@ -11,16 +11,13 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {updateUserProfile} from '../services/auth';
+import {logoutUser, updateUserProfile} from '../services/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
-import {AppDispatch, RootState} from '../store/store';
+import {RootState, useAppDispatch, useAppSelector} from '../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
-import auth from '@react-native-firebase/auth';
-import {removeUserFromStorage} from '../services/authHelpers';
 import {clearUser, setLoading} from '../store/slices/userSlice';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const initialState = {
   name: '',
@@ -30,14 +27,18 @@ const initialState = {
 };
 
 const Profile: React.FC = () => {
-  const {isLoading, ...user} = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch<AppDispatch>();
-
+  const {isLoading, ...user} = useAppSelector(state => state.user);
   const [userData, setUserData] = useState(initialState);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (user) {
+    if (
+      user &&
+      (user.displayName !== userData.name ||
+        user.email !== userData.email ||
+        user.photoURL !== userData.imageUri)
+    ) {
       setUserData({
         name: user.displayName || '',
         email: user.email || '',
@@ -45,7 +46,7 @@ const Profile: React.FC = () => {
         imageUri: user.photoURL || '',
       });
     }
-  }, [user]);
+  }, [user, userData]);
 
   const handleInputChange = (field: string, value: string | null) => {
     setUserData(prevState => ({...prevState, [field]: value}));
@@ -146,6 +147,8 @@ const Profile: React.FC = () => {
         email: userData.email || '',
         status: userData.status || '',
       }));
+      console.log(userData);
+      console.log(user);
 
       Alert.alert('Success', 'Profile updated successfully');
     } catch (error) {
@@ -157,14 +160,15 @@ const Profile: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    setLoading(true);
     try {
-      await auth().signOut();
-      await removeUserFromStorage();
-      await GoogleSignin.signOut();
+      await logoutUser();
       dispatch(clearUser());
     } catch (error) {
-      console.error('Failed to log out:', error);
-      Alert.alert('Error', 'Failed to log out');
+      console.error('Failed to logout:', error);
+      Alert.alert('Error', 'Failed to logout');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -219,7 +223,7 @@ const Profile: React.FC = () => {
           </ActionButton>
 
           <ActionButton
-            onClick={() => handleLogout()}
+            onClick={handleLogout}
             color="tomato"
             onLoadText="Logging out...">
             Logout

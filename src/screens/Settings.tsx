@@ -4,6 +4,7 @@ import ContentViewer from '../components/ContentViewer';
 import SettingsItem from '../components/SettingListItem';
 import useSettings from '../hooks/useSettings';
 import {settingItems} from '../constants/settingsListOptions';
+import { color } from '../constants/colors';
 
 const Settings = () => {
   const {user, navigation} = useSettings();
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     gap: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
+    borderBottomColor: color.light_grey,
   },
   userImage: {
     width: 60,
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
   },
   userStatus: {
     fontSize: 14,
-    color: 'gray',
+    color: color.light_grey,
     fontWeight: '400',
     marginLeft: 10,
   },

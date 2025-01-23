@@ -6,9 +6,12 @@ import ActionButton from '../components/ActionButton';
 import {color} from '../constants/colors';
 import {signInWithGoogle} from '../services/auth';
 import useNavigate from '../hooks/useNavigation';
+import useAuth from '../hooks/useAuth';
 
 const Welcome = () => {
   const {navigation} = useNavigate();
+  const {user} = useAuth();
+  console.log('Welcome screen (user) =>', user);	
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>

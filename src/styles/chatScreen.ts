@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { color } from "../constants/colors";
 
 export 
 const chatScreenStyles = StyleSheet.create({
@@ -24,17 +25,17 @@ const chatScreenStyles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 45, 
     textAlignVertical: 'top',
-    backgroundColor: 'rgba(231, 231, 231,0.4)',
+    backgroundColor: color.offwhite,
   },
   input: {
     fontSize: 16,
-    color: 'black',
+    color: color.black,
     width: '80%',
   },
   inputIcon: {
     width: 20,
     height: 20,
-    tintColor: '#333',
+    tintColor: color.dark_gray,
   },
   cameraButton: {
     padding: 10,
@@ -42,31 +43,34 @@ const chatScreenStyles = StyleSheet.create({
   cameraIcon: {
     width: 20,
     height: 20,
-    tintColor: '#333',
+    tintColor: color.dark_gray,
   },
   userMessage: {
     alignSelf: 'flex-end',
-    borderRadius: 20,
   },
   participantMessage: {
     alignSelf: 'flex-start',
   },
   userMessageText: {
-    color: 'white',
+    color: color.offwhite,
     fontSize: 16,
-    padding: 8,
-    backgroundColor: '#3D4A7A',
-    borderRadius: 18,
+    backgroundColor: color.light_blue,
+    padding: 10,
+    borderTopLeftRadius: 18,
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
   },
   participantMessageText: {
-    color: 'black',
+    color: color.black,
     fontSize: 16,
-    backgroundColor: '#E4E6EB',
-    padding: 8,
-    borderRadius: 18,
+    backgroundColor: color.bluish_white,
+    padding: 10,
+    borderTopRightRadius: 18,
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
   },
   timestampText: {
-    color: '#333',
+    color: color.dark_gray,
     fontSize: 12,
     marginTop: 5,
     textAlign: 'right',

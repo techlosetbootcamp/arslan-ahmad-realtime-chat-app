@@ -1,19 +1,15 @@
 import React from 'react';
 import {View, TextInput, TouchableOpacity, Image} from 'react-native';
 import {chatScreenStyles as styles} from '../styles/chatScreen';
+import useChatInput from '../hooks/useChatInput';
 
 const ChatInput: React.FC<{
   value: string;
   onChangeText: (text: string) => void;
   onSend: () => void;
 }> = ({value, onChangeText, onSend}) => {
-  const handleCamera = () => {
-    console.log('Camera button pressed');
-  };
+  const {handleSelectImages, handleCamera} = useChatInput();
 
-  const handleSelectImages = () => {
-    console.log('Select images button pressed');
-  };
   return (
     <View style={styles.inputContainer}>
       <TouchableOpacity

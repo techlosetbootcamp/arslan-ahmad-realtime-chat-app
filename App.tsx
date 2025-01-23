@@ -5,10 +5,11 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Navigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import Config from 'react-native-config';
 
 const App = () => {
   useEffect(() => {
-    GoogleSignin.configure({webClientId: process.env.GOOGLE_AUTH_CLIENTID});
+    GoogleSignin.configure({webClientId: Config.GOOGLE_AUTH_CLIENTID});
   }, []);
 
   return (

@@ -40,6 +40,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
 
   return (
     <TouchableOpacity
+      activeOpacity={0.9}
       style={ChatNavigatorStyles.chatItem}
       onPress={handleChatPress}>
       <View style={ChatNavigatorStyles.chatRow}>
@@ -62,7 +63,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
           </Text>
         </View>
         <View style={{height: '100%', justifyContent: 'space-between'}}>
-          <Text style={{color: "#ccc", fontSize: 12}}>{lastActivityTime}</Text>
+          <Text style={{color: '#ccc', fontSize: 12}}>{lastActivityTime}</Text>
           {item.unreadMessages && <Text>{item.unreadMessages}</Text>}
         </View>
       </View>

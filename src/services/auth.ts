@@ -17,7 +17,12 @@ import {
   saveUserToStorage,
 } from './authHelpers';
 import {User} from '../types/firestoreService';
-import {clearUser} from '../store/slices/userSlice';
+import {
+  clearUser,
+  setLoading,
+  setUser,
+  UserState,
+} from '../store/slices/userSlice';
 import {useDispatch} from 'react-redux';
 import firestore, {
   doc,
@@ -26,6 +31,8 @@ import firestore, {
   setDoc,
 } from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {Alert} from 'react-native';
+import {useAppDispatch} from '../store/store';
 
 export const observeAuthState = (
   callback: (user: User | null) => void,
@@ -176,7 +183,17 @@ export const signInWithGoogle = async () => {
       displayName,
       photoURL,
     });
+    const userDoc: User = {
+      uid,
+      displayName,
+      email,
+      status: null,
+      photoURL,
+      chats: [],
+      contacts: [],
+    };
 
+    await saveUserToStorage(userDoc);
     return userCredential.user;
   } catch (error) {
     if (error instanceof FirebaseError) {
@@ -186,12 +203,20 @@ export const signInWithGoogle = async () => {
   }
 };
 
-export const logoutUser = async (): Promise<void> => {
+export const logoutUser = async () => {
   try {
-    console.log('User had logged-out.');
+    const providers = auth().currentUser?.providerData.map(
+      provider => provider.providerId,
+    );
+    if (providers?.includes('google.com')) {
+      await GoogleSignin.signOut();
+    }
+    await auth().signOut();
+    await removeUserFromStorage();
   } catch (error) {
-    console.error('Error during logout:', error);
-    throw error;
+    console.error('Failed to log out:', error);
+    Alert.alert('Error', 'Failed to log out');
+  } finally {
   }
 };
 

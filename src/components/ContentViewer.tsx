@@ -53,7 +53,11 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                     ? require('../assets/icons/back.png')
                     : require('../assets/icons/search.png')
                 }
-                style={styles.iconText}
+                style={{
+                  ...styles.iconText,
+                  width: !isFullNav ? 30 : 20,
+                  height: !isFullNav ? 30 : 20,
+                }}
               />
             </TouchableOpacity>
           </View>
@@ -126,8 +130,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   iconText: {
-    width: 20,
-    height: 20,
     fontWeight: '400',
   },
   title: {
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
   },
   tabTitle: {
     width: '60%',
-  }
+  },
 });
 
 export default Header;

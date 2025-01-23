@@ -25,11 +25,18 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
         acc[chat.id] = chat;
         return acc;
       }, {} as Record<string, Chat>);
-      dispatch(setChats(chatMap));
+
+      // Sorting the chats by lastActive on the client side (if not already sorted from Firestore)
+      const sortedChats = Object.values(chatMap).sort(
+        (a, b) => new Date(b?.lastActive).getTime() - new Date(a?.lastActive).getTime()
+      );
+
+      dispatch(setChats(sortedChats));
     };
     fetchData();
     setLoading(false);
   }, [dispatch, userId]);
+
 
   return (
     <ContentViewer title="Home">

@@ -1,7 +1,7 @@
 export const color = {
   primary: '#3D4A7A',
   ghost: 'rgba(255, 255, 255, 0.5)',
-  light_grey: 'rgb(188, 189, 189)',
+  gray: 'rgb(188, 189, 189)',
   offwhite: 'rgb(243, 246, 246)',
   black: 'rgb(0, 14, 8)',
   blue: 'rgba(53, 40, 105, 1)',
@@ -9,4 +9,7 @@ export const color = {
   bluish_white: 'rgb(242, 247, 251)',
   red: 'rgb(234, 55, 54)',
   light_red: 'rgb(255, 45, 27)',
+  dark_gray: 'rgb(187, 191, 189)',
+  light_grey: 'rgb(214, 215, 215)',
+  green: 'rgb(43, 239, 131)',
 };
