@@ -1,3 +1,6 @@
+import {RouteProp} from '@react-navigation/native';
+import {RootStackParamList} from './navigation';
+
 export type ChatScreenProps = {
   name: string;
   params: {
@@ -10,3 +13,9 @@ export type ChatScreenProps = {
     };
   };
 };
+
+type ChatScreenRouteProp = RouteProp<RootStackParamList, 'Chat'>;
+
+export interface ChatProps {
+  route: ChatScreenRouteProp;
+}

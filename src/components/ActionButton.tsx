@@ -1,7 +1,7 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React, {ReactChildren} from 'react';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { ActionButtonProps } from '../types/actionButton';
+import {ActionButtonProps} from '../types/actionButton';
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
@@ -9,6 +9,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
   color,
   onLoadText,
   children,
+  error,
 }) => {
   return !color ? (
     <LinearGradient
@@ -24,6 +25,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
         loader={loader}
         onLoadText={onLoadText}
         children={children}
+        error={error}
       />
     </LinearGradient>
   ) : (
@@ -48,9 +50,21 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
   loader,
   onLoadText,
   children,
+  error = false,
 }) => {
+  const handleClick = () => {
+    error
+      ? Alert.alert(
+          'Error',
+          typeof error === 'string' ? error : 'An unknown error occurred',
+        )
+      : onClick();
+  };
   return (
-    <TouchableOpacity onPress={onClick} disabled={loader}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={handleClick}
+      disabled={loader}>
       <Text
         style={{
           fontSize: 18,

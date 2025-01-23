@@ -4,4 +4,5 @@ export interface ActionButtonProps {
   children: string;
   onLoadText: string;
   color?: string;
+  error?: string;
 }

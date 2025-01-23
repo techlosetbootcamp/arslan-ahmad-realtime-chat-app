@@ -1,11 +1,16 @@
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {FirebaseError} from '@firebase/util';
+import auth, {
+  createUserWithEmailAndPassword,
+  FirebaseAuthTypes,
+  signInWithCredential,
+} from '@react-native-firebase/auth';
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-import {getAuth} from 'firebase/auth';
+import {getAuth, GoogleAuthProvider} from 'firebase/auth';
 import {
   getUserFromStorage,
   removeUserFromStorage,
@@ -15,8 +20,12 @@ import {User} from '../types/firestoreService';
 import {clearUser} from '../store/slices/userSlice';
 import {useDispatch} from 'react-redux';
 import firestore, {
+  doc,
   FirebaseFirestoreTypes,
+  getDoc,
+  setDoc,
 } from '@react-native-firebase/firestore';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 export const observeAuthState = (
   callback: (user: User | null) => void,
@@ -135,6 +144,48 @@ export const signUp = async (
   }
 };
 
+export const signInWithGoogle = async () => {
+  try {
+    const userInfo = await GoogleSignin.signIn();
+    const idToken = userInfo.data?.idToken;
+
+    if (!idToken) {
+      throw new Error('Google Sign-In failed: No ID token found.');
+    }
+
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    const userCredential = await auth().signInWithCredential(googleCredential);
+
+    const {uid, email, displayName, photoURL} = userCredential.user;
+
+    await firestore().collection('users').doc(uid).set(
+      {
+        uid,
+        email,
+        displayName,
+        photoURL,
+        lastLogin: firestore.FieldValue.serverTimestamp(),
+      },
+      {merge: true},
+    );
+
+    console.log('User signed in and saved successfully:', {
+      uid,
+      email,
+      displayName,
+      photoURL,
+    });
+
+    return userCredential.user;
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      console.error('Error during Google Sign-In:', error.message);
+      throw error;
+    }
+  }
+};
+
 export const logoutUser = async (): Promise<void> => {
   try {
     console.log('User had logged-out.');
@@ -144,7 +195,13 @@ export const logoutUser = async (): Promise<void> => {
   }
 };
 
-export const updateUserProfile = async ({name, email}: {name: string; email: string}) => {
+export const updateUserProfile = async ({
+  name,
+  email,
+}: {
+  name: string;
+  email: string;
+}) => {
   const currentUser = auth().currentUser;
 
   if (!currentUser) throw new Error('User is not authenticated');
@@ -162,7 +219,6 @@ export const updateUserProfile = async ({name, email}: {name: string; email: str
     email: email,
   });
 };
-
 
 export const uploadProfileImage = async (imageUri: string) => {
   const user = getAuth().currentUser;

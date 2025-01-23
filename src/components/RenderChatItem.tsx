@@ -6,7 +6,6 @@ import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ChatNavigatorStyles} from '../styles/chatNavigator';
 import appNavigate from '../hooks/useNavigation';
 import {getRelativeTime} from '../constants/sideFucntions';
-import { color } from '../constants/colors';
 
 interface RenderChatItemProps {
   item: Chat;

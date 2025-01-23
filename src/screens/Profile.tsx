@@ -20,6 +20,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import auth from '@react-native-firebase/auth';
 import {removeUserFromStorage} from '../services/authHelpers';
 import {clearUser, setLoading} from '../store/slices/userSlice';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 const initialState = {
   name: '',
@@ -34,8 +35,6 @@ const Profile: React.FC = () => {
 
   const [userData, setUserData] = useState(initialState);
   const [error, setError] = useState<string | null>(null);
-
-  console.log('User (Profile) => ', user);
 
   useEffect(() => {
     if (user) {
@@ -62,7 +61,7 @@ const Profile: React.FC = () => {
       });
 
       if (response.didCancel) {
-        console.log('User canceled image picker');
+        console.error('User canceled image picker');
         setLoading(false);
         return;
       }
@@ -103,7 +102,7 @@ const Profile: React.FC = () => {
           photoURL: imageDataUri,
         };
 
-        console.log('Updated User:', updatedUser);
+        console.log('Updated User =>', updatedUser);
         setUserData(prevState => ({
           ...prevState,
           imageUri: imageDataUri,
@@ -161,6 +160,7 @@ const Profile: React.FC = () => {
     try {
       await auth().signOut();
       await removeUserFromStorage();
+      await GoogleSignin.signOut();
       dispatch(clearUser());
     } catch (error) {
       console.error('Failed to log out:', error);

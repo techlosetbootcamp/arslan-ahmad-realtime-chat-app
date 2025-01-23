@@ -1,17 +1,15 @@
-import React from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { IconButtonProps } from "../types/IconButton";
+import React from 'react';
+import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {IconButtonProps} from '../types/IconButton';
+import {color} from '../constants/colors';
 
-const IconButton: React.FC<IconButtonProps> = ({ src, size, onPress}) => {
+const IconButton: React.FC<IconButtonProps> = ({src, size, onPress}) => {
   return (
     <TouchableOpacity
+      activeOpacity={0.9}
       style={styles.ghostIcon}
-      onPress={() => onPress()}
-    >
-      <Image
-        source={src}
-        style={!size ? { width: 22.7, height: 23.16 } : size}
-      />
+      onPress={() => onPress()}>
+      <Image source={src} style={!size ? {width: 22.7, height: 23.16} : size} />
     </TouchableOpacity>
   );
 };
@@ -23,10 +21,15 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     width: 40,
     height: 40,
-    borderRadius: "50%",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    alignSelf: "center",
+    borderRadius: '50%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: color.ghost,
+    alignSelf: 'center',
+    shadowColor: color.light_grey,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
   },
 });

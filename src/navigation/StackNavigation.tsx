@@ -14,6 +14,7 @@ import {setLoading, setUser} from '../store/slices/userSlice';
 import Loader from '../components/Loader';
 import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
+import ForgetPassword from '../screens/ForgetPassword';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,8 +22,6 @@ const Navigation = () => {
   const {isLoading: loading, ...user} = useSelector(
     (state: RootState) => state.user,
   );
-
-  console.log('User:(stackNavigation)', user.uid);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,6 +35,8 @@ const Navigation = () => {
     };
     checkUserSession();
   }, [dispatch]);
+
+  console.log('User (stackNavigation.tsx) =>', user);
 
   if (loading) {
     <Loader />;
@@ -56,13 +57,14 @@ const Navigation = () => {
     </Stack.Navigator>
   ) : (
     <Stack.Navigator
-      screenOptions={{
+    screenOptions={{
         headerShown: false,
       }}
       initialRouteName="WelcomeScreen">
       <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
     </Stack.Navigator>
   );
 };

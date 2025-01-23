@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -12,91 +11,38 @@ import IconButton from '../components/IconButton';
 import RulerText from '../components/RulerText';
 import InputField from '../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
-import useAuth from '../hooks/useAuth';
-import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
 import ActionButton from '../components/ActionButton';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store/store';
+import {color} from '../constants/colors';
+import AuthHeaderSection from '../components/AuthHeaderSection';
+import useSign from '../hooks/useSign';
 
-type SignInProps = {
-  navigation: NativeStackNavigationProp<any>;
-};
-
-const initialState = {
-  email: '',
-  password: '',
-};
-
-const SignIn: React.FC<SignInProps> = ({navigation}) => {
-  const [signInData, setSignInData] = useState(initialState);
-  const {handleLogin, loading, error, observeAuth} = useAuth();
-  const dispatch = useDispatch<AppDispatch>();
-
-  useEffect(() => {
-    const unsubscribe = observeAuth();
-    return unsubscribe;
-  }, [observeAuth]);
-
-  const handleInputChange = (field: string, value: string) => {
-    setSignInData(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
-  };
-
-  const handleSignIn = async () => {
-    try {
-      const userCredential = await handleLogin(
-        signInData.email,
-        signInData.password,
-      );
-      if (userCredential) {
-        Alert.alert('Success', 'You are successfully logged in!');
-        setSignInData(initialState);
-      }
-    } catch {
-      Alert.alert('Error', error || 'An unknown error occurred');
-    }
-  };
+const SignIn: React.FC = () => {
+  const {
+    signInData,
+    handleInputChange,
+    handleSignIn,
+    loading,
+    navigation,
+    signInWithGoogle,
+  } = useSign();
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'android' ? 'padding' : undefined}
       style={{flex: 1, flexDirection: 'column', padding: 20}}>
-      <ScrollView contentContainerStyle={{flex: 1}}>
-        <View
-          style={{
-            flex: 3,
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              color: 'blue',
-              fontSize: 18,
-              fontWeight: '700',
-              textAlign: 'center',
-            }}>
-            Log in to Chatbox
-          </Text>
-          <Text
-            style={{
-              color: 'black',
-              fontSize: 14,
-              fontWeight: '300',
-              width: 293,
-              textAlign: 'center',
-            }}>
+      <ScrollView
+        contentContainerStyle={{flex: 1, maxWidth: 400, margin: 'auto'}}>
+        <View style={{flex: 3}}>
+          <AuthHeaderSection title="Log in to Chatbox">
             Welcome back! Sign in using your social account or email to continue
             with us
-          </Text>
+          </AuthHeaderSection>
         </View>
 
         <View style={{flex: 6}}>
           <IconButton
             src={require('../assets/icons/google_icon.png')}
-            onPress={() => console.log("'Google Icon' on Sign Clicked")}
+            onPress={signInWithGoogle}
           />
           <View style={styles.gapVertical}>
             <RulerText lineColor="#797C7B">OR</RulerText>
@@ -122,7 +68,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
           </View>
         </View>
 
-        <View style={{flex: 2}}>
+        <View style={{flex: 2, rowGap: 10}}>
           <ActionButton
             onClick={handleSignIn}
             loader={loading}
@@ -131,14 +77,16 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
           </ActionButton>
 
           <TouchableOpacity
-            onPress={() => console.log('Forget Password, clicked')}>
+            activeOpacity={0.9}
+            onPress={() => navigation.navigate('ForgetPassword')}>
             <Text
               style={{
-                color: 'black',
                 textAlign: 'center',
                 marginTop: 15,
+                color: color.blue,
+                fontWeight: 600,
               }}>
-              Forgot password?
+              Forgot password?{' '}
             </Text>
           </TouchableOpacity>
         </View>
@@ -157,7 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: '50%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: color.ghost,
     alignSelf: 'center',
   },
   gapVertical: {marginTop: 10},

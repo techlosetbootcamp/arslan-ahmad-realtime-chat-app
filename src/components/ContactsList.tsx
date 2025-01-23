@@ -7,19 +7,15 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
-import {startChat} from '../store/slices/chatSlice';
-import appNavigate from '../hooks/useNavigation';
-import appAuth from '../hooks/useAuth';
-import {AppDispatch} from '../store/store';
+import useNavigate from '../hooks/useNavigation';
+import useAuth from '../hooks/useAuth';
 import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
 import {createNewChat} from '../services/firebase';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
-  const {user} = appAuth();
-  const dispatch = useDispatch<AppDispatch>();
-  const {navigation} = appNavigate();
+  const {user} = useAuth();
+  const {navigation} = useNavigate();
 
 const handleContactClick = async (
   contactId: string,

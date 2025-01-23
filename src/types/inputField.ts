@@ -6,5 +6,6 @@ export interface InputFieldProps {
   placeholder?: string;
   secureTextEntry?: boolean;
   setVal: (val: string) => void;
+  setError?: (val: string) => void;
   val: string;
 }

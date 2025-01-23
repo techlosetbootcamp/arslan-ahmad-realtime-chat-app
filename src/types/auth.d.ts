@@ -16,3 +16,14 @@ export interface UseAuthReturn {
     name: string,
   ) => Promise<FirebaseAuthTypes.UserCredential | void>;
 }
+
+export interface GoogleUser {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    photo: string | null;
+    familyName?: string;
+    givenName?: string;
+  };
+}

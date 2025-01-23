@@ -11,11 +11,9 @@ import MessageBubble from '../components/MessageBubble';
 import ChatInput from '../components/ChatInput';
 import useAuth from '../hooks/useAuth';
 import ChatHeader from '../components/ChatHeader';
-import {ChatScreenProps} from '../types/chatScreenProps';
+import {ChatProps} from '../types/chatScreenProps';
 
-const ChatScreen: React.FC<{
-  route: ChatScreenProps;
-}> = ({route}) => {
+const ChatScreen: React.FC<ChatProps> = ({route}) => {
   const {chatId, participant} = route.params;
   const dispatch = useDispatch();
   const messages = useSelector(
