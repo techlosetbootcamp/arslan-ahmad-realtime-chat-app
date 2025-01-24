@@ -1,11 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { RulerTextProps } from "../types/rulerText";
+import { color } from "../constants/colors";
 
 const RulerText: React.FC<RulerTextProps> = ({
   children,
-  textColor = "black",
-  lineColor = "#2A3046",
+  textColor = color.black,
+  lineColor = color.gray,
 }) => {
   return (
     <View
@@ -13,7 +14,7 @@ const RulerText: React.FC<RulerTextProps> = ({
     >
       <View style={{ ...styles.line, backgroundColor: lineColor }} />
       <View>
-        <Text style={{ ...styles.text, color: textColor }}>{children}</Text>
+        <Text style={{ ...styles.text, color: textColor }}>OR</Text>
       </View>
       <View style={{ ...styles.line, backgroundColor: lineColor }} />
     </View>
@@ -21,7 +22,7 @@ const RulerText: React.FC<RulerTextProps> = ({
 };
 
 const styles = {
-  line: { flex: 1, height: 1, backgroundColor: "#2A3046" },
+  line: { flex: 1, height: 1, backgroundColor: color.gray },
   text: {
     width: 50,
     textAlign: "center" as "center",

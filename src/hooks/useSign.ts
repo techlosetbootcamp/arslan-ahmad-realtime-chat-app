@@ -11,7 +11,8 @@ const initialState = {
 
 const appSign = () => {
   const [signInData, setSignInData] = useState(initialState);
-  const {handleLogin, loading, error, observeAuth} = appAuth();
+  const {handleLogin, loading, observeAuth} = appAuth();
+  const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
 
   useEffect(() => {
@@ -48,6 +49,8 @@ const appSign = () => {
     signInData,
     navigation,
     signInWithGoogle,
+    error,
+    setError,
   };
 };
 

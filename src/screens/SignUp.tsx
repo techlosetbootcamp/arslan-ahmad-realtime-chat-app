@@ -27,7 +27,8 @@ const initialState = {
 
 const SignIn: React.FC<SignInProps> = ({navigation}) => {
   const [userData, setUserData] = useState(initialState);
-  const {handleSignUp, loading, error, observeAuth} = useAuth();
+  const [error, setError] = useState<string>('');
+  const {handleSignUp, loading, observeAuth} = useAuth();
 
   useEffect(() => {
     const unsubscribe = observeAuth();
@@ -109,14 +110,16 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
             title="Enter Name"
             type="default"
             placeholder="Jhon Doe"
-          />
+            setError={setError}
+            />
           <InputField
             val={userData.email}
             setVal={(value) => handleInputChange('email', value)}
             title="Enter Email"
             type="email-address"
             placeholder="i.e. Jhon@gmail.com"
-          />
+            setError={setError}
+            />
 
           <InputField
             val={userData.password}
@@ -125,15 +128,17 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
             title="Password"
             type="default"
             secureTextEntry={true}
-          />
+            setError={setError}
+            />
 
           <InputField
              val={userData.confirmPassword}
              setVal={(value) => handleInputChange('confirmPassword', value)}
-            title="Confirm Password"
-            type="default"
-            secureTextEntry={true}
-            placeholder="Enter confirm password"
+             title="Confirm Password"
+             type="default"
+             secureTextEntry={true}
+             placeholder="Enter confirm password"
+             setError={setError}
           />
         </View>
       </View>
@@ -142,6 +147,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
         <ActionButton
           onClick={SignUphandler}
           loader={loading}
+          error={error}
           onLoadText="Adding yourself...">
           Reginster Me
         </ActionButton>

@@ -24,6 +24,8 @@ const SignIn: React.FC = () => {
     loading,
     navigation,
     signInWithGoogle,
+    error,
+    setError,
   } = useSign();
 
   return (
@@ -55,6 +57,7 @@ const SignIn: React.FC = () => {
               title="Enter Email"
               type="email-address"
               placeholder="i.e. Jhon@gmail.com"
+              setError={setError}
             />
 
             <InputField
@@ -64,6 +67,7 @@ const SignIn: React.FC = () => {
               type="default"
               secureTextEntry={true}
               placeholder="Enter your password"
+              setError={setError}
             />
           </View>
         </View>
@@ -72,6 +76,7 @@ const SignIn: React.FC = () => {
           <ActionButton
             onClick={handleSignIn}
             loader={loading}
+            error={error}
             onLoadText="Signing in...">
             Sign in with email
           </ActionButton>

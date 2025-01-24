@@ -72,7 +72,7 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
           color: 'white',
           fontWeight: 600,
         }}>
-        {loader ? onLoadText : children}
+        {!error && loader ? onLoadText : children}
       </Text>
     </TouchableOpacity>
   );

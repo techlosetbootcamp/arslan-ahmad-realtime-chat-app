@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Dimensions, Modal, StyleSheet, View } from 'react-native';
 
-const Loader = () => {
+const LoaderScreen = () => {
   return (
     <Modal transparent visible animationType="fade">
       <View style={styles.loaderContainer}>
@@ -13,7 +13,7 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default LoaderScreen;
 
 const styles = StyleSheet.create({
   loaderContainer: {

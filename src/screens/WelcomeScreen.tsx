@@ -23,7 +23,7 @@ const Welcome = () => {
         onPress={signInWithGoogle}
       />
 
-      {/* <RulerText textColor="white">OR</RulerText> */}
+      <RulerText textColor='white' />
 
       <ActionButton
         onClick={() => navigation.navigate('SignUp')}

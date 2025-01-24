@@ -1,12 +1,5 @@
 import React, {useEffect} from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
 import {RootState, useAppDispatch, useAppSelector} from '../store/store';
 import {setChats, setLoading} from '../store/slices/chats';
 import ContentViewer from '../components/ContentViewer';
@@ -18,7 +11,7 @@ import Loader from '../components/Loader';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const dispatch = useAppDispatch();
-  const {isLoading, chats} = useAppSelector((state: RootState) => state.chat);
+  const {chats} = useAppSelector((state: RootState) => state.chat);
   const user = useAppSelector((state: RootState) => state.user);
   const userId = user?.uid;
 

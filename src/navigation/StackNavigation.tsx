@@ -10,7 +10,7 @@ import Search from '../screens/Search';
 import BottomTabsNavigator from './BottomTabsNavigator';
 import {getUserFromStorage} from '../services/authHelpers';
 import {setLoading, setUser} from '../store/slices/user';
-import Loader from '../components/Loader';
+import LoaderScreen from '../components/LoaderScreen';
 import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
 import ForgetPassword from '../screens/ForgetPassword';
@@ -43,8 +43,10 @@ const Navigation = () => {
     }, [user?.uid, dispatch]);
 
   if (userLoader || chatLoader) {
-    return <Loader />;
+    return <LoaderScreen />;
   }
+
+  console.log('user', user);
 
   return user.uid ? (
     <Stack.Navigator
