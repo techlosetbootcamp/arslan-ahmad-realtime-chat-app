@@ -10,8 +10,6 @@ import useAuth from '../hooks/useAuth';
 
 const Welcome = () => {
   const {navigation} = useNavigate();
-  const {user} = useAuth();
-  console.log('Welcome screen (user) =>', user);	
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>
@@ -25,7 +23,7 @@ const Welcome = () => {
         onPress={signInWithGoogle}
       />
 
-      <RulerText textColor="white">OR</RulerText>
+      {/* <RulerText textColor="white">OR</RulerText> */}
 
       <ActionButton
         onClick={() => navigation.navigate('SignUp')}

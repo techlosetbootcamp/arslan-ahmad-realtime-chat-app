@@ -19,6 +19,7 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
     <SectionList
       sections={sections}
       keyExtractor={item => item.uid as string}
+      ListEmptyComponent={() => <Text>No contacts found</Text>}
       renderItem={({item}) => (
         <TouchableOpacity
           onPress={() =>

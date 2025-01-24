@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
 import {
   fetchMessages,
   listenToMessages,
@@ -15,10 +14,8 @@ import {ChatProps} from '../types/chatScreenProps';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   const {chatId, participant} = route.params;
-  const dispatch = useDispatch();
-  const messages = useSelector(
-    (state: RootState) => state.chat.messages[chatId] || [],
-  );
+  const dispatch = useAppDispatch();
+  const messages = useAppSelector(state => state.chat.messages[chatId] || []);
   const [newMessage, setNewMessage] = useState('');
   const {user} = useAuth();
 
@@ -70,6 +67,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
       setNewMessage('');
     }
   };
+  console.log('participant => ', participant);
 
   return (
     <View style={styles.container}>

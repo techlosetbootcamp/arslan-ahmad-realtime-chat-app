@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from '../store';
 import {createUser, fetchUser} from '../../services/firebase';
-import {User} from '../../types/firestoreService';
+import {FirestoreChat, User} from '../../types/firestoreService';
 
 export interface UserState {
   uid: string | null;
@@ -13,6 +13,20 @@ export interface UserState {
   contacts: string[];
   chats: string[];
   isLoading: boolean;
+}
+
+interface Chat {
+  participantsDetails?: Participant[];
+  id: string;
+  lastMessage: string;
+  lastMessageTimestamp: number;
+}
+
+interface Participant {
+  createdAt?: {toMillis: () => number} | null;
+  uid: string;
+  displayName: string;
+  email: string;
 }
 
 const initialState: UserState = {
@@ -61,7 +75,27 @@ export const fetchUserData =
           description: userData.description || null,
           status: userData.status || null,
           contacts: userData.contacts || [],
-          chats: userData.chats || [],
+          chats:
+            userData.chats?.map((chat: FirestoreChat) => ({
+              id: chat.id || '',
+              participants: chat.members,
+              lastMessage:
+                chat.messages?.[chat.messages.length - 1]?.text || '',
+              unreadMessages: 0,
+              notificationStatus: false,
+              lastActive:
+                chat.messages?.[chat.messages.length - 1]?.timestamp
+                  ?.toDate()
+                  .toISOString() || null,
+              participantsDetails: chat.members.map(member => ({
+                uid: member,
+                name: '',
+                createdAt:
+                  chat.messages?.[chat.messages.length - 1]?.timestamp
+                    ?.toDate()
+                    .toISOString() || '',
+              })),
+            })) || [],
         }),
       );
     }

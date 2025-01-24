@@ -11,25 +11,26 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   status,
 }) => {
   const navigation = useNavigation();
+  console.log('profileImage', profileImage);
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Image source={{uri: BlackBackIcon}} style={styles.backIcon} />
+        <Image source={BlackBackIcon} style={styles.backIcon} />
       </TouchableOpacity>
-
-      <View style={styles.userInfoContainer}>
-        <View>
-          <Image
-            source={profileImage ? {uri: profileImage} : {uri: PlaceholderImg}}
-            style={styles.profileImage}
-          />
-          <View style={styles.onlineStatus}></View>
-        </View>
-        <View>
-          <Text style={styles.displayName}>{displayName}</Text>
-          <Text style={styles.status}>{status || 'Offline'}</Text>
-        </View>
-      </View>
+ 
+       <View style={styles.userInfoContainer}>
+         <View>
+           <Image
+             source={profileImage ? {uri: profileImage} : PlaceholderImg}
+             style={styles.profileImage}
+           />
+           <View style={styles.onlineStatus}></View>
+         </View>
+         <View>
+           <Text style={styles.displayName}>{displayName}</Text>
+           <Text style={styles.status}>{status || 'Offline'}</Text>
+         </View>
+       </View> 
     </View>
   );
 };

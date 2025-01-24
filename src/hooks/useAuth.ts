@@ -1,17 +1,15 @@
-import {RootState} from './../store/store';
+import {useAppDispatch, useAppSelector} from './../store/store';
 import {useEffect, useState} from 'react';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {login, signUp, observeAuthState} from '../services/auth';
 import {UseAuthReturn} from '../types/auth';
-import {useDispatch, useSelector} from 'react-redux';
-import {setLoading, setUser, UserState} from '../store/slices/userSlice';
-import {AppDispatch} from '../store/store';
+import {setLoading, setUser, UserState} from '../store/slices/user';
 import useNavigate from './useNavigation';
 
 const appAuth = (): UseAuthReturn => {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useAppSelector(state => state.user);
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const {navigation} = useNavigate();
   const loading = user.isLoading;
 

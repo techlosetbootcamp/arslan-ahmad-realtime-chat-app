@@ -8,16 +8,15 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
 import {logoutUser, updateUserProfile} from '../services/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
-import {RootState, useAppDispatch, useAppSelector} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
-import {clearUser, setLoading} from '../store/slices/userSlice';
+import {clearUser, setLoading} from '../store/slices/user';
 
 const initialState = {
   name: '',

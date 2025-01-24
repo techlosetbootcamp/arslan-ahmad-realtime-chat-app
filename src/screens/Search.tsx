@@ -13,7 +13,7 @@ import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../store/store';
-import {fetchUserData} from '../store/slices/userSlice';
+import {fetchUserData} from '../store/slices/user';
 import useContacts from '../hooks/useContact';
 
 const Search = () => {

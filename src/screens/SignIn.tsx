@@ -86,7 +86,7 @@ const SignIn: React.FC = () => {
                 color: color.blue,
                 fontWeight: 600,
               }}>
-              Forgot password?{' '}
+              Forgot password?
             </Text>
           </TouchableOpacity>
         </View>

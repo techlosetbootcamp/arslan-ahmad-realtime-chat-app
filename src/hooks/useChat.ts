@@ -1,15 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import useAuth from "./useAuth";
 import { fetchMessages, listenToMessages, sendMessage } from "../services/firebase";
 import { useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
 
 
 const appChat = () => {
-  const dispatch = useDispatch();
-  const messages = useSelector(
-    (state: RootState) => state.chat.messages[chatId] || [],
+  const dispatch = useAppDispatch();
+  const messages = useAppSelector(
+    (state) => state.chat.messages[chatId] || [],
   );
   const [newMessage, setNewMessage] = useState('');
   const {user} = useAuth();

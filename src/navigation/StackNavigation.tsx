@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SignInScreen from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
@@ -10,22 +9,23 @@ import {RootStackParamList} from '../types/navigation';
 import Search from '../screens/Search';
 import BottomTabsNavigator from './BottomTabsNavigator';
 import {getUserFromStorage} from '../services/authHelpers';
-import {setLoading, setUser} from '../store/slices/userSlice';
+import {setLoading, setUser} from '../store/slices/user';
 import Loader from '../components/Loader';
 import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
 import ForgetPassword from '../screens/ForgetPassword';
+import { fetchContactsThunk } from '../store/slices/contacts';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {isLoading: loading, ...user} = useSelector(
-    (state: RootState) => state.user,
-  );
-  const dispatch = useDispatch();
+  const {isLoading: userLoader, ...user} = useAppSelector(state => state.user);
+  const {isLoading: chatLoader} = useAppSelector(state => state.chat);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const checkUserSession = async () => {
+      dispatch(setLoading(true));
       const storedUser = await getUserFromStorage();
 
       if (storedUser.uid) {
@@ -36,10 +36,14 @@ const Navigation = () => {
     checkUserSession();
   }, [dispatch]);
 
-  console.log('User (stackNavigation.tsx) =>', user);
+  useEffect(() => {
+      if (user?.uid) {
+        dispatch(fetchContactsThunk(user?.uid));
+      }
+    }, [user?.uid, dispatch]);
 
-  if (loading) {
-    <Loader />;
+  if (userLoader || chatLoader) {
+    return <Loader />;
   }
 
   return user.uid ? (
@@ -57,7 +61,7 @@ const Navigation = () => {
     </Stack.Navigator>
   ) : (
     <Stack.Navigator
-    screenOptions={{
+      screenOptions={{
         headerShown: false,
       }}
       initialRouteName="WelcomeScreen">

@@ -10,29 +10,16 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-import {getAuth, GoogleAuthProvider} from 'firebase/auth';
+import {getAuth} from 'firebase/auth';
 import {
   getUserFromStorage,
   removeUserFromStorage,
   saveUserToStorage,
 } from './authHelpers';
 import {User} from '../types/firestoreService';
-import {
-  clearUser,
-  setLoading,
-  setUser,
-  UserState,
-} from '../store/slices/userSlice';
-import {useDispatch} from 'react-redux';
-import firestore, {
-  doc,
-  FirebaseFirestoreTypes,
-  getDoc,
-  setDoc,
-} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Alert} from 'react-native';
-import {useAppDispatch} from '../store/store';
 
 export const observeAuthState = (
   callback: (user: User | null) => void,

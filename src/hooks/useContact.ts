@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchContactsThunk} from '../store/slices/contactsSlice';
+import {fetchContactsThunk} from '../store/slices/contacts';
 import {User} from '../types/firestoreService';
 import useAuth from './useAuth';
 import {AppDispatch, RootState} from '../store/store';

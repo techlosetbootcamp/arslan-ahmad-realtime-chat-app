@@ -19,7 +19,6 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
   const participants = item.participantsDetails?.filter(
     (participant: User) => participant.uid !== userId,
   );
-  console.log('Item (RenderChatItem.tsx)', item);
 
   const participant = participants?.[0];
   const participantImage = participant?.photoURL;
@@ -37,7 +36,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
   };
 
   const lastActivityTime = getRelativeTime(item.lastActive);
-
+  const isUnreadMsgs = item?.unreadMessages || null;
   return (
     <TouchableOpacity
       activeOpacity={0.9}
@@ -64,7 +63,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
         </View>
         <View style={{height: '100%', justifyContent: 'space-between'}}>
           <Text style={{color: '#ccc', fontSize: 12}}>{lastActivityTime}</Text>
-          {item.unreadMessages && <Text>{item.unreadMessages}</Text>}
+          {isUnreadMsgs && <Text>{item.unreadMessages}</Text>}
         </View>
       </View>
     </TouchableOpacity>
