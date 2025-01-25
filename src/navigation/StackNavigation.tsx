@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -14,14 +14,36 @@ import LoaderScreen from '../components/LoaderScreen';
 import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
 import ForgetPassword from '../screens/ForgetPassword';
-import { fetchContactsThunk } from '../store/slices/contacts';
+import {fetchContactsThunk} from '../store/slices/contacts';
+import { observeAuthState } from '../services/auth';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
   const {isLoading: userLoader, ...user} = useAppSelector(state => state.user);
-  const {isLoading: chatLoader} = useAppSelector(state => state.chat);
+  const {isLoading: chatLoader, chats} = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
+  const userId = user?.uid;
+  const [isAuthChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const checkAuthState = () => {
+      dispatch(setLoading(true));
+      observeAuthState(async firebaseUser => {
+        if (firebaseUser) {
+          if (firebaseUser.uid) {
+            dispatch(setUser({ ...firebaseUser, uid: firebaseUser.uid! }));
+          }
+          if (firebaseUser.uid) {
+            await dispatch(fetchContactsThunk(firebaseUser.uid));
+          }
+        }
+        dispatch(setLoading(false));
+        setAuthChecked(true);
+      });
+    };
+    checkAuthState();
+  }, [dispatch]);
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -29,7 +51,7 @@ const Navigation = () => {
       const storedUser = await getUserFromStorage();
 
       if (storedUser.uid) {
-        dispatch(setUser(storedUser));
+        dispatch(setUser({ ...storedUser, uid: storedUser.uid! }));
       }
       dispatch(setLoading(false));
     };
@@ -37,16 +59,16 @@ const Navigation = () => {
   }, [dispatch]);
 
   useEffect(() => {
-      if (user?.uid) {
-        dispatch(fetchContactsThunk(user?.uid));
-      }
-    }, [user?.uid, dispatch]);
+    if (user?.uid) {
+      dispatch(fetchContactsThunk(user?.uid));
+    }
+    console.log('user (StackNavigation.tsx) =>', user);
+  }, [user?.uid, dispatch]);
 
-  if (userLoader || chatLoader) {
+  if (!isAuthChecked || userLoader || chatLoader) {
     return <LoaderScreen />;
   }
 
-  console.log('user', user);
 
   return user.uid ? (
     <Stack.Navigator

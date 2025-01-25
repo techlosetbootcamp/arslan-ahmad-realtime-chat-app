@@ -58,7 +58,7 @@ export const observeAuthState = (
 export const login = async (
   email: string,
   password: string,
-): Promise<FirebaseAuthTypes.UserCredential> => {
+): Promise<FirebaseAuthTypes.UserCredential | null> => {
   try {
     const userCredential = await auth().signInWithEmailAndPassword(
       email,
@@ -96,8 +96,30 @@ export const login = async (
 
     return userCredential;
   } catch (error) {
-    console.error('Login failed:', error);
-    throw error;
+    if (
+      error instanceof Error &&
+      (error as FirebaseAuthTypes.NativeFirebaseAuthError).code
+    ) {
+      const errorCode = (error as FirebaseAuthTypes.NativeFirebaseAuthError)
+        .code;
+      switch (errorCode) {
+        case 'auth/user-not-found':
+          Alert.alert('Login Failed', 'No user found with this email.');
+          break;
+        case 'auth/wrong-password':
+          Alert.alert('Login Failed', 'Incorrect password. Please try again.');
+          break;
+        case 'auth/invalid-email':
+          Alert.alert('Login Failed', 'Invalid email address format.');
+          break;
+        case 'auth/invalid-credential':
+          Alert.alert('Login Failed', 'User not found... Please sign up.');
+          break;
+        default:
+          Alert.alert('Login Failed', 'Please recheck inputs...');
+      }
+    }
+    return null;
   }
 };
 
@@ -105,7 +127,7 @@ export const signUp = async (
   email: string,
   password: string,
   name: string,
-): Promise<FirebaseAuthTypes.UserCredential> => {
+): Promise<FirebaseAuthTypes.UserCredential | null> => {
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(
       email,
@@ -132,9 +154,28 @@ export const signUp = async (
     console.log('User saved in Database...');
     await saveUserToStorage(userDoc);
     return userCredential;
-  } catch (error: any) {
-    console.error('Sign-up failed:', error.message);
-    throw new Error(error.message || 'Sign-up failed');
+  } catch (error) {
+    console.error('Sign-up failed:', error);
+    if (error instanceof FirebaseError) {
+      const errorCode = error.code;
+      switch (errorCode) {
+        case 'auth/email-already-in-use':
+          Alert.alert('Sign-Up Failed', 'Email is already in use.');
+          break;
+        case 'auth/invalid-email':
+          Alert.alert('Sign-Up Failed', 'Invalid email address format.');
+          break;
+        case 'auth/weak-password':
+          Alert.alert(
+            'Sign-Up Failed',
+            'Password is too weak. Please use a stronger password.',
+          );
+          break;
+        default:
+          Alert.alert('Sign-Up Failed', 'An unexpected error occurred.');
+      }
+    }
+    return null;
   }
 };
 

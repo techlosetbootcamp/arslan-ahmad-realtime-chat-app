@@ -1,13 +1,12 @@
 import React from 'react';
-import { ActivityIndicator, Dimensions, Modal, StyleSheet, View } from 'react-native';
+import {Dimensions, Image, Modal, StyleSheet, View} from 'react-native';
+import {SplashScreen} from '../constants/imgs';
 
 const LoaderScreen = () => {
   return (
     <Modal transparent visible animationType="fade">
       <View style={styles.loaderContainer}>
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#4d9ddf" />
-        </View>
+        <Image source={SplashScreen} style={{width: '100%', height: '100%'}} />
       </View>
     </Modal>
   );
@@ -22,16 +21,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  loader: {
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 50,
   },
 });

@@ -15,6 +15,7 @@ import ActionButton from '../components/ActionButton';
 import {color} from '../constants/colors';
 import AuthHeaderSection from '../components/AuthHeaderSection';
 import useSign from '../hooks/useSign';
+import {GoogleIcon} from '../constants/imgs';
 
 const SignIn: React.FC = () => {
   const {
@@ -35,19 +36,17 @@ const SignIn: React.FC = () => {
       <ScrollView
         contentContainerStyle={{flex: 1, maxWidth: 400, margin: 'auto'}}>
         <View style={{flex: 3}}>
-          <AuthHeaderSection title="Log in to Chatbox">
-            Welcome back! Sign in using your social account or email to continue
-            with us
-          </AuthHeaderSection>
+          <AuthHeaderSection
+            title="Log in to Chatbox"
+            subText="Welcome back! Sign in using your social account or email to continue
+            with us"
+          />
         </View>
 
         <View style={{flex: 6}}>
-          <IconButton
-            src={require('../assets/icons/google_icon.png')}
-            onPress={signInWithGoogle}
-          />
+          <IconButton src={GoogleIcon} onPress={signInWithGoogle} />
           <View style={styles.gapVertical}>
-            <RulerText lineColor="#797C7B">OR</RulerText>
+            <RulerText />
           </View>
 
           <View style={{gap: 25}}>

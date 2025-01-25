@@ -6,7 +6,7 @@ import { color } from "../constants/colors";
 const RulerText: React.FC<RulerTextProps> = ({
   children,
   textColor = color.black,
-  lineColor = color.gray,
+  lineColor = color.dark_gray,
 }) => {
   return (
     <View

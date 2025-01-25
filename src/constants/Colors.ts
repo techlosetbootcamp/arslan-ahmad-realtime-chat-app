@@ -1,6 +1,6 @@
 export const color = {
   primary: '#3D4A7A',
-  ghost: 'rgba(255, 255, 255, 0.5)',
+  ghost: 'rgba(255, 255, 255, 0.4)',
   gray: 'rgb(188, 189, 189)',
   offwhite: 'rgb(243, 246, 246)',
   black: 'rgb(0, 14, 8)',

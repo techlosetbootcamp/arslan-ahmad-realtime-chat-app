@@ -78,7 +78,6 @@ function InputField({
     if (setError) {
       setError(error);
     }
-    console.log(val);
   };
 
   return (

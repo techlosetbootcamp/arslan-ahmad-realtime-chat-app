@@ -1,5 +1,9 @@
+import { TextStyle } from "react-native";
+
 export type AuthHeaderSectionProps = {
   title: string;
-  children: React.ReactNode;
+  subText: string;
+  styleTitle?: TextStyle;
+  styleSubTitle?: TextStyle;
 };
 

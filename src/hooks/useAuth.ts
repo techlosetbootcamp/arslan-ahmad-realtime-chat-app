@@ -1,3 +1,4 @@
+import {FirebaseError} from '@firebase/util';
 import {useAppDispatch, useAppSelector} from './../store/store';
 import {useEffect, useState} from 'react';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -27,7 +28,7 @@ const appAuth = (): UseAuthReturn => {
   ): Promise<FirebaseAuthTypes.UserCredential | void> => {
     try {
       const userCredential = await login(email, password);
-      const firebaseUser = userCredential.user;
+      const firebaseUser = userCredential?.user;
 
       if (firebaseUser) {
         const userData: Partial<UserState> & {uid: string} = {
@@ -43,8 +44,11 @@ const appAuth = (): UseAuthReturn => {
         dispatch(setUser(userData));
         navigation.navigate('MainTabs');
       }
-
-      return userCredential;
+      if (userCredential) {
+        return userCredential;
+      } else {
+        console.error('User not created (useAuth.ts)... Error:', user);
+      }
     } catch (err: any) {
       setError(mapFirebaseError(err.code));
       console.error('Login Error:', err);
@@ -64,7 +68,7 @@ const appAuth = (): UseAuthReturn => {
     try {
       const userCredential = await signUp(email, password, name);
 
-      const firebaseUser = userCredential.user;
+      const firebaseUser = userCredential?.user;
 
       if (firebaseUser) {
         const userData = {
@@ -79,9 +83,15 @@ const appAuth = (): UseAuthReturn => {
         navigation.navigate('MainTabs');
       }
 
-      return userCredential;
+      if (userCredential) {
+        return userCredential;
+      } else {
+        console.error('User not created (useAuth.ts)... Error:', user);
+      }
     } catch (err: any) {
-      setError(mapFirebaseError(err.code));
+      if (err instanceof FirebaseError) {
+        setError(mapFirebaseError(err.code));
+      }
       console.error('Sign-Up Error:', err);
     } finally {
       setLoading(false);

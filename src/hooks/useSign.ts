@@ -29,6 +29,9 @@ const appSign = () => {
 
   const handleSignIn = async () => {
     try {
+      if (!signInData.email || !signInData.password) {
+        return Alert.alert('Error', 'Please fill in all fields');
+      }
       const userCredential = await handleLogin(
         signInData.email,
         signInData.password,

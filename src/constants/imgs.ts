@@ -13,21 +13,23 @@ import CrossBlackIcon from '../assets/icons/cross_dark.png';
 import GoogleIcon from '../assets/icons/google_icon.png';
 import HelpIcon from '../assets/icons/help.png';
 import NotificationIcon from '../assets/icons/notification.png';
+import SplashScreen from '../assets/imgs/launch_screen.png';
 
 export {
-  PlaceholderImg,
-  SearchIcon,
-  AddUserIcon,
   ActiveContactsIcon,
-  DisableContactsIcon,
   ActiveMessageIcon,
-  DisableMessageIcon,
+  AddUserIcon,
   BackIcon,
   BlackBackIcon,
   CameraIcon,
-  PaperClipIcon,
   CrossBlackIcon,
+  DisableContactsIcon,
+  DisableMessageIcon,
   GoogleIcon,
   HelpIcon,
   NotificationIcon,
+  PaperClipIcon,
+  PlaceholderImg,
+  SearchIcon,
+  SplashScreen,
 };

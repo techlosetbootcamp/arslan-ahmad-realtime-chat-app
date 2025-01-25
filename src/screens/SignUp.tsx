@@ -1,11 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IconButton from '../components/IconButton';
 import RulerText from '../components/RulerText';
 import InputField from '../components/InputField';
@@ -13,6 +7,11 @@ import {ScrollView} from 'react-native-gesture-handler';
 import useAuth from '../hooks/useAuth';
 import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
 import ActionButton from '../components/ActionButton';
+import AuthHeaderSection from '../components/AuthHeaderSection';
+import ActionText from '../components/ActionText';
+import { GoogleIcon } from '../constants/imgs';
+import { color } from '../constants/colors';
+import SimpleText from '../components/SimpleText';
 
 type SignInProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -44,7 +43,14 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
 
   const SignUphandler = async () => {
     try {
-      const userCredential = await handleSignUp(userData.email, userData.password, userData.name);
+      if (!userData.email || !userData.password || !userData.name) {
+        return Alert.alert('Error', 'Please fill in all fields');
+      }
+      const userCredential = await handleSignUp(
+        userData.email,
+        userData.password,
+        userData.name,
+      );
       if (userCredential) {
         Alert.alert('Success', 'You are successfully logged in!');
         setUserData(initialState);
@@ -65,85 +71,64 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
         paddingVertical: 60,
         columnGap: 40,
       }}>
-      <View
-        style={{
-          flex: 3,
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'blue',
-            fontSize: 18,
-            fontWeight: '700',
-            textAlign: 'center',
-          }}>
-          Sign up with Email
-        </Text>
-        <Text
-          style={{
-            color: 'black',
-            fontSize: 14,
-            fontWeight: '300',
-            width: 293,
-            textAlign: 'center',
-          }}>
-          Get chatting with friends and family today by signing up for our chat
-          app!
-        </Text>
-      </View>
+      <AuthHeaderSection
+        title="Sign up with Email"
+        subText="Get chatting with friends and family today by signing up for our chat
+        app!"
+        styleSubTitle={{width: '80%'}}
+      />
 
-      <View style={{flex: 6, padding: 10}}>
+      <View
+        style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
         <IconButton
-          src={require('../assets/icons/google_icon.png')}
+          src={GoogleIcon}
           onPress={() => console.log("'Google Icon' on Sign Clicked")}
         />
         <View style={styles.gapVertical}>
-          <RulerText lineColor="#797C7B">OR</RulerText>
+          <RulerText lineColor={color.dark_gray} />
         </View>
 
         <View style={{gap: 25}}>
           <InputField
             val={userData.name}
-            setVal={(value) => handleInputChange('name', value)}
+            setVal={value => handleInputChange('name', value)}
             title="Enter Name"
             type="default"
             placeholder="Jhon Doe"
             setError={setError}
-            />
+          />
           <InputField
             val={userData.email}
-            setVal={(value) => handleInputChange('email', value)}
+            setVal={value => handleInputChange('email', value)}
             title="Enter Email"
             type="email-address"
             placeholder="i.e. Jhon@gmail.com"
             setError={setError}
-            />
+          />
 
           <InputField
             val={userData.password}
-            setVal={(value) => handleInputChange('password', value)}
+            setVal={value => handleInputChange('password', value)}
             placeholder="Enter your password"
             title="Password"
             type="default"
             secureTextEntry={true}
             setError={setError}
-            />
+          />
 
           <InputField
-             val={userData.confirmPassword}
-             setVal={(value) => handleInputChange('confirmPassword', value)}
-             title="Confirm Password"
-             type="default"
-             secureTextEntry={true}
-             placeholder="Enter confirm password"
-             setError={setError}
+            val={userData.confirmPassword}
+            setVal={value => handleInputChange('confirmPassword', value)}
+            title="Confirm Password"
+            type="default"
+            secureTextEntry={true}
+            placeholder="Enter confirm password"
+            setError={setError}
           />
         </View>
       </View>
 
-      <View style={{flex: 2, marginTop: 20}}>
+      <View style={{flex: 2, marginTop: 20, paddingVertical: 10}}>
         <ActionButton
           onClick={SignUphandler}
           loader={loading}
@@ -151,16 +136,6 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
           onLoadText="Adding yourself...">
           Reginster Me
         </ActionButton>
-        <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-          <Text
-            style={{
-              color: 'black',
-              textAlign: 'center',
-              marginTop: 15,
-            }}>
-            Already have an account? Sign in
-          </Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );

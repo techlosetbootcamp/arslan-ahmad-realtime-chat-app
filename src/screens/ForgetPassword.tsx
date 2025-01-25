@@ -34,10 +34,12 @@ const ForgetPassword = () => {
   return (
     <>
       <View style={ForgetPasswordScreen.header}>
-        <AuthHeaderSection title="Forget Password">
-          Forgot your password? Don’t worry, we’ll send you a magic link right
-          at your inbox!
-        </AuthHeaderSection>
+        <AuthHeaderSection
+          title="Forget Password"
+          subText="Forgot your password? Don’t worry, we’ll send you a magic link right
+          at your inbox!"
+          styleSubTitle={{width: '80%'}}
+        />
       </View>
       <View style={ForgetPasswordScreen.formBody}>
         <View style={ForgetPasswordScreen.formBody_Content}>

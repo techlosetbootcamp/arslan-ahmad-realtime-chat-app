@@ -1,16 +1,28 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {color} from '../constants/colors';
-import { AuthHeaderSectionProps } from '../types/sectionHeaders';
+import {AuthHeaderSectionProps} from '../types/sectionHeaders';
+import SimpleText from './SimpleText';
 
 const AuthHeaderSection: React.FC<AuthHeaderSectionProps> = ({
   title,
-  children,
+  subText,
+  styleSubTitle,
+  styleTitle,
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{children}</Text>
+      <SimpleText
+        type="h"
+        text={title}
+        styles={StyleSheet.flatten([styles.title, styleTitle])}
+      />
+      <SimpleText
+        text={subText}
+        color={color.black}
+        align="center"
+        styles={StyleSheet.flatten([styleSubTitle])}
+      />
     </View>
   );
 };
@@ -28,13 +40,6 @@ const styles = StyleSheet.create({
     color: color.blue,
     fontSize: 18,
     fontWeight: '700',
-    textAlign: 'center',
-  },
-  description: {
-    color: color.black,
-    fontSize: 16,
-    fontWeight: '300',
-    width: 293,
     textAlign: 'center',
   },
 });

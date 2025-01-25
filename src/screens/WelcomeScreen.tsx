@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import RulerText from '../components/RulerText';
 import IconButton from '../components/IconButton';
@@ -6,24 +6,30 @@ import ActionButton from '../components/ActionButton';
 import {color} from '../constants/colors';
 import {signInWithGoogle} from '../services/auth';
 import useNavigate from '../hooks/useNavigation';
-import useAuth from '../hooks/useAuth';
+import ActionText from '../components/ActionText';
+import SimpleText from '../components/SimpleText';
+import {useAppSelector} from '../store/store';
 
 const Welcome = () => {
   const {navigation} = useNavigate();
+  const user = useAppSelector(state => state.user);
+
+  console.log('User => ', user);
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>
-      <Text style={styles.description}>
-        Our chat app is the perfect way to stay connected with friends and
-        family.
-      </Text>
+      <SimpleText
+        text="Our chat app is the perfect way to stay connected with friends and
+        family."
+        color={color.light_grey}
+      />
 
       <IconButton
         src={require('../assets/icons/google_icon.png')}
         onPress={signInWithGoogle}
       />
 
-      <RulerText textColor='white' />
+      <RulerText textColor="white" />
 
       <ActionButton
         onClick={() => navigation.navigate('SignUp')}
@@ -33,23 +39,22 @@ const Welcome = () => {
         Sign up with mail
       </ActionButton>
 
-      <TouchableOpacity
-        activeOpacity={0.9}
+      <ActionText
+        styles={{
+          ...styles.description,
+          fontSize: 14,
+          color: 'white',
+          textAlign: 'center',
+          marginTop: 20,
+        }}
         onPress={() => navigation.navigate('SignIn')}>
-        <Text
-          style={{
-            ...styles.description,
-            fontSize: 14,
-            color: 'white',
-            textAlign: 'center',
-            marginTop: 20,
-          }}>
-          Existing account?{' '}
-          <Text style={{color: 'white', fontWeight: 'bold', marginTop: 9}}>
-            Log in
-          </Text>{' '}
-        </Text>
-      </TouchableOpacity>
+        Existing account?{' '}
+        <SimpleText
+          text="Log In"
+          styles={{fontWeight: 600}}
+          color={color.light_grey}
+        />{' '}
+      </ActionText>
     </View>
   );
 };
@@ -58,7 +63,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#050821',
     flex: 1,
-    padding: 20,
+    padding: 15,
+    gap: 5,
   },
   link: {
     marginTop: 45,

@@ -1,43 +1,15 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
-import {RootState, useAppDispatch, useAppSelector} from '../store/store';
-import {setChats, setLoading} from '../store/slices/chats';
+import {useAppSelector} from '../store/store';
 import ContentViewer from '../components/ContentViewer';
 import {HomeScreenProps} from '../types/home';
-import {fetchChats} from '../services/firebase';
 import {Chat} from '../types/firestoreService';
 import RenderChatItem from '../components/RenderChatItem';
 import Loader from '../components/Loader';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const dispatch = useAppDispatch();
-  const {chats} = useAppSelector((state: RootState) => state.chat);
-  const user = useAppSelector((state: RootState) => state.user);
-  const userId = user?.uid;
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      if (!userId) return;
-
-      const fetchedChats = await fetchChats(userId);
-      const chatMap = fetchedChats.reduce((acc, chat) => {
-        acc[chat.id] = chat;
-        return acc;
-      }, {} as Record<string, Chat>);
-
-      const sortedChats = Object.values(chatMap).sort(
-        (a, b) =>
-          new Date(b?.lastActive ?? 0).getTime() -
-          new Date(a?.lastActive ?? 0).getTime(),
-      );
-
-      dispatch(setChats(chatMap));
-    };
-    fetchData();
-    setLoading(false);
-  }, [dispatch, userId]);
-
+  const chats = useAppSelector(store => store.chat.chats);
+  console.log('chats:', chats);
   return (
     <ContentViewer title="Home">
       <View style={styles.content}>
