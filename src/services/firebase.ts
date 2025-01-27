@@ -8,7 +8,6 @@ export const fetchUsers = async (userId?: string): Promise<User[]> => {
   if (userId) {
     query = query.where('uid', '!=', userId);
   }
-
   const snapshot = await query.get();
 
   return snapshot.docs.map(doc => {
@@ -34,82 +33,115 @@ export const fetchUser = async (uid: string) => {
   return userDoc.exists ? userDoc.data() : null;
 };
 
-export const fetchChats = async (userId: string): Promise<Chat[]> => {
-  const snapshot = await firestore()
+export const fetchChats = (
+  userId: string,
+  callback: (chats: Chat[]) => void,
+) => {
+  const unsubscribe = firestore()
     .collection('chats')
     .where('participants', 'array-contains', userId)
     .orderBy('lastActive', 'desc')
-    .get();
+    .onSnapshot(
+      async snapshot => {
+        const chats = snapshot.docs.map(doc => {
+          const chatData = doc.data();
 
-  const chats = snapshot.docs.map(doc => {
-    const chatData = doc.data();
+          const lastActive = chatData.lastActive
+            ? chatData.lastActive.toDate().toISOString()
+            : null;
+          const participants = chatData.participants || [];
+          const lastMessage = chatData.lastMessage || '';
+          const unreadMessages = chatData.unreadMessages || 0;
+          const notificationStatus = chatData.notificationStatus ?? true;
 
-    const lastActive = chatData.lastActive
-      ? chatData.lastActive.toDate().toISOString()
-      : null;
-    const participants = chatData.participants || [];
-    const lastMessage = chatData.lastMessage || '';
-    const unreadMessages = chatData.unreadMessages || 0;
-    const notificationStatus = chatData.notificationStatus ?? true;
+          let participantsDetails: any[] = [];
 
-    let participantsDetails: any[] = [];
+          if (chatData.participantsDetails) {
+            participantsDetails = chatData.participantsDetails.map(
+              (participant: any) => ({
+                ...participant,
+                createdAt: participant.createdAt
+                  ? participant.createdAt.toDate().toISOString()
+                  : null,
+              }),
+            );
+          }
 
-    if (chatData.participantsDetails) {
-      participantsDetails = chatData.participantsDetails.map(
-        (participant: any) => ({
-          ...participant,
-          createdAt: participant.createdAt
-            ? participant.createdAt.toDate().toISOString()
-            : null,
-        }),
-      );
-    }
+          return {
+            id: doc.id,
+            participants,
+            lastMessage,
+            unreadMessages,
+            notificationStatus,
+            lastActive,
+            participantsDetails,
+          };
+        });
 
-    return {
-      id: doc.id,
-      participants,
-      lastMessage,
-      unreadMessages,
-      notificationStatus,
-      lastActive,
-      participantsDetails,
-    };
-  });
+        const userPromises = chats.map(async chat => {
+          const userDetails = await Promise.all(
+            chat.participants.map(async (participantId: string) => {
+              const user = await fetchUser(participantId);
+              return {uid: participantId, ...user};
+            }),
+          );
+          return {...chat, participantsDetails: userDetails};
+        });
 
-  const userPromises = chats.map(async chat => {
-    const userDetails = await Promise.all(
-      chat.participants.map(async (participantId: string) => {
-        const user = await fetchUser(participantId);
-        return {uid: participantId, ...user};
-      }),
+        const resolvedChats = await Promise.all(userPromises);
+        callback(resolvedChats);
+      },
+      error => {
+        console.error('Error fetching chats:', error);
+        callback([]);
+      },
     );
-    return {...chat, participantsDetails: userDetails};
-  });
 
-  return Promise.all(userPromises);
+  return unsubscribe;
 };
 
-export const fetchContacts = async (userId: string): Promise<User[]> => {
-  const userDoc = await firestore().collection('users').doc(userId).get();
-  const userData = userDoc.data();
-  const contactIds = userData?.contacts || [];
+export const fetchContacts = (
+  userId: string,
+  callback: (contacts: User[]) => void,
+) => {
+  const userDocRef = firestore().collection('users').doc(userId);
 
-  const contactsSnapshot = await firestore()
-    .collection('users')
-    .where(firestore.FieldPath.documentId(), 'in', contactIds)
-    .get();
+  const unsubscribe = userDocRef.onSnapshot(
+    async userDoc => {
+      const userData = userDoc.data();
+      const contactIds = userData?.contacts || [];
 
-  return contactsSnapshot.docs.map(doc => {
-    const data = doc.data();
-    return {
-      uid: doc.id,
-      displayName: data.displayName || '',
-      email: data.email || '',
-      photoURL: data.photoURL || null,
-      description: data.description || '',
-      status: data.status || null,
-    };
-  }) as User[];
+      if (contactIds.length === 0) {
+        callback([]);
+        return;
+      }
+
+      const contactsSnapshot = await firestore()
+        .collection('users')
+        .where(firestore.FieldPath.documentId(), 'in', contactIds)
+        .get();
+
+      const contacts = contactsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          uid: doc.id,
+          displayName: data.displayName || '',
+          email: data.email || '',
+          photoURL: data.photoURL || null,
+          description: data.description || '',
+          status: data.status || null,
+        };
+      }) as User[];
+
+      callback(contacts);
+    },
+    error => {
+      console.error('Error fetching contacts:', error);
+      callback([]);
+    },
+  );
+
+  return unsubscribe;
 };
 
 export const addContact = async (userId: string, contactId: string) => {

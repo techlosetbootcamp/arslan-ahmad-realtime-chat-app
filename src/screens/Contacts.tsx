@@ -4,10 +4,12 @@ import ContentViewer from '../components/ContentViewer';
 import useContacts from '../hooks/useContact';
 import Contacts from '../components/ContactsList';
 import Loader from '../components/Loader';
+import { useAppSelector } from '../store/store';
 
 const ContactsScreen: React.FC = () => {
   const {contacts, sections} = useContacts();
-
+  const userContacts = useAppSelector(state => state.user.contacts);
+  console.log('Contacts => ', userContacts);
 
   return (
     <ContentViewer title="Contacts">

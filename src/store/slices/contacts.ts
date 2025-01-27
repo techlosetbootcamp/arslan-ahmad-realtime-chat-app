@@ -1,9 +1,7 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
-import {
-  fetchContacts,
-  addContact as addContactToDB,
-} from '../../services/firebase';
-import {User} from '../../types/firestoreService';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { addContact as addContactToDB } from '../../services/firebase';
+import { User } from '../../types/firestoreService';
+import { RootState, useAppSelector } from '../store';
 
 interface ContactsState {
   contacts: User[];
@@ -17,65 +15,59 @@ const initialState: ContactsState = {
   error: null,
 };
 
-export const fetchContactsThunk = createAsyncThunk(
-  'contacts/fetchContacts',
-  async (userId: string, {rejectWithValue}) => {
-    try {
-      const contacts = await fetchContacts(userId);
-      return contacts;
-    } catch (error) {
-      return rejectWithValue('Error fetching contacts');
-    }
-  },
-);
-
 export const addContactThunk = createAsyncThunk(
   'contacts/addContact',
   async (
-    {userId, contactId}: {userId: string; contactId: string},
-    {rejectWithValue},
+    { userId, contactId }: { userId: string; contactId: string },
+    { getState, rejectWithValue }
   ) => {
     try {
       await addContactToDB(userId, contactId);
-      return contactId;
+
+      const state = getState() as RootState;
+      const user = state.users.users.find(user => user.uid === contactId);
+
+      if (!user) {
+        throw new Error('User not found in local state.');
+      }
+
+      return user;
     } catch (error) {
       return rejectWithValue('Error adding contact');
     }
-  },
+  }
 );
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
-  reducers: {},
+  reducers: {
+    addContact: (state, action: PayloadAction<string>) => {
+      const contactId = action.payload;
+      const users = useAppSelector(state => state.users.users);
+      const contact = users.find(user => user.uid === contactId);
+      if (contact) {
+        state.contacts.push(contact);
+      }
+    },
+  },
   extraReducers: builder => {
-    builder.addCase(fetchContactsThunk.pending, state => {
+    builder.addCase(addContactThunk.pending, state => {
       state.loading = true;
       state.error = null;
     });
     builder.addCase(
-      fetchContactsThunk.fulfilled,
-      (state, action: PayloadAction<User[]>) => {
-        state.loading = false;
-        state.contacts = action.payload;
-      },
-    );
-    builder.addCase(fetchContactsThunk.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload as string;
-    });
-
-    builder.addCase(addContactThunk.pending, state => {
-      state.loading = true;
-    });
-    builder.addCase(
       addContactThunk.fulfilled,
-      (state, action: PayloadAction<string>) => {
+      (state, action: PayloadAction<User>) => {
         state.loading = false;
 
-        const contact = {uid: action.payload};
-        state.contacts.push(contact as User);
-      },
+        const alreadyExists = state.contacts.some(
+          contact => contact.uid === action.payload.uid
+        );
+        if (!alreadyExists) {
+          state.contacts.push(action.payload);
+        }
+      }
     );
     builder.addCase(addContactThunk.rejected, (state, action) => {
       state.loading = false;
@@ -83,7 +75,5 @@ const contactsSlice = createSlice({
     });
   },
 });
-
-export const {} = contactsSlice.actions;
 
 export default contactsSlice.reducer;

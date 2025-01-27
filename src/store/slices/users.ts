@@ -1,87 +1,70 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../types/firestoreService';
-import { RootState } from '../store';
-import { fetchUsers, searchUserInFirebase } from '../../services/firebase'; // Add a Firebase service for searching
+import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
+import {fetchUsers} from '../../services/firebase';
+import {User} from '../../types/firestoreService';
 
-const initialState: { users: User[]; isLoading: boolean; hasMore: boolean; lastFetchedAt?: string } = {
+interface UsersState {
+  users: User[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+const initialState: UsersState = {
   users: [],
   isLoading: false,
-  hasMore: true,
-  lastFetchedAt: undefined,
+  error: null,
 };
+
+export const fetchUsersThunk = createAsyncThunk<User[], string | undefined>(
+  'users/fetchAll',
+  async (userId, {rejectWithValue}) => {
+    try {
+      console.log(
+        '%c Inside thunk... (Users.ts) =>',
+        'font-size:20px;color:orange;text-align:center',
+      );
+      const users = await fetchUsers(userId);
+      console.log(
+        '%c Just fetched users... (Users.ts) =>',
+        'font-size:20px;color:red;',
+        users,
+      );
+      return users;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error fetching users:', error);
+        return rejectWithValue(error.message || 'Failed to fetch users.');
+      }
+      return rejectWithValue('Failed to fetch users.');
+    }
+  },
+);
 
 const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    setUsers(state, action: PayloadAction<{ users: User[]; hasMore: boolean }>) {
-      state.users = action.payload.users;
-      state.hasMore = action.payload.hasMore;
-      state.isLoading = false;
+    setAllUsers: (state, action: PayloadAction<User[]>) => {
+      state.users = action.payload;
     },
-    addUsers(
-      state: { users: User[]; hasMore: boolean; isLoading: boolean },
-      action: { payload: { users: User[]; hasMore: boolean } }
-    ) {
-      state.users = [...state.users, ...action.payload.users];
-      state.hasMore = action.payload.hasMore;
-      state.isLoading = false;
-    },
-    setLoading(state: { isLoading: boolean }, action: { payload: boolean }) {
-      state.isLoading = action.payload;
-    },
-    clearUsers(state) {
-      state.users = [];
-      state.hasMore = true;
-    },
-    updateLastFetchedAt(state, action: PayloadAction<string>) {
-      state.lastFetchedAt = action.payload;
-    },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchUsersThunk.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchUsersThunk.fulfilled,
+        (state, action: PayloadAction<User[]>) => {
+          state.isLoading = false;
+          state.users = action.payload;
+        },
+      )
+      .addCase(fetchUsersThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { setUsers, clearUsers, setLoading, addUsers, updateLastFetchedAt } = usersSlice.actions;
-
 export default usersSlice.reducer;
-
-export const fetchAndSetUsers = createAsyncThunk<
-  void,
-  { userId: string; reset?: boolean },
-  { state: RootState }
->('users/fetchAndSetUsers', async ({ userId, reset }, { dispatch, getState }) => {
-  try {
-    const state = getState();
-    if (state.users.isLoading) return;
-
-    dispatch(setLoading(true));
-
-    const { users, hasMore } = await fetchUsers(userId);
-    console.log('fetched users (slices/user.tsx) =>', users);
-
-    if (reset) {
-      dispatch(setUsers({ users, hasMore }));
-    } else {
-      dispatch(addUsers({ users, hasMore }));
-    }
-
-    const lastFetchedAt = new Date().toISOString();
-    dispatch(updateLastFetchedAt(lastFetchedAt));
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    dispatch(setLoading(false));
-  }
-});
-
-export const searchForUser = createAsyncThunk<
-  User[],
-  { searchText: string; excludeUserId: string },
-  { state: RootState }
->('users/searchForUser', async ({ searchText, excludeUserId }) => {
-  try {
-    const users = await searchUserInFirebase(searchText, excludeUserId);
-    return users;
-  } catch (error) {
-    console.error('Error searching for user:', error);
-    return [];
-  }
-});

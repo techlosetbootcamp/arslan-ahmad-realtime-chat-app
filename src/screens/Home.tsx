@@ -8,12 +8,14 @@ import RenderChatItem from '../components/RenderChatItem';
 import Loader from '../components/Loader';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const chats = useAppSelector(store => store.chat.chats);
-  console.log('chats:', chats);
+  const {chats, isLoading} = useAppSelector(store => store.chat);
+  const {users} = useAppSelector(store => store.users);
+
+  console.log('Users (Home.tsx) => ', users);
   return (
     <ContentViewer title="Home">
       <View style={styles.content}>
-        {Object.values(chats).length === 0 ? (
+        {isLoading ? (
           <View>
             <Loader color="#0000ff" />
           </View>

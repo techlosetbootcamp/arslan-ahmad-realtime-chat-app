@@ -14,6 +14,7 @@ import GoogleIcon from '../assets/icons/google_icon.png';
 import HelpIcon from '../assets/icons/help.png';
 import NotificationIcon from '../assets/icons/notification.png';
 import SplashScreen from '../assets/imgs/launch_screen.png';
+import EditIcon from '../assets/icons/edit.png';
 
 export {
   ActiveContactsIcon,
@@ -25,6 +26,7 @@ export {
   CrossBlackIcon,
   DisableContactsIcon,
   DisableMessageIcon,
+  EditIcon,
   GoogleIcon,
   HelpIcon,
   NotificationIcon,

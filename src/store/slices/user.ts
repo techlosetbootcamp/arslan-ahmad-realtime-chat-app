@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from '../store';
 import {createUser, fetchUser} from '../../services/firebase';
-import {FirestoreChat, User} from '../../types/firestoreService';
+import {User} from '../../types/firestoreService';
 
 export interface UserState {
   uid: string | null;
@@ -23,10 +23,20 @@ interface Chat {
 }
 
 interface Participant {
-  createdAt?: {toMillis: () => number} | null;
+  createdAt?: { toMillis: () => number } | null;
   uid: string;
   displayName: string;
   email: string;
+}
+
+interface UserData {
+  displayName?: string | null;
+  email?: string | null;
+  photoURL?: string | null;
+  description?: string | null;
+  status?: string | null;
+  contacts?: string[];
+  chats?: Chat[];
 }
 
 const initialState: UserState = {
@@ -46,6 +56,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<Partial<UserState> & {uid: string}>) {
+      
       Object.assign(state, action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {
@@ -75,27 +86,13 @@ export const fetchUserData =
           description: userData.description || null,
           status: userData.status || null,
           contacts: userData.contacts || [],
-          chats:
-            userData.chats?.map((chat: FirestoreChat) => ({
-              id: chat.id || '',
-              participants: chat.members,
-              lastMessage:
-                chat.messages?.[chat.messages.length - 1]?.text || '',
-              unreadMessages: 0,
-              notificationStatus: false,
-              lastActive:
-                chat.messages?.[chat.messages.length - 1]?.timestamp
-                  ?.toDate()
-                  .toISOString() || null,
-              participantsDetails: chat.members.map(member => ({
-                uid: member,
-                name: '',
-                createdAt:
-                  chat.messages?.[chat.messages.length - 1]?.timestamp
-                    ?.toDate()
-                    .toISOString() || '',
-              })),
-            })) || [],
+          chats: userData.chats?.map((chat: Chat) => ({
+        ...chat,
+        participantsDetails: chat.participantsDetails?.map((participant: Participant) => ({
+          ...participant,
+          createdAt: participant.createdAt?.toMillis() || null,
+        })),
+          })) || [],
         }),
       );
     }

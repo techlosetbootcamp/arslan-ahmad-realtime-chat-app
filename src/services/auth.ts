@@ -1,9 +1,5 @@
 import {FirebaseError} from '@firebase/util';
-import auth, {
-  createUserWithEmailAndPassword,
-  FirebaseAuthTypes,
-  signInWithCredential,
-} from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   getStorage,
   ref,

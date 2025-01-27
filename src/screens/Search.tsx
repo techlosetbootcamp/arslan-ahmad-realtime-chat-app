@@ -7,39 +7,29 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {addContact, fetchUsers} from '../services/firebase';
+import {addContact} from '../services/firebase';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../store/store';
-import {fetchUserData} from '../store/slices/user';
-import useContacts from '../hooks/useContact';
+import {useAppDispatch, useAppSelector} from '../store/store';
 
 const Search = () => {
   const [searchText, setSearchText] = useState<string>('');
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
-  const {contacts} = useContacts();
   const {user} = useAuth();
-  const dispatch: AppDispatch = useDispatch();
-
-  const fetchAllUsers = async () => {
-    if (user?.uid) {
-      const users = await fetchUsers(user?.uid);
-      setAllUsers(users);
-      setFilteredUsers(users);
-    }
-  };
+  const dispatch = useAppDispatch();
+  const {users: usersInStore} = useAppSelector(state => state.users);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(usersInStore);
+  const {contacts} = useAppSelector(state => state.contacts);
 
   const handleSearch = (text: string) => {
     setSearchText(text);
 
-    const filtered = allUsers.filter(
+    const filtered = usersInStore.filter(
       (user: User) =>
-        user.displayName?.toLowerCase().includes(text.toLowerCase()) ||
-        user.email?.toLowerCase().includes(text.toLowerCase()),
+        (user.displayName?.toLowerCase().includes(text.toLowerCase()) ||
+          user.email?.toLowerCase().includes(text.toLowerCase())) &&
+        !contacts.some(contact => contact.uid === user.uid),
     );
 
     const filteredGroups = groups.filter((group: any) =>
@@ -54,34 +44,23 @@ const Search = () => {
     try {
       if (contactId) {
         await addContact(user?.uid || '', contactId);
-        dispatch(fetchUserData(user?.uid || ''));
+        dispatch({type: 'contacts/addContact', payload: contactId});
       }
     } catch (error) {
       console.error('Error adding contact:', error);
     }
   };
 
-  useEffect(() => {
-    fetchAllUsers();
-  }, []);
-
-  useEffect(() => {
-    if (searchText === '') {
-      setFilteredUsers(allUsers);
-    }
-  }, [searchText]);
-
   const renderUserItem = ({item}: {item: User}) => {
-    const isContact = item?.uid
-      ? contacts.map(contact => contact.uid).includes(item?.uid)
-      : false;
+    const isContact = contacts.some(contact => contact.uid === item.uid);
+
     return (
       <View style={styles.itemContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image
             source={
               item.photoURL
-                ? { uri: item.photoURL }
+                ? {uri: item.photoURL}
                 : require('../assets/imgs/profile_placeholder_image.png')
             }
             style={styles.userImage}
@@ -104,8 +83,27 @@ const Search = () => {
 
   const renderGroupItem = ({item}: {item: any}) => (
     <View style={styles.itemContainer}>
-      <Image source={{uri: item.groupImage}} style={styles.userImage} />
-      <Text style={styles.userName}>{item.name}</Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View>
+          {item.participants
+            .slice(0, 4)
+            .map((participant: User, index: number) => (
+              <Image
+                key={index}
+                source={
+                  participant.photoURL
+                    ? {uri: participant.photoURL}
+                    : require('../assets/imgs/profile_placeholder_image.png')
+                }
+              />
+            ))}
+        </View>
+        <Text style={styles.userName}>
+          {item.participants
+            .map((participant: User) => participant.displayName)
+            .join(', ')}
+        </Text>
+      </View>
     </View>
   );
 

@@ -82,6 +82,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
         renderItem={({item}) => (
           <MessageBubble
             text={item.text}
+            photoURL={participant.photoURL || ''}
             isUserMessage={item.senderId === user?.uid}
             timestamp={
               item.timestamp ? new Date(item.timestamp).toLocaleString() : null

@@ -7,6 +7,8 @@ import {
   Alert,
   TouchableOpacity,
   KeyboardAvoidingView,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
@@ -16,7 +18,11 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {ScrollView} from 'react-native-gesture-handler';
-import {clearUser, setLoading} from '../store/slices/user';
+import {clearUser, setLoading, setUser} from '../store/slices/user';
+import {EditIcon} from '../constants/imgs';
+import {color} from '../constants/colors';
+import Loader from '../components/LoaderScreen';
+import Toast from 'react-native-toast-message';
 
 const initialState = {
   name: '',
@@ -27,25 +33,26 @@ const initialState = {
 
 const Profile: React.FC = () => {
   const {isLoading, ...user} = useAppSelector(state => state.user);
-  const [userData, setUserData] = useState(initialState);
+  const [userData, setUserData] = useState({
+    name: user.displayName || '',
+    email: user.email || '',
+    status: user.status || '',
+    imageUri: user.photoURL || '',
+  });
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (
-      user &&
-      (user.displayName !== userData.name ||
-        user.email !== userData.email ||
-        user.photoURL !== userData.imageUri)
-    ) {
-      setUserData({
-        name: user.displayName || '',
-        email: user.email || '',
-        status: user.status || '',
-        imageUri: user.photoURL || '',
-      });
-    }
-  }, [user, userData]);
+  // useEffect(() => {
+  //   if (user) {
+  //     setUserData({
+  //       name: user.displayName || '',
+  //       email: user.email || '',
+  //       status: user.status || '',
+  //       imageUri: user.photoURL || '',
+  //     });
+  //   }
+
+  // }, [user]);
 
   const handleInputChange = (field: string, value: string | null) => {
     setUserData(prevState => ({...prevState, [field]: value}));
@@ -109,7 +116,11 @@ const Profile: React.FC = () => {
         }));
       }
 
-      Alert.alert('Success', 'Profile image updated successfully');
+      if (user?.uid) {
+        dispatch(setUser({...user, photoURL: imageDataUri, uid: user.uid}));
+      }
+
+      Toast.show({type: "success", text1:"Updated...😎" ,text2:'Profile image updated successfully',});
     } catch (error) {
       console.error('Error handling image:', error);
       Alert.alert('Error', 'Failed to upload image');
@@ -146,10 +157,11 @@ const Profile: React.FC = () => {
         email: userData.email || '',
         status: userData.status || '',
       }));
-      console.log(userData);
-      console.log(user);
-
-      Alert.alert('Success', 'Profile updated successfully');
+      Toast.show({
+        type: 'success', 
+        text1: 'Hello!',
+        text2: 'Profile updated successfully',
+      });
     } catch (error) {
       console.error('Failed to update profile:', error);
       setError('Failed to update profile');
@@ -176,15 +188,24 @@ const Profile: React.FC = () => {
       <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
         <TouchableOpacity
           onPress={handlePickAndUploadImage}
+          activeOpacity={0.8}
           style={styles.header}>
-          <Image
-            source={
-              userData.imageUri
-                ? {uri: userData.imageUri}
-                : require('../assets/imgs/profile_placeholder_image.png')
-            }
-            style={styles.profileImage}
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Image
+              style={styles.profileImage}
+              source={
+                userData.imageUri
+                  ? {uri: userData.imageUri}
+                  : require('../assets/imgs/profile_placeholder_image.png')
+              }
+            />
+          )}
+
+          <View style={styles.editButton}>
+            <Image source={EditIcon} style={{width: 10, height: 10}} />
+          </View>
         </TouchableOpacity>
 
         <KeyboardAvoidingView style={{flex: 6, gap: 40, padding: 20}}>
@@ -238,6 +259,9 @@ const styles = StyleSheet.create({
     flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+    width: '40%',
+    alignSelf: 'center',
   },
   profileImage: {
     width: 100,
@@ -259,6 +283,18 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 14,
     marginTop: 10,
+  },
+  editButton: {
+    position: 'absolute',
+    bottom: 5,
+    right: 15,
+    width: 15,
+    height: 15,
+    borderRadius: 10,
+    padding: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: color.black,
   },
 });
 
