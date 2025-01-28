@@ -12,6 +12,14 @@ export const store = configureStore({
     contacts: contactsReducer,
     users: usersReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['chat/setChats'],
+        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
+        ignoredPaths: ['items.dates'],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

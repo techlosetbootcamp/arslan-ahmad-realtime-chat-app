@@ -12,6 +12,7 @@ import ActionText from '../components/ActionText';
 import { GoogleIcon } from '../constants/imgs';
 import { color } from '../constants/colors';
 import SimpleText from '../components/SimpleText';
+import { showToast } from '../components/Toast';
 
 type SignInProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -44,7 +45,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
   const SignUphandler = async () => {
     try {
       if (!userData.email || !userData.password || !userData.name) {
-        return Alert.alert('Error', 'Please fill in all fields');
+        return showToast('Error', 'Please fill in all fields', 'error');
       }
       const userCredential = await handleSignUp(
         userData.email,
@@ -52,12 +53,12 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
         userData.name,
       );
       if (userCredential) {
-        Alert.alert('Success', 'You are successfully logged in!');
+        showToast('Success', 'You are successfully logged in!', 'success');
         setUserData(initialState);
         navigation.navigate('MainTabs');
       }
     } catch {
-      Alert.alert('Error', error || 'An unknown error occurred');
+      showToast('Error', error || 'An unknown error occurred', 'error');
     }
   };
 

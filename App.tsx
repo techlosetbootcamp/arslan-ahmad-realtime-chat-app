@@ -6,6 +6,7 @@ import Navigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
+import Toast from 'react-native-toast-message';
 
 const App = () => {
   useEffect(() => {
@@ -18,6 +19,7 @@ const App = () => {
         <Provider store={store}>
           <NavigationContainer>
             <Navigation />
+            <Toast />
           </NavigationContainer>
         </Provider>
       </GestureHandlerRootView>

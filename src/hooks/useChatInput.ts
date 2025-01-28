@@ -91,7 +91,6 @@ const useChat = () => {
       );
     } catch (error) {
       console.error('Error sending message:', error);
-      throw error;
     }
   };
   return {handleCamera, handleSelectImages};

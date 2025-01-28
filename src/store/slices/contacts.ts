@@ -23,12 +23,9 @@ export const fetchContactsThunk = createAsyncThunk(
       const currentUser = state.user;
       const userContacts = currentUser.contacts;
 
-      const filteredContacts = allUsers.filter(user => {
-        if (user?.uid) {
-          userContacts.includes(user.uid);
-        }
-      });
-      console.log('Filtered contacts (slice) =>', filteredContacts);
+      const filteredContacts = allUsers.filter(
+        user => user && user.uid && userContacts.includes(user.uid),
+      );
       return filteredContacts;
     } catch (error) {
       return rejectWithValue('Failed to filter contacts');
@@ -36,23 +33,45 @@ export const fetchContactsThunk = createAsyncThunk(
   },
 );
 
+export const addContact = createAsyncThunk<
+  User | undefined,
+  string,
+  {state: RootState}
+>('contacts/addContact', async (uid, {getState, rejectWithValue}) => {
+  const allUsers = getState().users.users;
+
+  const userToAdd = allUsers.find(user => user.uid === uid);
+
+  if (!userToAdd) {
+    console.error('User not found in users slice:', uid);
+    return rejectWithValue('User not found');
+  }
+
+  return userToAdd;
+});
+
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {
-    addContact: (state, action: PayloadAction<User>) => {
-      const alreadyExists = state.contacts.some(
-        contact => contact.uid === action.payload.uid,
-      );
-      if (!alreadyExists) {
-        state.contacts.push(action.payload);
-      }
-    },
     setContactsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
   },
   extraReducers: builder => {
+    builder.addCase(addContact.fulfilled, (state, action) => {
+      if (action.payload) {
+        const isAlreadyContact = state.contacts.some(
+          contact => contact.uid === action.payload?.uid,
+        );
+
+        if (!isAlreadyContact) {
+          state.contacts.push(action.payload);
+        } else {
+          console.warn('User is already in contacts:', action.payload);
+        }
+      }
+    });
     builder.addCase(fetchContactsThunk.pending, state => {
       state.loading = true;
       state.error = null;
@@ -71,6 +90,6 @@ const contactsSlice = createSlice({
   },
 });
 
-export const {addContact, setContactsLoading} = contactsSlice.actions;
+export const {setContactsLoading} = contactsSlice.actions;
 
 export default contactsSlice.reducer;

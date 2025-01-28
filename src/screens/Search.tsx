@@ -15,14 +15,11 @@ import {useAppDispatch, useAppSelector} from '../store/store';
 
 const Search = () => {
   const [searchText, setSearchText] = useState<string>('');
-  const [groups, setGroups] = useState<any[]>([]);
   const {user} = useAuth();
   const dispatch = useAppDispatch();
   const {users: usersInStore} = useAppSelector(state => state.users);
   const [filteredUsers, setFilteredUsers] = useState<User[]>(usersInStore);
   const {contacts} = useAppSelector(state => state.contacts);
-
-  console.log('Users (Search.tsx) =>', user);
 
   const handleSearch = (text: string) => {
     setSearchText(text);
@@ -39,8 +36,8 @@ const Search = () => {
   const handleAddContact = async (contactId: string) => {
     try {
       if (contactId) {
-        await addContact(user?.uid || '', contactId);
         dispatch({type: 'contacts/addContact', payload: contactId});
+        await addContact(user?.uid || '', contactId);
       }
     } catch (error) {
       console.error('Error adding contact:', error);

@@ -1,18 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Image,
-  Alert,
   TouchableOpacity,
   KeyboardAvoidingView,
-  ActivityIndicator,
-  ToastAndroid,
 } from 'react-native';
 import InputField from '../components/InputField';
 import ActionButton from '../components/ActionButton';
-import {logoutUser, updateUserProfile} from '../services/auth';
+import {logoutUser} from '../services/auth';
 import firestore from '@react-native-firebase/firestore';
 import {launchImageLibrary} from 'react-native-image-picker';
 import ContentViewer from '../components/ContentViewer';
@@ -22,14 +19,8 @@ import {clearUser, setLoading, setUser} from '../store/slices/user';
 import {EditIcon} from '../constants/imgs';
 import {color} from '../constants/colors';
 import Loader from '../components/LoaderScreen';
-import Toast from 'react-native-toast-message';
-
-const initialState = {
-  name: '',
-  email: '',
-  status: '',
-  imageUri: '',
-};
+import {updateUserProfile} from '../services/user';
+import {showToast} from '../components/Toast';
 
 const Profile: React.FC = () => {
   const {isLoading, ...user} = useAppSelector(state => state.user);
@@ -74,9 +65,10 @@ const Profile: React.FC = () => {
       }
 
       if (response.errorCode) {
-        Alert.alert(
+        showToast(
           'Image Picker Error',
           response.errorMessage || 'Unknown error',
+          'error',
         );
         setLoading(false);
         return;
@@ -84,7 +76,7 @@ const Profile: React.FC = () => {
 
       const imageBase64 = response.assets?.[0].base64;
       if (!imageBase64) {
-        Alert.alert('Error', 'Failed to get image data');
+        showToast('Error', 'Failed to get image data', 'error');
         setLoading(false);
         return;
       }
@@ -119,11 +111,9 @@ const Profile: React.FC = () => {
       if (user?.uid) {
         dispatch(setUser({...user, photoURL: imageDataUri, uid: user.uid}));
       }
-
-      Toast.show({type: "success", text1:"Updated...😎" ,text2:'Profile image updated successfully',});
     } catch (error) {
       console.error('Error handling image:', error);
-      Alert.alert('Error', 'Failed to upload image');
+      showToast('Error', 'Failed to upload image', 'error');
     } finally {
       setLoading(false);
     }
@@ -157,14 +147,13 @@ const Profile: React.FC = () => {
         email: userData.email || '',
         status: userData.status || '',
       }));
-      Toast.show({
-        type: 'success', 
-        text1: 'Hello!',
-        text2: 'Profile updated successfully',
-      });
     } catch (error) {
-      console.error('Failed to update profile:', error);
-      setError('Failed to update profile');
+      console.error('Failed to update profile (Profile.tsx):', error);
+      showToast(
+        'Failed to update profile',
+        'There are some issue, that your profile is not updated. Please try again later.',
+        'error',
+      );
     } finally {
       setLoading(false);
     }
@@ -177,7 +166,7 @@ const Profile: React.FC = () => {
       dispatch(clearUser());
     } catch (error) {
       console.error('Failed to logout:', error);
-      Alert.alert('Error', 'Failed to logout');
+      showToast('Error', 'Failed to logout', 'error');
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,14 @@
-import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {ActionButtonProps} from '../types/actionButton';
+import {showToast} from './Toast';
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
@@ -54,9 +61,10 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
 }) => {
   const handleClick = () => {
     error
-      ? Alert.alert(
+      ? showToast(
           'Error',
           typeof error === 'string' ? error : 'An unknown error occurred',
+          'error',
         )
       : onClick();
   };

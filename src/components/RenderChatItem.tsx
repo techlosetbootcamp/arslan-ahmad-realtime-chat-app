@@ -15,6 +15,7 @@ import {getRelativeTime} from '../constants/sideFucntions';
 import {Swipeable} from 'react-native-gesture-handler';
 import {color} from '../constants/colors';
 import {NotificationWhiteIcon} from '../constants/imgs';
+import { showToast } from './Toast';
 
 interface RenderChatItemProps {
   item: Chat;
@@ -53,8 +54,8 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
   };
 
   const lastActivityTime = getRelativeTime(item.lastActive);
-  const isUnreadMsgs = item?.unreadMessages || null;
   const [isSwiped, setIsSwiped] = useState(false);
+  console.log('Chat item =>', item.unreadMessages);
 
   const renderRightActions = (
     progressAnimatedValue: Animated.AnimatedInterpolation<string | number>,
@@ -72,15 +73,17 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
     const handleDelete = (chatId: string) => {
       console.log('Delete chat with id: ', chatId);
     };
-    const handleDisable = (chatId: string) => {
-      console.log('Disable chat with id: ', chatId);
+
+    const handleNotiClick = (chatId: string) => {
+      showToast('Notification clicked', 'Chat notification clicked', 'success');
+      console.log('Notification clicked for chat with id: ', chatId);
     };
 
     return (
       <View style={slider.rightActions}>
         <TouchableOpacity
           style={[slider.actionButton, slider.notificationButton]}
-          onPress={() => handleDisable(item.id)}>
+          onPress={() => handleNotiClick(item.id)}>
           <Animated.Text style={[slider.actionText, {transform: [{scale}]}]}>
             <Image
               source={
@@ -146,14 +149,15 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
             <Text style={{color: '#ccc', fontSize: 12}}>
               {lastActivityTime}
             </Text>
-            {isUnreadMsgs !== 0 && (
+            {item.unreadMessages !== 0 && (
               <Text
                 style={{
                   backgroundColor: color.red,
-                  paddingHorizontal: 10,
-                  paddingVertical: 4,
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
                   borderRadius: 20,
-                  color: '#fff',}}>
+                  color: '#fff',
+                }}>
                 {item.unreadMessages}
               </Text>
             )}

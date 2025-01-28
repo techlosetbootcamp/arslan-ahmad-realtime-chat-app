@@ -46,17 +46,21 @@ export const fetchContacts = (
 };
 
 export const addContact = async (userId: string, contactId: string) => {
-  await firestore()
-    .collection('users')
-    .doc(userId)
-    .update({
-      contacts: firestore.FieldValue.arrayUnion(contactId),
-    });
+  try {
+    await firestore()
+      .collection('users')
+      .doc(userId)
+      .update({
+        contacts: firestore.FieldValue.arrayUnion(contactId),
+      });
 
-  await firestore()
-    .collection('users')
-    .doc(contactId)
-    .update({
-      contacts: firestore.FieldValue.arrayUnion(userId),
-    });
+    await firestore()
+      .collection('users')
+      .doc(contactId)
+      .update({
+        contacts: firestore.FieldValue.arrayUnion(userId),
+      });
+  } catch (error) {
+    console.error('Error adding contact:', error);
+  }
 };

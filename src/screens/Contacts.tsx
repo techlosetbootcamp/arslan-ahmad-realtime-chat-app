@@ -9,8 +9,6 @@ import { useAppSelector } from '../store/store';
 const ContactsScreen: React.FC = () => {
   const {sections} = useContacts();
   const {contacts, loading} = useAppSelector(state => state.contacts);
-  console.log('Contacts => ', contacts);
-
   return (
     <ContentViewer title="Contacts">
       <Text style={styles.pageHead}>My Contacts</Text>

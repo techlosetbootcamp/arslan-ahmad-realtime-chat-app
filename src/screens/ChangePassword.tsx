@@ -7,6 +7,7 @@ import ContentViewer from '../components/ContentViewer';
 import ActionButton from '../components/ActionButton';
 import {color} from '../constants/colors';
 import {FirebaseError} from '@firebase/util';
+import {showToast} from '../components/Toast';
 
 const initialState = {
   currentPassword: '',
@@ -23,50 +24,51 @@ const ForgotPasswordScreen = () => {
     const {currentPassword, newPassword, confirmPassword} = passwords;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      Alert.alert('Error', 'All fields are required.');
+      showToast('Error', 'All fields are required.', 'error');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords & Confirm Password are different.');
+      showToast(
+        'Error',
+        'Passwords & Confirm Password are different.',
+        'error',
+      );
       return;
     }
     if (!user) {
-      Alert.alert('Error', 'No authenticated user found.');
+      showToast('Error', 'No authenticated user found.', 'error');
       return;
     }
 
     try {
       if (!user.email) {
-        Alert.alert('Error', 'No email found for the user.');
+        showToast('Error', 'No email found for the user.', 'error');
         return;
       }
       const credential = auth.EmailAuthProvider.credential(
         user.email,
-        currentPassword, // User-provided current password
+        currentPassword,
       );
       await user.reauthenticateWithCredential(credential);
 
       await user.updatePassword(newPassword);
 
-      Alert.alert('Success', 'Password updated successfully!', [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('Profile'),
-        },
-      ]);
+      showToast('Success', 'Password updated successfully!', 'success');
+      navigation.navigate('Profile');
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/wrong-password') {
-          Alert.alert('Error', 'The current password is incorrect.');
+          showToast('Error', 'The current password is incorrect.', 'error');
         } else {
-          Alert.alert(
+          showToast(
             'Error',
             'Failed to update the password. Please try again.',
+            'error',
           );
         }
       } else {
-        Alert.alert('Error', 'An unexpected error occurred.');
+        showToast('Error', 'An unexpected error occurred.', 'error');
       }
     }
   };
@@ -98,7 +100,7 @@ const ForgotPasswordScreen = () => {
       </View>
       <View>
         <ActionButton
-          color={color.main}
+          color={color.primary}
           onLoadText="Resetting Password..."
           onClick={handlePasswordReset}>
           Reset Password

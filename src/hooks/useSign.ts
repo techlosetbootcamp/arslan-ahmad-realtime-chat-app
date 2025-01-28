@@ -1,3 +1,4 @@
+import {showToast} from './../components/Toast';
 import {useEffect, useState} from 'react';
 import appNavigate from './useNavigation';
 import appAuth from './useAuth';
@@ -30,18 +31,18 @@ const appSign = () => {
   const handleSignIn = async () => {
     try {
       if (!signInData.email || !signInData.password) {
-        return Alert.alert('Error', 'Please fill in all fields');
+        return showToast('Error', 'Please fill in all fields', 'error');
       }
       const userCredential = await handleLogin(
         signInData.email,
         signInData.password,
       );
       if (userCredential) {
-        Alert.alert('Success', 'You are successfully logged in!');
+        showToast('Success', 'You are successfully logged in!', 'success');
         setSignInData(initialState);
       }
     } catch {
-      Alert.alert('Error', error || 'An unknown error occurred');
+      showToast('Error', error || 'An unknown error occurred', 'error');
     }
   };
 

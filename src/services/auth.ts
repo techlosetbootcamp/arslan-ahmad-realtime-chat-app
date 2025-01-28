@@ -1,13 +1,12 @@
 import {FirebaseError} from '@firebase/util';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {
-  removeUserFromStorage,
-  saveUserToStorage,
-} from './async_storage';
+import {removeUserFromStorage, saveUserToStorage} from './async_storage';
 import {User} from '../types/firestoreService';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Alert} from 'react-native';
+import {setUser, UserState} from '../store/slices/user';
+import {showToast} from '../components/Toast';
 
 export const observeAuthState = (
   callback: (user: User | null) => void,
@@ -64,24 +63,23 @@ export const login = async (
         throw new Error('User document not found in Firestore.');
       }
 
-      const userData = userDoc.data();
+      const userDataFromFirestore = userDoc.data();
 
-      const user: User = {
+      const userData: User = {
         uid: firebaseUser.uid,
-        displayName: userData?.displayName || '',
+        displayName:
+          firebaseUser.displayName || userDataFromFirestore?.displayName || '',
         email: firebaseUser.email || '',
-        photoURL: userData?.photoURL || null,
-        status: userData?.status || null,
+        photoURL:
+          firebaseUser.photoURL || userDataFromFirestore?.photoURL || null,
+        status: userDataFromFirestore?.status || null,
+        chats: userDataFromFirestore?.chats || [],
+        contacts: userDataFromFirestore?.contacts || [],
       };
 
-      console.log(
-        'User logged in:',
-        user.displayName + ' (' + user.email + ')',
-      );
-
-      await saveUserToStorage(user);
+      await saveUserToStorage(userData);
     }
-
+    showToast('Success', 'Logged in successfully... 🌟', 'success');
     return userCredential;
   } catch (error) {
     if (
@@ -92,19 +90,27 @@ export const login = async (
         .code;
       switch (errorCode) {
         case 'auth/user-not-found':
-          Alert.alert('Login Failed', 'No user found with this email.');
+          showToast('Login Failed', 'No user found with this email.', 'error');
           break;
         case 'auth/wrong-password':
-          Alert.alert('Login Failed', 'Incorrect password. Please try again.');
+          showToast(
+            'Login Failed',
+            'Incorrect password. Please try again.',
+            'error',
+          );
           break;
         case 'auth/invalid-email':
-          Alert.alert('Login Failed', 'Invalid email address format.');
+          showToast('Login Failed', 'Invalid email address format.', 'error');
           break;
         case 'auth/invalid-credential':
-          Alert.alert('Login Failed', 'User not found... Please sign up.');
+          showToast(
+            'Login Failed',
+            'User not found... Please sign up.',
+            'error',
+          );
           break;
         default:
-          Alert.alert('Login Failed', 'Please recheck inputs...');
+          showToast('Login Failed', 'Please recheck inputs...', 'error');
       }
     }
     return null;
@@ -141,6 +147,7 @@ export const signUp = async (
 
     console.log('User saved in Database...');
     await saveUserToStorage(userDoc);
+    showToast('Success', 'Account created successfully... 🤠', 'success');
     return userCredential;
   } catch (error) {
     console.error('Sign-up failed:', error);
@@ -148,19 +155,20 @@ export const signUp = async (
       const errorCode = error.code;
       switch (errorCode) {
         case 'auth/email-already-in-use':
-          Alert.alert('Sign-Up Failed', 'Email is already in use.');
+          showToast('Sign-Up Failed', 'Email is already in use.', 'error');
           break;
         case 'auth/invalid-email':
-          Alert.alert('Sign-Up Failed', 'Invalid email address format.');
+          showToast('Sign-Up Failed', 'Invalid email address format.', 'error');
           break;
         case 'auth/weak-password':
-          Alert.alert(
+          showToast(
             'Sign-Up Failed',
             'Password is too weak. Please use a stronger password.',
+            'error',
           );
           break;
         default:
-          Alert.alert('Sign-Up Failed', 'An unexpected error occurred.');
+          showToast('Sign-Up Failed', 'An unexpected error occurred.', 'error');
       }
     }
     return null;
@@ -179,41 +187,52 @@ export const signInWithGoogle = async () => {
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
     const userCredential = await auth().signInWithCredential(googleCredential);
-
     const {uid, email, displayName, photoURL} = userCredential.user;
 
-    await firestore().collection('users').doc(uid).set(
-      {
+    const userDocRef = firestore().collection('users').doc(uid);
+    const userDocSnapshot = await userDocRef.get();
+
+    let userData: User;
+
+    if (userDocSnapshot.exists) {
+      const firestoreData = userDocSnapshot.data();
+      userData = {
+        uid,
+        email: email || firestoreData?.email || null,
+        displayName: displayName || firestoreData?.displayName || null,
+        photoURL: photoURL || firestoreData?.photoURL || null,
+        status: firestoreData?.status || null,
+        chats: firestoreData?.chats || [],
+        contacts: firestoreData?.contacts || [],
+      };
+    } else {
+      userData = {
+        uid,
+        email,
+        displayName,
+        photoURL,
+        status: null,
+        chats: [],
+        contacts: [],
+      };
+
+      await userDocRef.set({
         uid,
         email,
         displayName,
         photoURL,
         lastLogin: firestore.FieldValue.serverTimestamp(),
-      },
-      {merge: true},
-    );
-
-    console.log('User signed in and saved successfully:', {
-      uid,
-      email,
-      displayName,
-      photoURL,
-    });
-    const userDoc: User = {
-      uid,
-      displayName,
-      email,
-      status: null,
-      photoURL,
-      chats: [],
-      contacts: [],
-    };
-
-    await saveUserToStorage(userDoc);
-    return userCredential.user;
+      });
+    }
+    await saveUserToStorage(userData);
+    showToast('Success', 'Logged in successfully... 😎', 'success');
+    return userCredential.user as Partial<UserState> & {uid: string};
   } catch (error) {
     if (error instanceof FirebaseError) {
       console.error('Error during Google Sign-In:', error.message);
+      throw error;
+    } else {
+      console.error('Error during Google Sign-In:', error);
       throw error;
     }
   }
@@ -229,9 +248,10 @@ export const logoutUser = async () => {
     }
     await auth().signOut();
     await removeUserFromStorage();
+    showToast('Success', 'Logged out successfully... 🙂', 'success');
   } catch (error) {
     console.error('Failed to log out:', error);
-    Alert.alert('Error', 'Failed to log out');
+    showToast('Error', 'Failed to log out', 'error');
   } finally {
   }
 };
