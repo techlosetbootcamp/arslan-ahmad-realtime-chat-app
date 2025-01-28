@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {addContact} from '../services/firebase';
+import {addContact} from '../services/contacts';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
@@ -22,22 +22,18 @@ const Search = () => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>(usersInStore);
   const {contacts} = useAppSelector(state => state.contacts);
 
+  console.log('Users (Search.tsx) =>', user);
+
   const handleSearch = (text: string) => {
     setSearchText(text);
 
     const filtered = usersInStore.filter(
       (user: User) =>
-        (user.displayName?.toLowerCase().includes(text.toLowerCase()) ||
-          user.email?.toLowerCase().includes(text.toLowerCase())) &&
-        !contacts.some(contact => contact.uid === user.uid),
-    );
-
-    const filteredGroups = groups.filter((group: any) =>
-      group.name.toLowerCase().includes(text.toLowerCase()),
+        user.displayName?.toLowerCase().includes(text.toLowerCase()) ||
+        user.email?.toLowerCase().includes(text.toLowerCase()),
     );
 
     setFilteredUsers(filtered);
-    setGroups(filteredGroups);
   };
 
   const handleAddContact = async (contactId: string) => {
@@ -53,7 +49,6 @@ const Search = () => {
 
   const renderUserItem = ({item}: {item: User}) => {
     const isContact = contacts.some(contact => contact.uid === item.uid);
-
     return (
       <View style={styles.itemContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -80,33 +75,6 @@ const Search = () => {
       </View>
     );
   };
-
-  const renderGroupItem = ({item}: {item: any}) => (
-    <View style={styles.itemContainer}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View>
-          {item.participants
-            .slice(0, 4)
-            .map((participant: User, index: number) => (
-              <Image
-                key={index}
-                source={
-                  participant.photoURL
-                    ? {uri: participant.photoURL}
-                    : require('../assets/imgs/profile_placeholder_image.png')
-                }
-              />
-            ))}
-        </View>
-        <Text style={styles.userName}>
-          {item.participants
-            .map((participant: User) => participant.displayName)
-            .join(', ')}
-        </Text>
-      </View>
-    </View>
-  );
-
   const renderNoResultsMessage = (type: 'People' | 'Group') => (
     <View style={styles.noResultsContainer}>
       <Text style={styles.noResultsText}>No {type} found</Text>
@@ -129,18 +97,6 @@ const Search = () => {
           />
         ) : (
           renderNoResultsMessage('People')
-        )}
-
-        {/* Group Results */}
-        <Text style={styles.sectionTitle}>Groups</Text>
-        {groups.length > 0 ? (
-          <FlatList
-            data={groups}
-            keyExtractor={item => item.id}
-            renderItem={renderGroupItem}
-          />
-        ) : (
-          renderNoResultsMessage('Group')
         )}
       </View>
     </View>

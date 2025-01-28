@@ -1,4 +1,4 @@
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ActivityIndicator} from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {ActionButtonProps} from '../types/actionButton';
@@ -72,7 +72,7 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
           color: 'white',
           fontWeight: 600,
         }}>
-        {!error && loader ? onLoadText : children}
+        {!error && loader ? <ActivityIndicator color="#fff" /> : children}
       </Text>
     </TouchableOpacity>
   );

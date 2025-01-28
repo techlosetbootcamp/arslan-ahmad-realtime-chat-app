@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../store/store";
 import useAuth from "./useAuth";
-import { fetchMessages, listenToMessages, sendMessage } from "../services/firebase";
+import { fetchMessages, listenToMessages, sendMessage } from "../services/user";
 import { useEffect, useState } from "react";
 
 

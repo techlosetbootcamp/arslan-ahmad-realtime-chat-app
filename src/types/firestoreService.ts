@@ -28,7 +28,7 @@ export interface Message {
   senderId: string;
   text: string;
   contentType: string;
-  timestamp: any;
+  timestamp: FirebaseFirestoreTypes.Timestamp | null;
   status: {
     sender: string;
     receiver: string;
@@ -38,9 +38,9 @@ export interface Message {
 export interface Chat {
   id: string;
   participants: string[];
-  lastMessage: string; 
+  lastMessage: string;
   unreadMessages: number;
   notificationStatus: boolean;
-  lastActive: string | null; 
-  participantsDetails: { uid: string; name: string; createdAt: string }[];
+  lastActive: string | null;
+  participantsDetails: {uid: string; name: string; createdAt: string}[];
 }

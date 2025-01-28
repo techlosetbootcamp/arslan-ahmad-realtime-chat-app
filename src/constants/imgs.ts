@@ -13,8 +13,10 @@ import CrossBlackIcon from '../assets/icons/cross_dark.png';
 import GoogleIcon from '../assets/icons/google_icon.png';
 import HelpIcon from '../assets/icons/help.png';
 import NotificationIcon from '../assets/icons/notification.png';
+import NotificationWhiteIcon from '../assets/icons/notification_light.png';
 import SplashScreen from '../assets/imgs/launch_screen.png';
 import EditIcon from '../assets/icons/edit.png';
+import DeleteIcon from '../assets/icons/delete.png';
 
 export {
   ActiveContactsIcon,
@@ -24,12 +26,14 @@ export {
   BlackBackIcon,
   CameraIcon,
   CrossBlackIcon,
+  DeleteIcon,
   DisableContactsIcon,
   DisableMessageIcon,
   EditIcon,
   GoogleIcon,
   HelpIcon,
   NotificationIcon,
+  NotificationWhiteIcon,
   PaperClipIcon,
   PlaceholderImg,
   SearchIcon,

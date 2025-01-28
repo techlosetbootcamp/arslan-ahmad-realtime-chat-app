@@ -5,7 +5,7 @@ import {
   fetchMessages,
   listenToMessages,
   sendMessage,
-} from '../services/firebase';
+} from '../services/messages';
 import MessageBubble from '../components/MessageBubble';
 import ChatInput from '../components/ChatInput';
 import useAuth from '../hooks/useAuth';
@@ -42,6 +42,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
   }, [chatId, dispatch]);
 
   const handleSend = async () => {
+    setNewMessage('');
     if (newMessage.trim()) {
       dispatch({
         type: 'chat/addMessage',
@@ -67,7 +68,6 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
       setNewMessage('');
     }
   };
-  console.log('participant => ', participant);
 
   return (
     <View style={styles.container}>
@@ -85,7 +85,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
             photoURL={participant.photoURL || ''}
             isUserMessage={item.senderId === user?.uid}
             timestamp={
-              item.timestamp ? new Date(item.timestamp).toLocaleString() : null
+              item.timestamp ? new Date(item.timestamp.toDate()).toLocaleString() : null
             }
           />
         )}
@@ -95,6 +95,8 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
         value={newMessage}
         onChangeText={setNewMessage}
         onSend={handleSend}
+        recvId={participant.uid}
+        senderId={user?.uid || ''}
       />
     </View>
   );

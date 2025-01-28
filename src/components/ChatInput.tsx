@@ -7,13 +7,15 @@ const ChatInput: React.FC<{
   value: string;
   onChangeText: (text: string) => void;
   onSend: () => void;
-}> = ({value, onChangeText, onSend}) => {
+  recvId: string;
+  senderId: string;
+}> = ({value, onChangeText, onSend, recvId: chatId, senderId}) => {
   const {handleSelectImages, handleCamera} = useChatInput();
 
   return (
     <View style={styles.inputContainer}>
       <TouchableOpacity
-        onPress={handleSelectImages}
+        onPress={() => handleSelectImages(chatId, senderId)}
         style={styles.attachmentButton}>
         <Image
           source={require('../assets/icons/clip.png')}
@@ -37,7 +39,9 @@ const ChatInput: React.FC<{
           />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={handleCamera} style={styles.cameraButton}>
+      <TouchableOpacity
+        onPress={() => handleCamera(chatId, senderId)}
+        style={styles.cameraButton}>
         <Image
           source={require('../assets/icons/camera.png')}
           style={styles.cameraIcon}

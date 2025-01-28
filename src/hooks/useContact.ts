@@ -1,23 +1,21 @@
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchContactsThunk} from '../store/slices/contacts';
 import {User} from '../types/firestoreService';
 import useAuth from './useAuth';
-import {AppDispatch, RootState} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {fetchContactsThunk, setContactsLoading} from '../store/slices/contacts';
 
 const useContacts = () => {
   const [sections, setSections] = useState<{title: string; data: User[]}[]>([]);
   const {user} = useAuth();
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const {contacts, loading, error} = useSelector(
-    (state: RootState) => state.contacts,
-  );
-
+  const {contacts, error} = useAppSelector(state => state.contacts);
 
   useEffect(() => {
     if (user?.uid) {
+      setContactsLoading(true);
       dispatch(fetchContactsThunk(user?.uid));
+      setContactsLoading(false);
     }
   }, [user?.uid, dispatch]);
 
@@ -27,7 +25,7 @@ const useContacts = () => {
     }
   }, [contacts]);
 
-  return {contacts, sections, loading, error};
+  return {contacts, sections, error};
 };
 
 const groupContactsByAlphabet = (contacts: User[]) => {

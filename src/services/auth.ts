@@ -1,17 +1,9 @@
 import {FirebaseError} from '@firebase/util';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from 'firebase/storage';
-import {getAuth} from 'firebase/auth';
-import {
-  getUserFromStorage,
   removeUserFromStorage,
   saveUserToStorage,
-} from './authHelpers';
+} from './async_storage';
 import {User} from '../types/firestoreService';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -241,70 +233,5 @@ export const logoutUser = async () => {
     console.error('Failed to log out:', error);
     Alert.alert('Error', 'Failed to log out');
   } finally {
-  }
-};
-
-export const updateUserProfile = async ({
-  name,
-  email,
-}: {
-  name: string;
-  email: string;
-}) => {
-  const currentUser = auth().currentUser;
-
-  if (!currentUser) throw new Error('User is not authenticated');
-
-  await currentUser.updateProfile({
-    displayName: name,
-  });
-
-  if (email && email !== currentUser.email) {
-    await currentUser.updateEmail(email);
-  }
-
-  await firestore().collection('users').doc(currentUser.uid).update({
-    displayName: name,
-    email: email,
-  });
-};
-
-export const uploadProfileImage = async (imageUri: string) => {
-  const user = getAuth().currentUser;
-  if (!user) throw new Error('No user is logged in');
-
-  const storage = getStorage();
-  const imageName = user.uid + '_profile_image';
-  const imageRef = ref(storage, 'profile_images/' + imageName);
-
-  const response = await fetch(imageUri);
-  const blob = await response.blob();
-
-  const uploadTask = uploadBytesResumable(imageRef, blob);
-
-  return new Promise<string>((resolve, reject) => {
-    uploadTask.on(
-      'state_changed',
-      null,
-      error => reject(error),
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-          resolve(downloadURL);
-        });
-      },
-    );
-  });
-};
-
-export const getCurrentUserProfile = async () => {
-  try {
-    const user = await getUserFromStorage();
-    if (!user) {
-      console.log('No user profile found in storage.');
-    }
-    return user;
-  } catch (error) {
-    console.error('Failed to get user profile from storage:', error);
-    throw error;
   }
 };

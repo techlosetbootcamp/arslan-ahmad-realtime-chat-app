@@ -7,14 +7,14 @@ import Loader from '../components/Loader';
 import { useAppSelector } from '../store/store';
 
 const ContactsScreen: React.FC = () => {
-  const {contacts, sections} = useContacts();
-  const userContacts = useAppSelector(state => state.user.contacts);
-  console.log('Contacts => ', userContacts);
+  const {sections} = useContacts();
+  const {contacts, loading} = useAppSelector(state => state.contacts);
+  console.log('Contacts => ', contacts);
 
   return (
     <ContentViewer title="Contacts">
       <Text style={styles.pageHead}>My Contacts</Text>
-      {contacts.length === 0 ? (
+      {contacts.length === 0 && loading ? (
         <View>
           <Loader />
         </View>

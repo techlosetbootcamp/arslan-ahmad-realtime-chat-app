@@ -8,18 +8,19 @@ import Profile from '../screens/Profile';
 import {RootStackParamList} from '../types/navigation';
 import Search from '../screens/Search';
 import BottomTabsNavigator from './BottomTabsNavigator';
-import {getUserFromStorage} from '../services/authHelpers';
+import {getUserFromStorage} from '../services/async_storage';
 import {setLoading, setUser} from '../store/slices/user';
 import {setLoading as setChatLoading} from '../store/slices/chats';
 import LoaderScreen from '../components/LoaderScreen';
 import ChangePassword from '../screens/ChangePassword';
 import ChatScreen from '../screens/Chat';
 import ForgetPassword from '../screens/ForgetPassword';
-// import {fetchContactsThunk} from '../store/slices/contacts';
-import {fetchChats, fetchUsers} from '../services/firebase';
+import {fetchUsers} from '../services/user';
 import {Chat} from '../types/firestoreService';
 import {setChats} from '../store/slices/chats';
 import {observeAuthState} from '../services/auth';
+import {fetchContactsThunk} from '../store/slices/contacts';
+import { fetchChats } from '../services/chats';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -36,9 +37,7 @@ const Navigation = () => {
       if (user?.uid && usersInStore.length === 0) {
         const users = await fetchUsers(user?.uid);
         dispatch({type: 'users/setAllUsers', payload: users});
-        console.log('Fetched and setted Users...');
       }
-      console.log('Users in store:', usersInStore);
     };
     fetchAllUsers();
   }, [user?.uid, usersInStore.length, dispatch]);
@@ -52,7 +51,7 @@ const Navigation = () => {
             dispatch(setUser({...firebaseUser, uid: firebaseUser.uid!}));
           }
           if (firebaseUser.uid) {
-            // await dispatch(fetchContactsThunk(firebaseUser.uid));
+            await dispatch(fetchContactsThunk(firebaseUser.uid));
           }
         }
         dispatch(setLoading(false));
@@ -62,6 +61,7 @@ const Navigation = () => {
     checkAuthState();
   }, [dispatch]);
 
+  // Fetch user from storage
   useEffect(() => {
     const checkUserSession = async () => {
       dispatch(setLoading(true));
@@ -74,15 +74,8 @@ const Navigation = () => {
     };
     checkUserSession();
   }, [dispatch]);
-  console.log('user (StackNavigation.tsx) =>', user);
 
-  useEffect(() => {
-    if (user?.uid) {
-      // dispatch(fetchContactsThunk(user?.uid));
-    }
-    console.log('user (StackNavigation.tsx) =>', user);
-  }, [user?.uid, dispatch]);
-
+  // Fetch chats
   useEffect(() => {
     if (userId) {
       dispatch(setChatLoading(true));
@@ -100,6 +93,7 @@ const Navigation = () => {
   if (!isAuthChecked || userLoader || chatLoader) {
     return <LoaderScreen />;
   }
+  console.log('%c User (StackNavigation.tsx) =>', "font-size:20px;color:orange;", user);
 
   return user.uid ? (
     <Stack.Navigator

@@ -9,9 +9,7 @@ import Loader from '../components/Loader';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const {chats, isLoading} = useAppSelector(store => store.chat);
-  const {users} = useAppSelector(store => store.users);
-
-  console.log('Users (Home.tsx) => ', users);
+  console.log('Chats =>', Object.values(chats));
   return (
     <ContentViewer title="Home">
       <View style={styles.content}>
@@ -23,7 +21,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           <FlatList
             data={Object.values(chats) as Chat[]}
             keyExtractor={item => item?.id}
-            renderItem={({item}) => <RenderChatItem item={item} />}
+            renderItem={({item}) => <RenderChatItem unreadMessages={item.unreadMessages} notificationStatus={item.notificationStatus} item={item} />}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No chats yet.</Text>
             }

@@ -13,6 +13,7 @@ import {useRoute} from '@react-navigation/native';
 import useNavigation from '../hooks/useNavigation';
 import useAuth from '../hooks/useAuth';
 import LinearGradient from 'react-native-linear-gradient';
+import { color } from '../constants/colors';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   const route = useRoute();
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: color.ghost,
     borderRadius: 25,
   },
   iconText: {
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: color.ghost,
   },
   childView: {
     width: '20%',

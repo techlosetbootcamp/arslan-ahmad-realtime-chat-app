@@ -49,8 +49,10 @@ const appAuth = (): UseAuthReturn => {
       } else {
         console.error('User not created (useAuth.ts)... Error:', user);
       }
-    } catch (err: any) {
-      setError(mapFirebaseError(err.code));
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(mapFirebaseError(err.code));
+      }
       console.error('Login Error:', err);
     } finally {
       setLoading(false);
@@ -88,7 +90,7 @@ const appAuth = (): UseAuthReturn => {
       } else {
         console.error('User not created (useAuth.ts)... Error:', user);
       }
-    } catch (err: any) {
+    } catch (err) {
       if (err instanceof FirebaseError) {
         setError(mapFirebaseError(err.code));
       }

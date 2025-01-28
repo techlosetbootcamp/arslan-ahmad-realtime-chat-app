@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from '../store';
-import {createUser, fetchUser} from '../../services/firebase';
+import {createUser, fetchUser} from '../../services/user';
 import {User} from '../../types/firestoreService';
 
 export interface UserState {
@@ -28,17 +28,6 @@ interface Participant {
   displayName: string;
   email: string;
 }
-
-interface UserData {
-  displayName?: string | null;
-  email?: string | null;
-  photoURL?: string | null;
-  description?: string | null;
-  status?: string | null;
-  contacts?: string[];
-  chats?: Chat[];
-}
-
 const initialState: UserState = {
   uid: null,
   displayName: null,

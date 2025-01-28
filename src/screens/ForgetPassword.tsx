@@ -3,7 +3,7 @@ import {Alert, StyleSheet, View} from 'react-native';
 import InputField from '../components/InputField';
 import AuthHeaderSection from '../components/AuthHeaderSection';
 import ActionButton from '../components/ActionButton';
-import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
@@ -21,10 +21,16 @@ const ForgetPassword = () => {
         'Success',
         'A password reset link has been sent to your email address.',
       );
-    } catch (error: any) {
-      if (error.code === 'auth/user-not-found') {
+    } catch (error) {
+      if (
+        (error as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        'auth/user-not-found'
+      ) {
         Alert.alert('Error', 'No user found with this email address.');
-      } else if (error.code === 'auth/invalid-email') {
+      } else if (
+        (error as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        'auth/invalid-email'
+      ) {
         Alert.alert('Error', 'The email address is not valid.');
       } else {
         Alert.alert('Error', 'Something went wrong. Please try again later.');

@@ -11,7 +11,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   status,
 }) => {
   const navigation = useNavigation();
-  console.log('profileImage', profileImage);
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>

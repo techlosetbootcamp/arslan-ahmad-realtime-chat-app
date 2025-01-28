@@ -1,11 +1,13 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {WritableDraft} from 'immer';
 import {AppThunk} from '../store';
 import {
   createNewChat as createChat,
   fetchChats,
   createNewChat,
-} from '../../services/firebase';
+} from '../../services/chats';
 import {Chat, Message} from '../../types/firestoreService';
+import {Timestamp} from '@react-native-firebase/firestore';
 
 interface ChatState {
   chats: Record<string, Chat>;
@@ -26,15 +28,18 @@ const chatSlice = createSlice({
   reducers: {
     setChats(state, action: PayloadAction<Record<string, Chat>>) {
       const chats = action.payload;
-      state.chats = Object.entries(chats).reduce((acc: any, [chatId, chat]) => {
-        acc[chatId] = {
-          ...chat,
-          lastActive: chat.lastActive
-            ? new Date(chat.lastActive).toISOString()
-            : null,
-        };
-        return acc;
-      }, {});
+      state.chats = Object.entries(chats).reduce(
+        (acc: Record<string, Chat>, [chatId, chat]) => {
+          acc[chatId] = {
+            ...chat,
+            lastActive: chat.lastActive
+              ? new Date(chat.lastActive).toISOString()
+              : null,
+          };
+          return acc;
+        },
+        {},
+      );
     },
     setMessages(
       state,
@@ -43,9 +48,7 @@ const chatSlice = createSlice({
       state.messages[action.payload.chatId] = action.payload.messages.map(
         message => ({
           ...message,
-          timestamp: message.timestamp
-            ? new Date(message.timestamp).toISOString()
-            : null,
+          timestamp: message.timestamp ? message.timestamp : null,
         }),
       );
     },
@@ -59,7 +62,9 @@ const chatSlice = createSlice({
         {
           ...message,
           timestamp: message.timestamp
-            ? new Date(message.timestamp).toISOString()
+            ? (message.timestamp
+                .toDate()
+                .toISOString() as unknown as WritableDraft<Timestamp>)
             : null,
         },
       ];
@@ -79,8 +84,12 @@ export const fetchUserChats =
     dispatch(setLoading(true));
     dispatch(setError(null));
     try {
-      const chats = await fetchChats(userId);
-      const chatMap = chats.reduce((acc, chat) => {
+      const chats = await new Promise<Chat[]>((resolve, reject) => {
+        fetchChats(userId, (chats: Chat[]) => {
+          resolve(chats);
+        });
+      });
+      const chatMap = chats.reduce((acc: Record<string, Chat>, chat: Chat) => {
         acc[chat.id] = chat;
         return acc;
       }, {} as Record<string, Chat>);
@@ -102,7 +111,11 @@ export const startChat =
     dispatch(setLoading(true));
     dispatch(setError(null));
     try {
-      const chats = await fetchChats(userId);
+      const chats = await new Promise<Chat[]>((resolve, reject) => {
+        fetchChats(userId, (chats: Chat[]) => {
+          resolve(chats);
+        });
+      });
       const existingChat = chats.find(chat =>
         chat.participants.includes(contactId),
       );

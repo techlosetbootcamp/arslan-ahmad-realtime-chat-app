@@ -1,4 +1,4 @@
-import {createNewChat} from '../services/firebase';
+import {createNewChat} from '../services/user';
 import {userProfile} from '../types/profile';
 import useAuth from './useAuth';
 import appNavigate from './useNavigation';

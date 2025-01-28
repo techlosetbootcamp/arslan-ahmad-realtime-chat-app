@@ -1,12 +1,11 @@
-import {useSelector} from 'react-redux';
-import {RootState} from '../store/store';
+import {useAppSelector} from '../store/store';
 import {User} from '../types/firestoreService';
 import {useNavigation} from '@react-navigation/native';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ChatNavigatorStyles} from '../styles/chatNavigator';
 
 export const useRenderChatItem = () => {
-  const user = useSelector((state: RootState) => state.user);
+  const user = useAppSelector(state => state.user);
   const userId = user?.uid;
   const navigation = useNavigation();
 
@@ -23,18 +22,21 @@ export const useRenderChatItem = () => {
         style={ChatNavigatorStyles.chatItem}
         onPress={() =>
           navigation.navigate('Chat', {
-            chatId: item.id,
+            chatId: item.id as string,
             participant: {
-              uid: participant?.uid || '',
-              displayName: participantName,
-              photoURL: participantImage,
-              status: participant?.status || 'Offline',
-            }
+              uid: participant?.uid || '' as string,
+              displayName: participantName as string,
+              photoURL: participantImage as string,
+              status: participant?.status || 'Offline' ,
+            },
           })
         }>
         <View style={ChatNavigatorStyles.chatRow}>
           {participantImage ? (
-            <Image source={{uri: participantImage}} style={ChatNavigatorStyles.chatImage} />
+            <Image
+              source={{uri: participantImage}}
+              style={ChatNavigatorStyles.chatImage}
+            />
           ) : (
             <View style={ChatNavigatorStyles.defaultImage}>
               <Text style={ChatNavigatorStyles.defaultImageText}>
