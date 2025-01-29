@@ -26,20 +26,20 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
   const {isLoading: userLoader, ...user} = useAppSelector(state => state.user);
-  const {isLoading: chatLoader, chats} = useAppSelector(state => state.chat);
+  const {isLoading: chatLoader} = useAppSelector(state => state.chat);
   const dispatch = useAppDispatch();
   const userId = user?.uid;
   const [isAuthChecked, setAuthChecked] = useState(false);
   const {users: usersInStore} = useAppSelector(state => state.users);
 
   useEffect(() => {
-    const fetchAllUsers = async () => {
-      if (user?.uid && usersInStore.length === 0) {
-        const users = await fetchUsers(user?.uid);
+    const fetchAllUsers = async (userId?:string) => {
+      if (userId && usersInStore.length === 0) {
+        const users = await fetchUsers(userId);
         dispatch({type: 'users/setAllUsers', payload: users});
       }
     };
-    fetchAllUsers();
+    fetchAllUsers(userId || '');
   }, [user?.uid, usersInStore.length, dispatch]);
 
   useEffect(() => {
@@ -93,7 +93,6 @@ const Navigation = () => {
   if (!isAuthChecked || userLoader || chatLoader) {
     return <LoaderScreen />;
   }
-  console.log('%c User (StackNavigation.tsx) =>', "font-size:20px;color:orange;", user);
 
   return user.uid ? (
     <Stack.Navigator

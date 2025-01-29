@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {addContact} from '../services/contacts';
+import {addContact as addContactToStore} from '../store/slices/contacts';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
@@ -34,10 +35,13 @@ const Search = () => {
   };
 
   const handleAddContact = async (contactId: string) => {
+    console.log('Adding to contact...(outside) ', contactId);
     try {
       if (contactId) {
-        dispatch({type: 'contacts/addContact', payload: contactId});
+        dispatch(addContactToStore(contactId));
+        console.log('Added in Store...', contactId);
         await addContact(user?.uid || '', contactId);
+        console.log('Completely Added Contact...', contactId);
       }
     } catch (error) {
       console.error('Error adding contact:', error);
@@ -61,6 +65,7 @@ const Search = () => {
         </View>
         {!isContact && (
           <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => handleAddContact(item?.uid || '')}
             style={styles.addContactButton}>
             <Image

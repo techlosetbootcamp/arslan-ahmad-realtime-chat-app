@@ -4,7 +4,7 @@ import { color } from "../constants/colors";
 export 
 const chatScreenStyles = StyleSheet.create({
   container: {flex: 1},
-  messageContainer: {padding: 10, marginVertical: 3, maxWidth: '80%'},
+  messageContainer: {padding: 5, marginVertical: 1, maxWidth: '80%'},
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -41,8 +41,8 @@ const chatScreenStyles = StyleSheet.create({
     padding: 10,
   },
   cameraIcon: {
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     tintColor: color.dark_gray,
   },
   userMessage: {

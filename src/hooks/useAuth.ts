@@ -5,13 +5,11 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {login, signUp, observeAuthState} from '../services/auth';
 import {UseAuthReturn} from '../types/auth';
 import {setLoading, setUser, UserState} from '../store/slices/user';
-import useNavigate from './useNavigation';
 
 const appAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const {navigation} = useNavigate();
   const loading = user.isLoading;
 
   useEffect(() => {
@@ -42,7 +40,6 @@ const appAuth = (): UseAuthReturn => {
         };
 
         dispatch(setUser(userData));
-        navigation.navigate('MainTabs');
       }
       if (userCredential) {
         return userCredential;
@@ -82,7 +79,6 @@ const appAuth = (): UseAuthReturn => {
         };
 
         dispatch(setUser(userData));
-        navigation.navigate('MainTabs');
       }
 
       if (userCredential) {

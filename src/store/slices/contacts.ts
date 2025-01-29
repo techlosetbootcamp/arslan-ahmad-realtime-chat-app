@@ -39,7 +39,6 @@ export const addContact = createAsyncThunk<
   {state: RootState}
 >('contacts/addContact', async (uid, {getState, rejectWithValue}) => {
   const allUsers = getState().users.users;
-
   const userToAdd = allUsers.find(user => user.uid === uid);
 
   if (!userToAdd) {

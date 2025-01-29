@@ -110,12 +110,16 @@ const appProfile = () => {
     setError(null);
 
     try {
-      await updateUserProfile({
-        name: userData.name || '',
-        email: userData.email || '',
-      });
-
       const userId = user?.uid;
+      dispatch(
+        setUser({
+          uid: userId || '',
+          displayName: userData.name || '',
+          email: userData.email || '',
+          status: userData.status || '',
+        }),
+      );
+
       if (userId) {
         await firestore()
           .collection('users')
@@ -127,12 +131,6 @@ const appProfile = () => {
           });
       }
 
-      setUserData(prevState => ({
-        ...prevState,
-        name: userData.name || '',
-        email: userData.email || '',
-        status: userData.status || '',
-      }));
       showToast('Success', 'Profile updated successfully', 'success');
     } catch (error) {
       console.error('Failed to update profile (Profile.tsx):', error);

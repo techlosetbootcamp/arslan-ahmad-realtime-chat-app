@@ -10,7 +10,7 @@ import {
 import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
 import useContactHandler from '../hooks/useContactHandler';
-import { color } from '../constants/colors';
+import {color} from '../constants/colors';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
   const {handleContactClick} = useContactHandler();
@@ -22,6 +22,7 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
       ListEmptyComponent={() => <Text>No contacts found</Text>}
       renderItem={({item}) => (
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() =>
             handleContactClick(item.uid as string, item as userProfile)
           }

@@ -1,16 +1,20 @@
-import { useAppDispatch, useAppSelector } from "../store/store";
-import useAuth from "./useAuth";
-import { fetchMessages, listenToMessages, sendMessage } from "../services/user";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from 'react';
+import {Timestamp} from 'firebase/firestore';
+import {useAppDispatch, useAppSelector} from '../store/store';
+import {
+  fetchMessages,
+  listenToMessages,
+  sendMessage,
+} from '../services/messages';
+import {addMessage} from '../store/slices/chats';
+import useAuth from '../hooks/useAuth';
+import {Message} from '../types/firestoreService';
 
-
-const appChat = () => {
+const appChat = (chatId: string, participantUid: string) => {
   const dispatch = useAppDispatch();
-  const messages = useAppSelector(
-    (state) => state.chat.messages[chatId] || [],
-  );
-  const [newMessage, setNewMessage] = useState('');
+  const messages = useAppSelector(state => state.chat.messages[chatId] || []);
   const {user} = useAuth();
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -36,30 +40,29 @@ const appChat = () => {
 
   const handleSend = async () => {
     if (newMessage.trim()) {
-      dispatch({
-        type: 'chat/addMessage',
-        payload: {
-          chatId,
-          message: {
-            id: `${Date.now()}`,
-            senderId: user?.uid,
-            text: newMessage,
-            contentType: 'text',
-            timestamp: new Date().toISOString(),
-            status: {sender: 'sent', receiver: 'unread'},
-          },
-        },
-      });
+      const message: Message = {
+        id: `${Date.now()}`,
+        senderId: user?.uid || '',
+        text: newMessage,
+        contentType: 'text',
+        timestamp: Timestamp.fromDate(new Date()),
+        status: {sender: 'sent', receiver: 'unread'},
+      };
+
+      dispatch(addMessage({chatId, message}));
+      setNewMessage('');
+
       try {
         if (user?.uid) {
-          await sendMessage(participant.uid, user?.uid, newMessage);
+          await sendMessage(participantUid, user?.uid, message);
         }
       } catch (error) {
         console.error('Error sending message:', error);
       }
-      setNewMessage('');
     }
   };
-}
+
+  return {messages, newMessage, setNewMessage, handleSend, user};
+};
 
 export default appChat;

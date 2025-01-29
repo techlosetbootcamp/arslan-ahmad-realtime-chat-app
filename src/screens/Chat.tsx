@@ -1,71 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
-import {Timestamp} from 'firebase/firestore';
-import {useAppDispatch, useAppSelector} from '../store/store';
-import {
-  fetchMessages,
-  listenToMessages,
-  sendMessage,
-} from '../services/messages';
 import ChatInput from '../components/ChatInput';
-import useAuth from '../hooks/useAuth';
 import ChatHeader from '../components/ChatHeader';
 import {ChatProps} from '../types/chatScreenProps';
 import MessageBubble from '../components/MessageBubble';
-import {addMessage} from '../store/slices/chats';
-import {Message} from '../types/firestoreService';
+import useChat from '../hooks/useChat';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   const {chatId, participant} = route.params;
-  const dispatch = useAppDispatch();
-  const messages = useAppSelector(state => state.chat.messages[chatId] || []);
-  const [newMessage, setNewMessage] = useState('');
-  const {user} = useAuth();
-
-  useEffect(() => {
-    const loadMessages = async () => {
-      try {
-        const messages = await fetchMessages(chatId);
-        dispatch({type: 'chat/setMessages', payload: {chatId, messages}});
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
-    loadMessages();
-  }, [chatId, dispatch]);
-
-  useEffect(() => {
-    const unsubscribe = listenToMessages(chatId, newMessages => {
-      dispatch({
-        type: 'chat/setMessages',
-        payload: {chatId, messages: newMessages},
-      });
-    });
-    return () => unsubscribe();
-  }, [chatId, dispatch]);
-
-  const handleSend = async () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: `${Date.now()}`,
-        senderId: user?.uid || '',
-        text: newMessage,
-        contentType: 'text',
-        timestamp: Timestamp.fromDate(new Date()),
-        status: {sender: 'sent', receiver: 'unread'},
-      };
-
-      dispatch(addMessage({chatId, message}));
-      setNewMessage('');
-      try {
-        if (user?.uid) {
-          await sendMessage(participant.uid, user?.uid, message as Message);
-        }
-      } catch (error) {
-        console.error('Error sending message:', error);
-      }
-    }
-  };
+  const {messages, newMessage, setNewMessage, handleSend, user} = useChat(
+    chatId,
+    participant.uid,
+  );
 
   return (
     <View style={styles.container}>
@@ -76,10 +22,11 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
       />
       <FlatList
         data={messages}
-        style={{gap: 10, padding: 10}}
-        renderItem={({item}) => (
+        style={{gap: 5, padding: 10}}
+        renderItem={({item, index}) => (
           <MessageBubble
             text={item.text}
+            participantName={participant.displayName || 'unkown'}
             photoURL={participant.photoURL || ''}
             isUserMessage={item.senderId === user?.uid}
             timestamp={
@@ -89,6 +36,8 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
                   : new Date(item.timestamp.toDate()).toLocaleString()
                 : null
             }
+            previousMessage={messages[index - 1] || null}
+            nextMessage={messages[index + 1] || null}
           />
         )}
         keyExtractor={item => item.id}

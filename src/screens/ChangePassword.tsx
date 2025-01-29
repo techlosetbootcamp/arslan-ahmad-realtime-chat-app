@@ -55,7 +55,7 @@ const ForgotPasswordScreen = () => {
       await user.updatePassword(newPassword);
 
       showToast('Success', 'Password updated successfully!', 'success');
-      navigation.navigate('Profile');
+      navigation.goBack();
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/wrong-password') {
