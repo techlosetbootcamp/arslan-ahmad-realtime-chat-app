@@ -66,9 +66,11 @@ export const fetchChats = (
             participantsDetails = chatData.participantsDetails.map(
               (participant: Partial<User>) => ({
                 ...participant,
-                createdAt: 'createdAt' in participant && participant.createdAt instanceof firestore.Timestamp
-                  ? participant.createdAt.toDate().toISOString()
-                  : null,
+                createdAt:
+                  'createdAt' in participant &&
+                  participant.createdAt instanceof firestore.Timestamp
+                    ? participant.createdAt.toDate().toISOString()
+                    : null,
               }),
             );
           }
@@ -104,4 +106,26 @@ export const fetchChats = (
     );
 
   return unsubscribe;
+};
+
+export const deleteChat = async (chatId: string, participants: string[]) => {
+  const chatRef = firestore().collection('chats').doc(chatId);
+  const usersRef = firestore().collection('users');
+
+  try {
+    await chatRef.delete();
+
+    await Promise.all(
+      participants.map(uid =>
+        usersRef.doc(uid).update({
+          chats: firestore.FieldValue.arrayRemove(chatId),
+        }),
+      ),
+    );
+
+    console.log(`Chat ${chatId} deleted successfully`);
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    throw error;
+  }
 };

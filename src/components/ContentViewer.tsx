@@ -13,7 +13,7 @@ import {useRoute} from '@react-navigation/native';
 import useNavigation from '../hooks/useNavigation';
 import useAuth from '../hooks/useAuth';
 import LinearGradient from 'react-native-linear-gradient';
-import { color } from '../constants/colors';
+import {color} from '../constants/colors';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   const route = useRoute();
@@ -41,66 +41,63 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   return (
     <SafeAreaView style={styles.Maincontainer}>
       <LinearGradient
-            start={{x: 0, y: 1}}
-            end={{x: 1, y: 1}}
-            style={{
-              flex: 1,
-              width: '100%',
-            }}
-            colors={['#010102', '#192f6a', '#3b5998']}>
-      <ImageBackground
-        source={require('../assets/imgs/launch_screen.png')}
-        style={styles.bgImage}></ImageBackground>
-      <View style={styles.Maincontainer}>
-        <View style={styles.header}>
-          <View style={styles.childView}>
-            <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.iconContainer}
-            onPress={handlePressLeft}>
-              <Image
-                source={
-                  !isFullNav
-                    ? require('../assets/icons/back.png')
-                    : require('../assets/icons/search.png')
-                }
-                style={{
-                  ...styles.iconText,
-                  width: !isFullNav ? 30 : 20,
-                  height: !isFullNav ? 30 : 20,
-                }}
-              />
-              </TouchableOpacity>
-          </View>
-          <View style={styles.tabTitle}>
-            <Text style={styles.title}>{title}</Text>
-          </View>
-          <View style={{...styles.childView, alignItems: 'flex-end'}}>
-            {isFullNav && (
+        start={{x: 0, y: 1}}
+        end={{x: 1, y: 1}}
+        style={{
+          flex: 1,
+          width: '100%',
+        }}
+        colors={['#010102', '#192f6a', '#3b5998']}>
+        <View style={styles.Maincontainer}>
+          <View style={styles.header}>
+            <View style={styles.childView}>
               <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={
-                route.name !== 'Contacts'
-                    ? () => navigation.navigate('Profile')
-                    : () => navigation.navigate('Search')
-                }>
+                activeOpacity={0.8}
+                style={styles.iconContainer}
+                onPress={handlePressLeft}>
                 <Image
                   source={
-                    route.name !== 'Contacts'
-                    ? user?.photoURL
-                        ? {uri: user.photoURL}
-                        : require('../assets/imgs/profile_placeholder_image.png')
-                      : require('../assets/icons/add_user.png')
+                    !isFullNav
+                      ? require('../assets/icons/back.png')
+                      : require('../assets/icons/search.png')
                   }
-                  style={styles.profileImage}
-                  />
+                  style={{
+                    ...styles.iconText,
+                    width: !isFullNav ? 30 : 20,
+                    height: !isFullNav ? 30 : 20,
+                  }}
+                />
               </TouchableOpacity>
-            )}
+            </View>
+            <View style={styles.tabTitle}>
+              <Text style={styles.title}>{title}</Text>
+            </View>
+            <View style={{...styles.childView, alignItems: 'flex-end'}}>
+              {isFullNav && (
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={
+                    route.name !== 'Contacts'
+                      ? () => navigation.navigate('Profile')
+                      : () => navigation.navigate('Search')
+                  }>
+                  <Image
+                    source={
+                      route.name !== 'Contacts'
+                        ? user?.photoURL
+                          ? {uri: user.photoURL}
+                          : require('../assets/imgs/profile_placeholder_image.png')
+                        : require('../assets/icons/add_user.png')
+                    }
+                    style={styles.profileImage}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
+          <View style={styles.content}>{children}</View>
         </View>
-        <View style={styles.content}>{children}</View>
-      </View>
-</LinearGradient>
+      </LinearGradient>
     </SafeAreaView>
   );
 };

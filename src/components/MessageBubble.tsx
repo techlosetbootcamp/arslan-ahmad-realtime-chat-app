@@ -37,7 +37,7 @@ const MessageBubble: React.FC<{
           }>
           {text}
         </Text>
-        {timestamp && <Text style={styles.timestampText}>{validTime}</Text>}
+        {/* {timestamp && <Text style={styles.timestampText}>{validTime}</Text>} */}
       </View>
     </View>
   );

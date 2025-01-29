@@ -5,6 +5,7 @@ import {
   createNewChat as createChat,
   fetchChats,
   createNewChat,
+  deleteChat,
 } from '../../services/chats';
 import {Chat, Message} from '../../types/firestoreService';
 import {Timestamp} from '@react-native-firebase/firestore';
@@ -21,6 +22,25 @@ const initialState: ChatState = {
   messages: {},
   isLoading: false,
 };
+
+export const deleteChatFromFirebase =
+  (chatId: string, participants: string[]): AppThunk =>
+  async dispatch => {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+    try {
+      await deleteChat(chatId, participants);
+      dispatch(deleteChatFromStore(chatId));
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to delete chat',
+        ),
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 const chatSlice = createSlice({
   name: 'chat',
@@ -58,7 +78,7 @@ const chatSlice = createSlice({
     ) {
       const {chatId, message} = action.payload;
       state.messages[chatId] = [
-        ...(state.messages[chatId] || []),
+        ...state.messages[chatId],
         {
           ...message,
           timestamp: message.timestamp
@@ -68,6 +88,12 @@ const chatSlice = createSlice({
             : null,
         },
       ];
+      console.log('%c message', 'font-size:25px;color:orange;', message);
+    },
+    deleteChatFromStore(state, action: PayloadAction<string>) {
+      const chatId = action.payload;
+      delete state.chats[chatId];
+      delete state.messages[chatId];
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
@@ -138,6 +164,12 @@ export const startChat =
       dispatch(setLoading(false));
     }
   };
-export const {setChats, setMessages, addMessage, setLoading, setError} =
-  chatSlice.actions;
+export const {
+  setChats,
+  setMessages,
+  addMessage,
+  setLoading,
+  setError,
+  deleteChatFromStore,
+} = chatSlice.actions;
 export default chatSlice.reducer;

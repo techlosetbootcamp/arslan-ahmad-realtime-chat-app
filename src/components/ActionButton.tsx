@@ -2,7 +2,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import React from 'react';
@@ -55,7 +54,6 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 const ButtonContent: React.FC<ActionButtonProps> = ({
   onClick,
   loader,
-  onLoadText,
   children,
   error = false,
 }) => {

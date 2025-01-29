@@ -1,16 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
+import {Timestamp} from 'firebase/firestore';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {
   fetchMessages,
   listenToMessages,
   sendMessage,
 } from '../services/messages';
-import MessageBubble from '../components/MessageBubble';
 import ChatInput from '../components/ChatInput';
 import useAuth from '../hooks/useAuth';
 import ChatHeader from '../components/ChatHeader';
 import {ChatProps} from '../types/chatScreenProps';
+import MessageBubble from '../components/MessageBubble';
+import {addMessage} from '../store/slices/chats';
+import {Message} from '../types/firestoreService';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   const {chatId, participant} = route.params;
@@ -42,30 +45,25 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
   }, [chatId, dispatch]);
 
   const handleSend = async () => {
-    setNewMessage('');
     if (newMessage.trim()) {
-      dispatch({
-        type: 'chat/addMessage',
-        payload: {
-          chatId,
-          message: {
-            id: `${Date.now()}`,
-            senderId: user?.uid,
-            text: newMessage,
-            contentType: 'text',
-            timestamp: new Date().toISOString(),
-            status: {sender: 'sent', receiver: 'unread'},
-          },
-        },
-      });
+      const message = {
+        id: `${Date.now()}`,
+        senderId: user?.uid || '',
+        text: newMessage,
+        contentType: 'text',
+        timestamp: Timestamp.fromDate(new Date()),
+        status: {sender: 'sent', receiver: 'unread'},
+      };
+
+      dispatch(addMessage({chatId, message}));
+      setNewMessage('');
       try {
         if (user?.uid) {
-          await sendMessage(participant.uid, user?.uid, newMessage);
+          await sendMessage(participant.uid, user?.uid, message as Message);
         }
       } catch (error) {
         console.error('Error sending message:', error);
       }
-      setNewMessage('');
     }
   };
 
@@ -85,7 +83,11 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
             photoURL={participant.photoURL || ''}
             isUserMessage={item.senderId === user?.uid}
             timestamp={
-              item.timestamp ? new Date(item.timestamp.toDate()).toLocaleString() : null
+              item.timestamp
+                ? typeof item.timestamp === 'string'
+                  ? new Date(item.timestamp).toLocaleString()
+                  : new Date(item.timestamp.toDate()).toLocaleString()
+                : null
             }
           />
         )}

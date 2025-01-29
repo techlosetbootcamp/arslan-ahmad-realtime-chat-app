@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {color} from '../constants/colors';
 import {AuthHeaderSectionProps} from '../types/sectionHeaders';
 import SimpleText from './SimpleText';

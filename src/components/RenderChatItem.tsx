@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Chat, User} from '../types/firestoreService';
-import {useAppSelector} from '../store/store';
+import {useAppDispatch, useAppSelector} from '../store/store';
 import {
   Animated,
   Image,
@@ -15,7 +15,8 @@ import {getRelativeTime} from '../constants/sideFucntions';
 import {Swipeable} from 'react-native-gesture-handler';
 import {color} from '../constants/colors';
 import {NotificationWhiteIcon} from '../constants/imgs';
-import { showToast } from './Toast';
+import {showToast} from './Toast';
+import {deleteChatFromFirebase} from '../store/slices/chats';
 
 interface RenderChatItemProps {
   item: Chat;
@@ -32,6 +33,7 @@ interface ChatItem {
 const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
   const {navigation} = appNavigate();
   const user = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
   const userId = user?.uid;
 
   const participants = item.participantsDetails?.filter(
@@ -70,8 +72,8 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
       extrapolate: 'clamp',
     });
 
-    const handleDelete = (chatId: string) => {
-      console.log('Delete chat with id: ', chatId);
+    const handleDeleteChat = (chatId: string, participants: string[]) => {
+      dispatch(deleteChatFromFirebase(chatId, participants));
     };
 
     const handleNotiClick = (chatId: string) => {
@@ -97,7 +99,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[slider.actionButton, slider.deleteButton]}
-          onPress={() => handleDelete(item.id)}>
+          onPress={() => handleDeleteChat(item.id, item.participants)}>
           <Animated.Text style={[slider.actionText, {transform: [{scale}]}]}>
             <Image
               source={require('../assets/icons/delete.png')}

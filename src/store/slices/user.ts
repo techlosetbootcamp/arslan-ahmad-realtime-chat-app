@@ -45,7 +45,6 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<Partial<UserState> & {uid: string}>) {
-      
       Object.assign(state, action.payload);
     },
     setLoading(state, action: PayloadAction<boolean>) {

@@ -1,40 +1,35 @@
-import firestore, {FieldPath} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {Message} from '../types/firestoreService';
 
 export const sendMessage = async (
   receiverId: string,
   senderId: string,
-  text: string,
+  message: Message,
 ) => {
   const chatId =
     senderId < receiverId ? senderId + receiverId : receiverId + senderId;
 
   const chatRef = firestore().collection('chats').doc(chatId);
-  const messageRef = chatRef.collection('messages').doc();
+  const messageRef = chatRef.collection('messages').doc(message.id);
 
   try {
     await messageRef.set({
-      id: messageRef.id,
-      senderId,
-      text,
-      contentType: 'text',
+      ...message,
       timestamp: firestore.FieldValue.serverTimestamp(),
-      status: {sender: 'sent', receiver: 'unread'},
     });
 
     await chatRef.set(
       {
-        lastMessage: text,
+        lastMessage: message.text,
         lastActive: firestore.FieldValue.serverTimestamp(),
         unreadCount: firestore.FieldValue.increment(1),
       },
       {merge: true},
     );
 
-    await chatRef.update(
-      new FieldPath('unreadCount', receiverId),
-      firestore.FieldValue.increment(1),
-    );
+    await chatRef.update({
+      [`unreadCount.${receiverId}`]: firestore.FieldValue.increment(1),
+    });
   } catch (error) {
     console.error('Error sending message:', error);
     throw error;
