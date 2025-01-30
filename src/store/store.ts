@@ -12,13 +12,9 @@ export const store = configureStore({
     contacts: contactsReducer,
     users: usersReducer,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['chat/setChats'],
-        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
-        ignoredPaths: ['items.dates'],
-      },
+      serializableCheck: false,
     }),
 });
 

@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {fetchUser} from './user';
 import {Chat, User} from '../types/firestoreService';
+import { ToastAndroid } from 'react-native';
 
 export const createNewChat = async (
   participants: string[],
@@ -113,6 +114,11 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
   const usersRef = firestore().collection('users');
 
   try {
+    const messagesRef = chatRef.collection("messages")
+    messagesRef.get().then((querySnapshot) => {
+      Promise.all(querySnapshot.docs.map((d) => d.ref.delete()));
+    });
+    
     await chatRef.delete();
 
     await Promise.all(

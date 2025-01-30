@@ -62,7 +62,7 @@ function InputField({
         error = 'Please enter a valid email address.';
       }
     } else {
-      if (title === 'Password') {
+      if (title.toLowerCase().includes('password')) {
         const {hasNumber, hasAlphabet, hasSpecialChar} = validatePassword(text);
 
         if (!hasNumber) {

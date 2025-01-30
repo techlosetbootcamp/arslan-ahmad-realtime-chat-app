@@ -5,6 +5,7 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {login, signUp, observeAuthState} from '../services/auth';
 import {UseAuthReturn} from '../types/auth';
 import {setLoading, setUser, UserState} from '../store/slices/user';
+import { ToastAndroid } from 'react-native';
 
 const appAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);
@@ -44,6 +45,7 @@ const appAuth = (): UseAuthReturn => {
       if (userCredential) {
         return userCredential;
       } else {
+        ToastAndroid.show('Email or Password may invalid.', ToastAndroid.SHORT);
         console.error('User not created (useAuth.ts)... Error:', user);
       }
     } catch (err) {

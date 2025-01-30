@@ -11,42 +11,46 @@ import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
 import useContactHandler from '../hooks/useContactHandler';
 import {color} from '../constants/colors';
+import Loader from './Loader';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
-  const {handleContactClick} = useContactHandler();
+  const {handleContactClick, loader} = useContactHandler();
 
   return (
-    <SectionList
-      sections={sections}
-      keyExtractor={item => item.uid as string}
-      ListEmptyComponent={() => <Text>No contacts found</Text>}
-      renderItem={({item}) => (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() =>
-            handleContactClick(item.uid as string, item as userProfile)
-          }
-          style={styles.contactContainer}>
-          <Image
-            source={
-              item.photoURL
-                ? {uri: item.photoURL}
-                : require('../assets/imgs/profile_placeholder_image.png')
+    <>
+    {loader && <Loader />}
+      <SectionList
+        sections={sections}
+        keyExtractor={item => item.uid as string}
+        ListEmptyComponent={() => <Text>No contacts found</Text>}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              handleContactClick(item.uid as string, item as userProfile)
             }
-            style={styles.contactImage}
-          />
-          <View>
-            <Text style={styles.contactName}>{item.displayName}</Text>
-            {item.status && (
-              <Text style={styles.contactStatus}>{item.status}</Text>
-            )}
-          </View>
-        </TouchableOpacity>
-      )}
-      renderSectionHeader={({section: {title}}) => (
-        <Text style={styles.header}>{title}</Text>
-      )}
-    />
+            style={styles.contactContainer}>
+            <Image
+              source={
+                item.photoURL
+                  ? {uri: item.photoURL}
+                  : require('../assets/imgs/profile_placeholder_image.png')
+              }
+              style={styles.contactImage}
+            />
+            <View>
+              <Text style={styles.contactName}>{item.displayName}</Text>
+              {item.status && (
+                <Text style={styles.contactStatus}>{item.status}</Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+        renderSectionHeader={({section: {title}}) => (
+          <Text style={styles.header}>{title}</Text>
+        )}
+      />
+    </>
   );
 };
 

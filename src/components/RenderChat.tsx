@@ -1,17 +1,16 @@
 import {useAppSelector} from '../store/store';
 import {User} from '../types/firestoreService';
-import {useNavigation} from '@react-navigation/native';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {ChatNavigatorStyles} from '../styles/chatNavigator';
+import appNavigate from '../hooks/useNavigation';
 
 export const useRenderChatItem = () => {
   const user = useAppSelector(state => state.user);
-  const userId = user?.uid;
-  const navigation = useNavigation();
+  const {navigation} = appNavigate();
 
   return ({item}: {item: any}) => {
     const participants = item.participantsDetails?.filter(
-      (participant: User) => participant.uid !== userId,
+      (participant: User) => participant.uid !== user.uid,
     );
     const participant = participants?.[0];
     const participantImage = participant?.photoURL;
@@ -24,10 +23,10 @@ export const useRenderChatItem = () => {
           navigation.navigate('Chat', {
             chatId: item.id as string,
             participant: {
-              uid: participant?.uid || '' as string,
+              uid: participant?.uid || ('' as string),
               displayName: participantName as string,
               photoURL: participantImage as string,
-              status: participant?.status || 'Offline' ,
+              status: participant?.status || 'Offline',
             },
           })
         }>

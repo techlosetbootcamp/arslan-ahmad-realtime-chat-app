@@ -9,10 +9,12 @@ import {
 } from 'react-native';
 import {addContact} from '../services/contacts';
 import {addContact as addContactToStore} from '../store/slices/contacts';
+import { addUserToContact} from '../store/slices/user';
 import {User} from '../types/firestoreService';
 import SearchBar from '../components/Search';
 import useAuth from '../hooks/useAuth';
 import {useAppDispatch, useAppSelector} from '../store/store';
+import {saveUserToStorage} from '../services/async_storage';
 
 const Search = () => {
   const [searchText, setSearchText] = useState<string>('');
@@ -35,13 +37,16 @@ const Search = () => {
   };
 
   const handleAddContact = async (contactId: string) => {
-    console.log('Adding to contact...(outside) ', contactId);
     try {
       if (contactId) {
         dispatch(addContactToStore(contactId));
-        console.log('Added in Store...', contactId);
+        dispatch(addUserToContact(contactId));
         await addContact(user?.uid || '', contactId);
-        console.log('Completely Added Contact...', contactId);
+        if (user) {
+          await saveUserToStorage(user);
+          console.log('%c Contact added successfully...', 'font-size:16px;color:green;');
+        }
+        console.log('User...', user);
       }
     } catch (error) {
       console.error('Error adding contact:', error);

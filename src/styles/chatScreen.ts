@@ -1,10 +1,8 @@
-import { StyleSheet } from "react-native";
-import { color } from "../constants/colors";
+import {StyleSheet} from 'react-native';
+import {color} from '../constants/colors';
 
-export 
-const chatScreenStyles = StyleSheet.create({
+export const chatScreenStyles = StyleSheet.create({
   container: {flex: 1},
-  messageContainer: {padding: 5, marginVertical: 1, maxWidth: '80%'},
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -23,7 +21,7 @@ const chatScreenStyles = StyleSheet.create({
     marginLeft: 5,
     borderRadius: 20,
     paddingHorizontal: 10,
-    height: 45, 
+    height: 45,
     textAlignVertical: 'top',
     backgroundColor: color.offwhite,
   },
@@ -41,14 +39,21 @@ const chatScreenStyles = StyleSheet.create({
     padding: 10,
   },
   cameraIcon: {
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
     tintColor: color.dark_gray,
+  },
+  messageContainer: {
+    padding: 10,
+    marginVertical: 3,
+    maxWidth: '80%',
+    alignSelf: 'flex-start', 
   },
   userMessage: {
     alignSelf: 'flex-end',
   },
   participantMessage: {
+    marginLeft: 20,
     alignSelf: 'flex-start',
   },
   userMessageText: {

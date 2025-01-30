@@ -13,7 +13,7 @@ import ContentViewer from '../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
 import {EditIcon} from '../constants/imgs';
 import {color} from '../constants/colors';
-import Loader from '../components/LoaderScreen';
+import LoaderScreen from '../components/Loader';
 import useProfile from '../hooks/useProfile';
 
 const Profile: React.FC = () => {
@@ -29,74 +29,74 @@ const Profile: React.FC = () => {
   } = useProfile();
 
   return (
-    <ContentViewer title="Profile">
-      <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
-        <TouchableOpacity
-          onPress={handlePickAndUploadImage}
-          activeOpacity={0.8}
-          style={styles.header}>
-          {isLoading ? (
-            <Loader />
-          ) : (
-            <Image
-              style={styles.profileImage}
-              source={
-                userData.imageUri
-                  ? {uri: userData.imageUri}
-                  : require('../assets/imgs/profile_placeholder_image.png')
-              }
+    <>
+    {updateLoader && <LoaderScreen />}
+      <ContentViewer title="Profile">
+        <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
+          <TouchableOpacity
+            onPress={handlePickAndUploadImage}
+            activeOpacity={0.8}
+            style={styles.header}>
+            {
+              <Image
+                style={styles.profileImage}
+                source={
+                  userData.imageUri
+                    ? {uri: userData.imageUri}
+                    : require('../assets/imgs/profile_placeholder_image.png')
+                }
+              />
+            }
+
+            <View style={styles.editButton}>
+              <Image source={EditIcon} style={{width: 10, height: 10}} />
+            </View>
+          </TouchableOpacity>
+
+          <KeyboardAvoidingView style={{flex: 6, gap: 40, padding: 20}}>
+            <InputField
+              title="Name"
+              placeholder="Enter your name"
+              type="default"
+              val={userData.name}
+              setVal={value => handleInputChange('name', value)}
             />
-          )}
+            <InputField
+              title="Email"
+              placeholder="Enter your email"
+              type="email-address"
+              val={userData.email}
+              setVal={value => handleInputChange('email', value)}
+            />
+            <InputField
+              title="Your Status"
+              placeholder="Enter your status"
+              type="default"
+              val={userData.status}
+              setVal={value => handleInputChange('status', value)}
+            />
+            {error && <Text style={styles.error}>{error}</Text>}
+          </KeyboardAvoidingView>
 
-          <View style={styles.editButton}>
-            <Image source={EditIcon} style={{width: 10, height: 10}} />
+          <View style={{flex: 2, rowGap: 10}}>
+            <ActionButton
+              onClick={handleUpdateProfile}
+              color="#3D4A7A"
+              onLoadText="Updating...">
+              Update Profile
+            </ActionButton>
+
+            <ActionButton
+              onClick={handleLogout}
+              color="tomato"
+              loader={isLoading}
+              onLoadText="Logging out...">
+              Logout
+            </ActionButton>
           </View>
-        </TouchableOpacity>
-
-        <KeyboardAvoidingView style={{flex: 6, gap: 40, padding: 20}}>
-          <InputField
-            title="Name"
-            placeholder="Enter your name"
-            type="default"
-            val={userData.name}
-            setVal={value => handleInputChange('name', value)}
-          />
-          <InputField
-            title="Email"
-            placeholder="Enter your email"
-            type="email-address"
-            val={userData.email}
-            setVal={value => handleInputChange('email', value)}
-          />
-          <InputField
-            title="Your Status"
-            placeholder="Enter your status"
-            type="default"
-            val={userData.status}
-            setVal={value => handleInputChange('status', value)}
-          />
-          {error && <Text style={styles.error}>{error}</Text>}
-        </KeyboardAvoidingView>
-
-        <View style={{flex: 2, rowGap: 10}}>
-          <ActionButton
-            onClick={handleUpdateProfile}
-            loader={updateLoader}
-            color="#3D4A7A"
-            onLoadText="Updating...">
-            Update Profile
-          </ActionButton>
-
-          <ActionButton
-            onClick={handleLogout}
-            color="tomato"
-            loader={isLoading}
-            onLoadText="Logging out...">
-            Logout
-          </ActionButton>
-        </View>
-      </ScrollView>
-    </ContentViewer>
+        </ScrollView>
+      </ContentViewer>
+    </>
   );
 };
 

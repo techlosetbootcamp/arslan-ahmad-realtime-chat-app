@@ -9,10 +9,11 @@ import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/nat
 import ActionButton from '../components/ActionButton';
 import AuthHeaderSection from '../components/AuthHeaderSection';
 import ActionText from '../components/ActionText';
-import { GoogleIcon } from '../constants/imgs';
-import { color } from '../constants/colors';
+import {GoogleIcon} from '../constants/imgs';
+import {color} from '../constants/colors';
 import SimpleText from '../components/SimpleText';
-import { showToast } from '../components/Toast';
+import {showToast} from '../components/Toast';
+import Loader from '../components/Loader';
 
 type SignInProps = {
   navigation: NativeStackNavigationProp<any>;
@@ -63,82 +64,84 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
   };
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={true}
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-        paddingHorizontal: 20,
-        paddingVertical: 60,
-        columnGap: 40,
-      }}>
-      <AuthHeaderSection
-        title="Sign up with Email"
-        subText="Get chatting with friends and family today by signing up for our chat
+    <>
+      {loading && <Loader />}
+      <ScrollView
+        showsVerticalScrollIndicator={true}
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          paddingHorizontal: 20,
+          paddingVertical: 60,
+          columnGap: 40,
+        }}>
+        <AuthHeaderSection
+          title="Sign up with Email"
+          subText="Get chatting with friends and family today by signing up for our chat
         app!"
-        styleSubTitle={{width: '80%'}}
-      />
-
-      <View
-        style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
-        <IconButton
-          src={GoogleIcon}
-          onPress={() => console.log("'Google Icon' on Sign Clicked")}
+          styleSubTitle={{width: '80%'}}
         />
-        <View style={styles.gapVertical}>
-          <RulerText lineColor={color.dark_gray} />
+
+        <View style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
+          <IconButton
+            src={GoogleIcon}
+            onPress={() => console.log("'Google Icon' on Sign Clicked")}
+          />
+          <View style={styles.gapVertical}>
+            <RulerText lineColor={color.dark_gray} />
+          </View>
+
+          <View style={{gap: 25}}>
+            <InputField
+              val={userData.name}
+              setVal={value => handleInputChange('name', value)}
+              title="Enter Name"
+              type="default"
+              placeholder="Jhon Doe"
+              setError={setError}
+            />
+            <InputField
+              val={userData.email}
+              setVal={value => handleInputChange('email', value)}
+              title="Enter Email"
+              type="email-address"
+              placeholder="i.e. Jhon@gmail.com"
+              setError={setError}
+            />
+
+            <InputField
+              val={userData.password}
+              setVal={value => handleInputChange('password', value)}
+              placeholder="Enter your password"
+              title="Password"
+              type="default"
+              secureTextEntry={true}
+              setError={setError}
+            />
+
+            <InputField
+              val={userData.confirmPassword}
+              setVal={value => handleInputChange('confirmPassword', value)}
+              title="Confirm Password"
+              type="default"
+              secureTextEntry={true}
+              placeholder="Enter confirm password"
+              setError={setError}
+            />
+          </View>
         </View>
 
-        <View style={{gap: 25}}>
-          <InputField
-            val={userData.name}
-            setVal={value => handleInputChange('name', value)}
-            title="Enter Name"
-            type="default"
-            placeholder="Jhon Doe"
-            setError={setError}
-          />
-          <InputField
-            val={userData.email}
-            setVal={value => handleInputChange('email', value)}
-            title="Enter Email"
-            type="email-address"
-            placeholder="i.e. Jhon@gmail.com"
-            setError={setError}
-          />
-
-          <InputField
-            val={userData.password}
-            setVal={value => handleInputChange('password', value)}
-            placeholder="Enter your password"
-            title="Password"
-            type="default"
-            secureTextEntry={true}
-            setError={setError}
-          />
-
-          <InputField
-            val={userData.confirmPassword}
-            setVal={value => handleInputChange('confirmPassword', value)}
-            title="Confirm Password"
-            type="default"
-            secureTextEntry={true}
-            placeholder="Enter confirm password"
-            setError={setError}
-          />
+        <View style={{flex: 2, marginTop: 20, paddingVertical: 10}}>
+          <ActionButton
+            onClick={SignUphandler}
+            loader={loading}
+            error={error}
+            onLoadText="Adding yourself...">
+            Reginster Me
+          </ActionButton>
         </View>
-      </View>
-
-      <View style={{flex: 2, marginTop: 20, paddingVertical: 10}}>
-        <ActionButton
-          onClick={SignUphandler}
-          loader={loading}
-          error={error}
-          onLoadText="Adding yourself...">
-          Reginster Me
-        </ActionButton>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

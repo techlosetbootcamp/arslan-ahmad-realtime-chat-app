@@ -16,14 +16,16 @@ const MessageBubble: React.FC<{
     senderId: string;
     timestamp?: string | {toDate: () => Date} | null;
   } | null;
+  type: 'text' | 'image';
 }> = ({
   text,
-  isUserMessage,
-  timestamp,
+  type,
   photoURL,
-  previousMessage,
-  participantName,
+  timestamp,
   nextMessage,
+  isUserMessage,
+  participantName,
+  previousMessage,
 }) => {
   const time = timestamp?.split(',')[1];
   const validTime = time
@@ -31,10 +33,13 @@ const MessageBubble: React.FC<{
     : '';
 
   const isFirstMessageInSequence =
-    !previousMessage || previousMessage.senderId !== previousMessage.senderId;
+    !previousMessage ||
+    previousMessage.senderId !== (isUserMessage ? 'user' : 'participant');
 
   const isLastMessageInSequence =
-    !nextMessage || nextMessage.senderId !== previousMessage?.senderId;
+    !nextMessage ||
+    nextMessage.senderId !== (isUserMessage ? 'user' : 'participant');
+  !nextMessage || nextMessage.senderId !== previousMessage?.senderId;
   return (
     <View
       style={[
@@ -54,14 +59,21 @@ const MessageBubble: React.FC<{
         style={
           !isUserMessage && {marginLeft: isFirstMessageInSequence ? 35 : 0}
         }>
-        <Text
-          style={
-            isUserMessage
-              ? styles.userMessageText
-              : styles.participantMessageText
-          }>
-          {text}
-        </Text>
+        {type === 'image' ? (
+          <Image
+            source={{uri: text}}
+            style={{width: 200, height: 200, borderRadius: 10}}
+          />
+        ) : (
+          <Text
+            style={
+              isUserMessage
+                ? styles.userMessageText
+                : styles.participantMessageText
+            }>
+            {text}
+          </Text>
+        )}
         {timestamp && isLastMessageInSequence && (
           <Text style={styles.timestampText}>{validTime}</Text>
         )}

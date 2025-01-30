@@ -61,7 +61,6 @@ const Navigation = () => {
     checkAuthState();
   }, [dispatch]);
 
-  // Fetch user from storage
   useEffect(() => {
     const checkUserSession = async () => {
       dispatch(setLoading(true));

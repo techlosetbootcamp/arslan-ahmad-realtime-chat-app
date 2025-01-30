@@ -27,7 +27,7 @@ export interface Message {
   id: string;
   senderId: string;
   text: string;
-  contentType: string;
+  contentType: 'text' | 'image';
   timestamp: FirebaseFirestoreTypes.Timestamp | null;
   status: {
     sender: string;

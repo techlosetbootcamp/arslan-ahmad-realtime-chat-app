@@ -16,6 +16,7 @@ import {color} from '../constants/colors';
 import AuthHeaderSection from '../components/AuthHeaderSection';
 import useSign from '../hooks/useSign';
 import {GoogleIcon} from '../constants/imgs';
+import Loader from '../components/Loader';
 
 const SignIn: React.FC = () => {
   const {
@@ -30,72 +31,75 @@ const SignIn: React.FC = () => {
   } = useSign();
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'android' ? 'padding' : undefined}
-      style={{flex: 1, flexDirection: 'column', padding: 20}}>
-      <ScrollView
-        contentContainerStyle={{flex: 1, maxWidth: 400, margin: 'auto'}}>
-        <View style={{flex: 3}}>
-          <AuthHeaderSection
-            title="Log in to Chatbox"
-            subText="Welcome back! Sign in using your social account or email to continue
+    <>
+      {loading && <Loader />}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'android' ? 'padding' : undefined}
+        style={{flex: 1, flexDirection: 'column', padding: 20}}>
+        <ScrollView
+          contentContainerStyle={{flex: 1, maxWidth: 400, margin: 'auto'}}>
+          <View style={{flex: 3}}>
+            <AuthHeaderSection
+              title="Log in to Chatbox"
+              subText="Welcome back! Sign in using your social account or email to continue
             with us"
-          />
-        </View>
-
-        <View style={{flex: 6}}>
-          <IconButton src={GoogleIcon} onPress={signInWithGoogle} />
-          <View style={styles.gapVertical}>
-            <RulerText />
-          </View>
-
-          <View style={{gap: 25}}>
-            <InputField
-              val={signInData.email}
-              setVal={value => handleInputChange('email', value)}
-              title="Enter Email"
-              type="email-address"
-              placeholder="i.e. Jhon@gmail.com"
-              setError={setError}
-            />
-
-            <InputField
-              val={signInData.password}
-              setVal={value => handleInputChange('password', value)}
-              title="Password"
-              type="default"
-              secureTextEntry={true}
-              placeholder="Enter your password"
-              setError={setError}
             />
           </View>
-        </View>
 
-        <View style={{flex: 2, rowGap: 10}}>
-          <ActionButton
-            onClick={handleSignIn}
-            loader={loading}
-            error={error}
-            onLoadText="Signing in...">
-            Sign in with email
-          </ActionButton>
+          <View style={{flex: 6}}>
+            <IconButton src={GoogleIcon} onPress={signInWithGoogle} />
+            <View style={styles.gapVertical}>
+              <RulerText />
+            </View>
 
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => navigation.navigate('ForgetPassword')}>
-            <Text
-              style={{
-                textAlign: 'center',
-                marginTop: 15,
-                color: color.blue,
-                fontWeight: 600,
-              }}>
-              Forgot password?
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <View style={{gap: 25}}>
+              <InputField
+                val={signInData.email}
+                setVal={value => handleInputChange('email', value)}
+                title="Enter Email"
+                type="email-address"
+                placeholder="i.e. Jhon@gmail.com"
+                setError={setError}
+              />
+
+              <InputField
+                val={signInData.password}
+                setVal={value => handleInputChange('password', value)}
+                title="Password"
+                type="default"
+                secureTextEntry={true}
+                placeholder="Enter your password"
+                setError={setError}
+              />
+            </View>
+          </View>
+
+          <View style={{flex: 2, rowGap: 10}}>
+            <ActionButton
+              onClick={handleSignIn}
+              loader={loading}
+              error={error}
+              onLoadText="Signing in...">
+              Sign in with email
+            </ActionButton>
+
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate('ForgetPassword')}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 15,
+                  color: color.blue,
+                  fontWeight: 600,
+                }}>
+                Forgot password?
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 

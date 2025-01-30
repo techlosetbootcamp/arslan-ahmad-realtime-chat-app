@@ -23,7 +23,7 @@ interface Chat {
 }
 
 interface Participant {
-  createdAt?: { toMillis: () => number } | null;
+  createdAt?: {toMillis: () => number} | null;
   uid: string;
   displayName: string;
   email: string;
@@ -50,13 +50,25 @@ const userSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
+    addUserToContact(state, action: PayloadAction<string>) {
+      if (!state.contacts) {
+        state.contacts = [];
+      }
+
+      const alreadyExists = state.contacts.some(
+        contactId => contactId === action.payload,
+      );
+      if (!alreadyExists && action.payload) {
+        state.contacts.push(action.payload);
+      }
+    },
     clearUser(state) {
       Object.assign(state, initialState);
     },
   },
 });
 
-export const {setUser, setLoading, clearUser} = userSlice.actions;
+export const {setUser, setLoading, clearUser, addUserToContact} = userSlice.actions;
 
 export const fetchUserData =
   (uid: string): AppThunk =>
@@ -74,13 +86,16 @@ export const fetchUserData =
           description: userData.description || null,
           status: userData.status || null,
           contacts: userData.contacts || [],
-          chats: userData.chats?.map((chat: Chat) => ({
-        ...chat,
-        participantsDetails: chat.participantsDetails?.map((participant: Participant) => ({
-          ...participant,
-          createdAt: participant.createdAt?.toMillis() || null,
-        })),
-          })) || [],
+          chats:
+            userData.chats?.map((chat: Chat) => ({
+              ...chat,
+              participantsDetails: chat.participantsDetails?.map(
+                (participant: Participant) => ({
+                  ...participant,
+                  createdAt: participant.createdAt?.toMillis() || null,
+                }),
+              ),
+            })) || [],
         }),
       );
     }
