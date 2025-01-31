@@ -11,11 +11,11 @@ import IconButton from '../components/IconButton';
 import RulerText from '../components/RulerText';
 import InputField from '../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
-import ActionButton from '../components/ActionButton';
+import ActionButton from '../components/actionButton/ActionButton';
 import {color} from '../constants/colors';
-import AuthHeaderSection from '../components/AuthHeaderSection';
+import AuthHeaderSection from '../components/AuthSectionHeader';
 import useSign from '../hooks/useSign';
-import {GoogleIcon} from '../constants/imgs';
+import Images from '../constants/imgs';
 import Loader from '../components/Loader';
 
 const SignIn: React.FC = () => {
@@ -47,7 +47,7 @@ const SignIn: React.FC = () => {
           </View>
 
           <View style={{flex: 6}}>
-            <IconButton src={GoogleIcon} onPress={signInWithGoogle} />
+            <IconButton src={Images.GoogleIcon} onPress={signInWithGoogle} />
             <View style={styles.gapVertical}>
               <RulerText />
             </View>

@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, TextInput, TouchableOpacity, Image} from 'react-native';
-import {chatScreenStyles as styles} from '../styles/chatScreen';
+import {chatScreenStyles as styles} from '../styles/chatComponents/screen';
 import useChatInput from '../hooks/useChatInput';
+import Images from '../constants/imgs';
 
 const ChatInput: React.FC<{
   value: string;
@@ -17,10 +18,7 @@ const ChatInput: React.FC<{
       <TouchableOpacity
         onPress={() => handleSelectImages(chatId, senderId)}
         style={styles.attachmentButton}>
-        <Image
-          source={require('../assets/icons/clip.png')}
-          style={styles.cameraIcon}
-        />
+        <Image source={Images.PaperClipIcon} style={styles.cameraIcon} />
       </TouchableOpacity>
       <View style={styles.inputWrapper}>
         <TextInput
@@ -33,19 +31,23 @@ const ChatInput: React.FC<{
           onKeyPress={() => console.log('Typed...')}
         />
         <TouchableOpacity onPress={onSend} style={styles.attachmentButton}>
-          <Image
-            source={require('../assets/icons/send.png')}
-            style={{width: 27, height: 27}}
-          />
+          <View
+            style={{
+              width: 27,
+              height: 27,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Image source={Images.SendIcon} style={{width: 25, height: 25}} />
+          </View>
         </TouchableOpacity>
       </View>
       <TouchableOpacity
         onPress={() => handleCamera(chatId, senderId)}
         style={styles.cameraButton}>
-        <Image
-          source={require('../assets/icons/camera.png')}
-          style={styles.cameraIcon}
-        />
+        <View style={styles.cameraIcon}>
+          <Image source={Images.CameraIcon} style={styles.cameraIcon} />
+        </View>
       </TouchableOpacity>
     </View>
   );

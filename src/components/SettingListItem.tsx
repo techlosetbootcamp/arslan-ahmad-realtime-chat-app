@@ -12,7 +12,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   const {navigation} = appNavigate();
 
     const handlePress = () => {
-        if (link !== null) {
+        if (link === 'ForgetPassword') {
           navigation.navigate(link);
         }
       };

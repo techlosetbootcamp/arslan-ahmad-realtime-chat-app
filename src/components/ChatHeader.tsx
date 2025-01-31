@@ -1,9 +1,9 @@
-import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Image, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {ChatHeaderProps} from '../types/chatHeader';
-import {color} from '../constants/colors';
-import {BlackBackIcon, PlaceholderImg} from '../constants/imgs';
+import Images from '../constants/imgs';
+import {ChatHeaderStyles} from '../styles/chatComponents/header';
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
   profileImage,
@@ -12,73 +12,26 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 }) => {
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <View style={ChatHeaderStyles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Image source={BlackBackIcon} style={styles.backIcon} />
+        <Image source={Images.BlackBackIcon} style={ChatHeaderStyles.backIcon} />
       </TouchableOpacity>
- 
-       <View style={styles.userInfoContainer}>
-         <View>
-           <Image
-             source={profileImage ? {uri: profileImage} : PlaceholderImg}
-             style={styles.profileImage}
-           />
-           <View style={styles.onlineStatus}></View>
-         </View>
-         <View>
-           <Text style={styles.displayName}>{displayName}</Text>
-           <Text style={styles.status}>{status || 'Offline'}</Text>
-         </View>
-       </View> 
+
+      <View style={ChatHeaderStyles.userInfoContainer}>
+        <View>
+          <Image
+            source={profileImage ? {uri: profileImage} : Images.PlaceholderImg}
+            style={ChatHeaderStyles.profileImage}
+          />
+          <View style={ChatHeaderStyles.onlineStatus}></View>
+        </View>
+        <View>
+          <Text style={ChatHeaderStyles.displayName}>{displayName}</Text>
+          <Text style={ChatHeaderStyles.status}>{status || 'Offline'}</Text>
+        </View>
+      </View>
     </View>
   );
 };
 
 export default ChatHeader;
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8f8f8',
-    padding: 15,
-    elevation: 2,
-  },
-  backIcon: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
-  },
-  userInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  imgContainer: {
-    position: 'relative',
-  },
-  onlineStatus: {
-    width: 12,
-    height: 12,
-    borderRadius: 7.5,
-    backgroundColor: color.green,
-    position: 'absolute',
-    right: 10,
-    bottom: -2,
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  displayName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  status: {
-    fontSize: 12,
-    color: 'gray',
-  },
-});

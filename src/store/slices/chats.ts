@@ -82,9 +82,9 @@ const chatSlice = createSlice({
         {
           ...message,
           timestamp: message.timestamp
-            ? (message.timestamp
-                .toDate()
-                .toISOString() as unknown as WritableDraft<Timestamp>)
+            ? ((message.timestamp instanceof Timestamp
+                ? message.timestamp.toDate().toISOString()
+                : message.timestamp) as unknown as WritableDraft<Timestamp>)
             : null,
         },
       ];

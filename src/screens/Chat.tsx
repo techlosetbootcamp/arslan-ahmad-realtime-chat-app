@@ -5,6 +5,7 @@ import ChatHeader from '../components/ChatHeader';
 import {ChatProps} from '../types/chatScreenProps';
 import MessageBubble from '../components/MessageBubble';
 import useChat from '../hooks/useChat';
+import {Timestamp} from '@react-native-firebase/firestore';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   const {chatId, participant} = route.params;
@@ -33,9 +34,11 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
               type={item.contentType}
               timestamp={
                 item.timestamp
-                  ? typeof item.timestamp === 'string'
-                    ? new Date(item.timestamp).toLocaleString()
-                    : new Date(item.timestamp.toDate()).toLocaleString()
+                  ? item.timestamp instanceof Timestamp
+                    ? item.timestamp.toDate().toLocaleString() // Convert Firestore Timestamp to Date
+                    : typeof item.timestamp === 'string'
+                    ? new Date(item.timestamp).toLocaleString() // Convert string timestamp
+                    : null // Handle unexpected cases
                   : null
               }
               previousMessage={messages[index - 1] || null}

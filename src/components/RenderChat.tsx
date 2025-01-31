@@ -1,7 +1,7 @@
 import {useAppSelector} from '../store/store';
 import {User} from '../types/firestoreService';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import {ChatNavigatorStyles} from '../styles/chatNavigator';
+import {ChatNavigatorStyles} from '../styles/chatComponents/navigator';
 import appNavigate from '../hooks/useNavigation';
 
 export const useRenderChatItem = () => {

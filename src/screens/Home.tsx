@@ -14,7 +14,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <View style={styles.content}>
         {isLoading ? (
           <View>
-            <Loader color="#0000ff" />
+            <Loader />
           </View>
         ) : (
           <FlatList

@@ -1,23 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import IconButton from '../components/IconButton';
 import RulerText from '../components/RulerText';
 import InputField from '../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
 import useAuth from '../hooks/useAuth';
-import {NativeStackNavigationProp} from 'react-native-screens/lib/typescript/native-stack/types';
-import ActionButton from '../components/ActionButton';
-import AuthHeaderSection from '../components/AuthHeaderSection';
-import ActionText from '../components/ActionText';
-import {GoogleIcon} from '../constants/imgs';
+import ActionButton from '../components/actionButton/ActionButton';
+import AuthHeaderSection from '../components/AuthSectionHeader';
+import Images from '../constants/imgs';
 import {color} from '../constants/colors';
-import SimpleText from '../components/SimpleText';
 import {showToast} from '../components/Toast';
 import Loader from '../components/Loader';
-
-type SignInProps = {
-  navigation: NativeStackNavigationProp<any>;
-};
+import useNavigate from '../hooks/useNavigation';
 
 const initialState = {
   name: '',
@@ -26,7 +20,8 @@ const initialState = {
   confirmPassword: '',
 };
 
-const SignIn: React.FC<SignInProps> = ({navigation}) => {
+const SignIn: React.FC = () => {
+  const {navigation} = useNavigate();
   const [userData, setUserData] = useState(initialState);
   const [error, setError] = useState<string>('');
   const {handleSignUp, loading, observeAuth} = useAuth();
@@ -84,7 +79,7 @@ const SignIn: React.FC<SignInProps> = ({navigation}) => {
 
         <View style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
           <IconButton
-            src={GoogleIcon}
+            src={Images.GoogleIcon}
             onPress={() => console.log("'Google Icon' on Sign Clicked")}
           />
           <View style={styles.gapVertical}>

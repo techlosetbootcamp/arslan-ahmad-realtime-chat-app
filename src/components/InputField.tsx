@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {InputFieldProps} from '../types/inputField';
 import {color} from '../constants/colors';
+import useInputValidation from '../hooks/useInputValidation';
 
 function InputField({
   placeholder,
@@ -12,73 +13,12 @@ function InputField({
   val,
   setError,
 }: InputFieldProps) {
-  const [isError, setIsError] = useState<string>('');
-  const [touched, setTouched] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(
-    null,
+  const {isError, handleChange} = useInputValidation(
+    title,
+    type,
+    setVal,
+    setError,
   );
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    const hasNumber = /[0-9]/;
-    const hasAlphabet = /[a-zA-Z]/;
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>_-]/;
-
-    return {
-      hasNumber: hasNumber.test(password),
-      hasAlphabet: hasAlphabet.test(password),
-      hasSpecialChar: hasSpecialChar.test(password),
-    };
-  };
-
-  const handleChange = (text: string) => {
-    setVal(text);
-    setTouched(true);
-
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
-    const newTimeout = setTimeout(() => {
-      validateField(text);
-    }, 500);
-    setTypingTimeout(newTimeout);
-  };
-
-  const validateField = (text: string) => {
-    let error = '';
-    if (text.length === 0 && touched) {
-      let text = title;
-      if (title.split(' ')[0] === 'Enter') {
-        text = title.split(' ')[1];
-      }
-      error = `${text} is important.`;
-    } else if (type === 'email-address') {
-      if (!validateEmail(text)) {
-        error = 'Please enter a valid email address.';
-      }
-    } else {
-      if (title.toLowerCase().includes('password')) {
-        const {hasNumber, hasAlphabet, hasSpecialChar} = validatePassword(text);
-
-        if (!hasNumber) {
-          error = 'Your password must contain at least one number.';
-        } else if (!hasAlphabet) {
-          error = 'Your password must contain at least one letter.';
-        } else if (!hasSpecialChar) {
-          error = 'Your password must contain at least one special character.';
-        }
-      }
-    }
-    setIsError(error);
-    if (setError) {
-      setError(error);
-    }
-  };
 
   return (
     <View>
@@ -96,10 +36,10 @@ function InputField({
           borderBottomWidth: 1,
           borderBottomColor: isError ? color.light_red : color.light_grey,
           paddingInlineStart: 0,
-          color: '#3D4A7A',
+          color: color.light_grey,
         }}
         placeholder={placeholder || ''}
-        placeholderTextColor="#CDD1D0"
+        placeholderTextColor={color.dark_gray}
         value={val}
         secureTextEntry={secureTextEntry}
         onChangeText={text => handleChange(text)}
@@ -109,7 +49,7 @@ function InputField({
       {isError && (
         <Text
           style={{
-            color: 'red',
+            color: color.red,
             fontSize: 12,
             fontWeight: '300',
             marginTop: 2,

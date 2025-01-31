@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, TextStyle} from 'react-native';
+import {Text, TextStyle} from 'react-native';
 import {color as ThemeColor} from '../constants/colors';
 
 type SimpleTextProps = {

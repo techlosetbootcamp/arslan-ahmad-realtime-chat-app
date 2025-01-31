@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {color} from '../constants/colors';
+import {color} from '../../constants/colors';
 
 export const chatScreenStyles = StyleSheet.create({
   container: {flex: 1},
@@ -39,15 +39,15 @@ export const chatScreenStyles = StyleSheet.create({
     padding: 10,
   },
   cameraIcon: {
-    width: 20,
-    height: 20,
+    width: 25,
+    height: 25,
     tintColor: color.dark_gray,
   },
   messageContainer: {
     padding: 10,
     marginVertical: 3,
     maxWidth: '80%',
-    alignSelf: 'flex-start', 
+    alignSelf: 'flex-start',
   },
   userMessage: {
     alignSelf: 'flex-end',

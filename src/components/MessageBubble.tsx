@@ -1,7 +1,9 @@
 import React from 'react';
 import {View, Text, Image} from 'react-native';
-import {chatScreenStyles as styles} from '../styles/chatScreen';
-import {PlaceholderImg} from '../constants/imgs';
+import {chatScreenStyles as styles} from '../styles/chatComponents/screen';
+import Images from '../constants/imgs';
+import {Message} from '../types/firestoreService';
+import {useMessageBubble} from '../hooks/useMessageBubble';
 
 const MessageBubble: React.FC<{
   text: string;
@@ -12,34 +14,21 @@ const MessageBubble: React.FC<{
   nextMessage?: {
     senderId: string;
   } | null;
-  previousMessage?: {
-    senderId: string;
-    timestamp?: string | {toDate: () => Date} | null;
-  } | null;
+  previousMessage?: Message | null;
   type: 'text' | 'image';
 }> = ({
   text,
   type,
   photoURL,
   timestamp,
-  nextMessage,
   isUserMessage,
   participantName,
+  nextMessage,
   previousMessage,
 }) => {
-  const time = timestamp?.split(',')[1];
-  const validTime = time
-    ? time.split(':').slice(0, 2).join(':') + time.slice(-3)
-    : '';
+  const {isFirstMessageInSequence, isLastMessageInSequence, validTime} =
+    useMessageBubble(isUserMessage, nextMessage, previousMessage, timestamp);
 
-  const isFirstMessageInSequence =
-    !previousMessage ||
-    previousMessage.senderId !== (isUserMessage ? 'user' : 'participant');
-
-  const isLastMessageInSequence =
-    !nextMessage ||
-    nextMessage.senderId !== (isUserMessage ? 'user' : 'participant');
-  !nextMessage || nextMessage.senderId !== previousMessage?.senderId;
   return (
     <View
       style={[
@@ -49,7 +38,7 @@ const MessageBubble: React.FC<{
       {!isUserMessage && isFirstMessageInSequence && (
         <View style={{flexDirection: 'row', alignItems: 'flex-start', gap: 10}}>
           <Image
-            source={photoURL ? {uri: photoURL} : PlaceholderImg}
+            source={photoURL ? {uri: photoURL} : Images.PlaceholderImg}
             style={{width: 35, height: 35, borderRadius: 17.5}}
           />
           <Text>{participantName}</Text>

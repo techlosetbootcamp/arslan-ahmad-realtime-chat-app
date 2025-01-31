@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -6,13 +6,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {SearchBarProps} from '../hooks/useSearchBar';
 
-interface SearchBarProps {
-  searchText: string;
-  setSearchText: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ searchText, setSearchText }) => {
+const SearchBar: React.FC<SearchBarProps> = ({searchText, setSearchText}) => {
   const handleClear = () => {
     setSearchText('');
   };
@@ -29,7 +25,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchText, setSearchText }) => {
           placeholderTextColor="#888"
           placeholder="Find new people or groups"
           value={searchText}
-          onChangeText={(text) => setSearchText(text)}
+          onChangeText={text => setSearchText(text)}
         />
       </View>
       <TouchableOpacity onPress={handleClear} style={styles.clearButton}>

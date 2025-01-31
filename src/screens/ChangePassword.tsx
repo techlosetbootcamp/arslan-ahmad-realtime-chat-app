@@ -1,78 +1,13 @@
-import React, {useState} from 'react';
-import {View, TextInput, Button, Alert, StyleSheet, Text} from 'react-native';
-import auth from '@react-native-firebase/auth';
-import useNavigate from '../hooks/useNavigation';
+import React from 'react';
+import {View, StyleSheet} from 'react-native';
 import InputField from '../components/InputField';
 import ContentViewer from '../components/ContentViewer';
-import ActionButton from '../components/ActionButton';
+import ActionButton from '../components/actionButton/ActionButton';
 import {color} from '../constants/colors';
-import {FirebaseError} from '@firebase/util';
-import {showToast} from '../components/Toast';
-
-const initialState = {
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-};
+import useChangePassword from '../hooks/useChangePassword';
 
 const ForgotPasswordScreen = () => {
-  const [passwords, setPasswords] = useState(initialState);
-  const {navigation} = useNavigate();
-  const user = auth().currentUser;
-
-  const handlePasswordReset = async () => {
-    const {currentPassword, newPassword, confirmPassword} = passwords;
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      showToast('Error', 'All fields are required.', 'error');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      showToast(
-        'Error',
-        'Passwords & Confirm Password are different.',
-        'error',
-      );
-      return;
-    }
-    if (!user) {
-      showToast('Error', 'No authenticated user found.', 'error');
-      return;
-    }
-
-    try {
-      if (!user.email) {
-        showToast('Error', 'No email found for the user.', 'error');
-        return;
-      }
-      const credential = auth.EmailAuthProvider.credential(
-        user.email,
-        currentPassword,
-      );
-      await user.reauthenticateWithCredential(credential);
-
-      await user.updatePassword(newPassword);
-
-      showToast('Success', 'Password updated successfully!', 'success');
-      navigation.goBack();
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        if (error.code === 'auth/wrong-password') {
-          showToast('Error', 'The current password is incorrect.', 'error');
-        } else {
-          showToast(
-            'Error',
-            'Failed to update the password. Please try again.',
-            'error',
-          );
-        }
-      } else {
-        showToast('Error', 'An unexpected error occurred.', 'error');
-      }
-    }
-  };
-
+  const {setPasswords, passwords, handlePasswordReset} = useChangePassword();
   return (
     <ContentViewer title="Reset Password">
       <View style={styles.container}>

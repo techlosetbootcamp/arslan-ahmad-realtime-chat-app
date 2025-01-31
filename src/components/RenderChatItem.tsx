@@ -9,25 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ChatNavigatorStyles} from '../styles/chatNavigator';
+import {ChatNavigatorStyles} from '../styles/chatComponents/navigator';
 import appNavigate from '../hooks/useNavigation';
 import {getRelativeTime} from '../constants/sideFucntions';
 import {Swipeable} from 'react-native-gesture-handler';
 import {color} from '../constants/colors';
-import {NotificationWhiteIcon} from '../constants/imgs';
+import Images from '../constants/imgs';
 import {showToast} from './Toast';
 import {deleteChatFromFirebase} from '../store/slices/chats';
 
 interface RenderChatItemProps {
   item: Chat;
-}
-
-interface ChatItem {
-  participantsDetails: User[];
-  lastActive: number;
-  lastMessage: string;
-  unreadMessages: number;
-  id: string;
 }
 
 const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
@@ -90,8 +82,8 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
             <Image
               source={
                 item.notificationStatus
-                  ? NotificationWhiteIcon
-                  : NotificationWhiteIcon
+                  ? Images.NotificationWhiteIcon
+                  : Images.NotificationWhiteIcon
               }
               style={{width: 20, height: 20}}
             />

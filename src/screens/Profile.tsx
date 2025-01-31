@@ -8,10 +8,10 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import InputField from '../components/InputField';
-import ActionButton from '../components/ActionButton';
+import ActionButton from '../components/actionButton/ActionButton';
 import ContentViewer from '../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
-import {EditIcon} from '../constants/imgs';
+import Images from '../constants/imgs';
 import {color} from '../constants/colors';
 import LoaderScreen from '../components/Loader';
 import useProfile from '../hooks/useProfile';
@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
 
   return (
     <>
-    {updateLoader && <LoaderScreen />}
+      {updateLoader && <LoaderScreen />}
       <ContentViewer title="Profile">
         <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
           <TouchableOpacity
@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
             }
 
             <View style={styles.editButton}>
-              <Image source={EditIcon} style={{width: 10, height: 10}} />
+              <Image source={Images.EditIcon} style={{width: 10, height: 10}} />
             </View>
           </TouchableOpacity>
 

@@ -2,19 +2,16 @@ import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
 import RulerText from '../components/RulerText';
 import IconButton from '../components/IconButton';
-import ActionButton from '../components/ActionButton';
+import ActionButton from '../components/actionButton/ActionButton';
 import {color} from '../constants/colors';
 import {signInWithGoogle} from '../services/auth';
 import useNavigate from '../hooks/useNavigation';
 import ActionText from '../components/ActionText';
 import SimpleText from '../components/SimpleText';
-import {useAppSelector} from '../store/store';
 
 const Welcome = () => {
   const {navigation} = useNavigate();
-  const user = useAppSelector(state => state.user);
 
-  console.log('User => ', user);
   return (
     <View style={styles.container}>
       <Text style={styles.link}>Connect friends easily & quickly</Text>
@@ -43,7 +40,7 @@ const Welcome = () => {
         styles={{
           ...styles.description,
           fontSize: 14,
-          color: 'white',
+          color: color.white,
           textAlign: 'center',
           marginTop: 20,
         }}
@@ -71,7 +68,7 @@ const styles = StyleSheet.create({
     fontSize: 68,
     lineHeight: 80,
     fontWeight: 400,
-    color: 'white',
+    color: color.white,
     paddingVertical: 15,
   },
   description: {
@@ -83,7 +80,7 @@ const styles = StyleSheet.create({
   },
   ghostButton_text: {
     textAlign: 'center',
-    color: 'white',
+    color: color.white,
     fontSize: 18,
   },
   ghostIcon: {

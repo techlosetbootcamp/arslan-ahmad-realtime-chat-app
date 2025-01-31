@@ -12,4 +12,6 @@ export const color = {
   dark_gray: 'rgb(187, 191, 189)',
   light_grey: 'rgb(214, 215, 215)',
   green: 'rgb(43, 239, 131)',
+  white: 'rgb(251, 250, 250)',
+  pure_gray: 'gray',
 };

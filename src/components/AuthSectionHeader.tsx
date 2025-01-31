@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {color} from '../constants/colors';
 import {AuthHeaderSectionProps} from '../types/sectionHeaders';
 import SimpleText from './SimpleText';
+import {color} from '../constants/colors';
 
 const AuthHeaderSection: React.FC<AuthHeaderSectionProps> = ({
   title,

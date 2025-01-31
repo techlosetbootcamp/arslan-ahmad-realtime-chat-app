@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Timestamp} from 'firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {
   fetchMessages,
@@ -32,10 +32,13 @@ const appChat = (chatId: string, participantUid: string) => {
     const unsubscribe = listenToMessages(chatId, newMessages => {
       dispatch({
         type: 'chat/setMessages',
-        payload: {chatId, messages: newMessages},
+        payload: { chatId, messages: newMessages },
       });
     });
-    return () => unsubscribe();
+  
+    return () => {
+      unsubscribe();
+    };
   }, [chatId, dispatch]);
 
   const handleSend = async () => {
@@ -45,7 +48,7 @@ const appChat = (chatId: string, participantUid: string) => {
         senderId: user?.uid || '',
         text: newMessage,
         contentType: 'text',
-        timestamp: Timestamp.fromDate(new Date()),
+        timestamp: firestore.FieldValue.serverTimestamp(),
         status: {sender: 'sent', receiver: 'unread'},
       };
 
