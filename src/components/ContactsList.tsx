@@ -11,7 +11,8 @@ import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
 import useContactHandler from '../hooks/useContactHandler';
 import {color} from '../constants/colors';
-import Loader from './Loader';
+import Loader from './loader/Loader';
+import Images from '../constants/imgs';
 
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
   const {handleContactClick, loader} = useContactHandler();
@@ -34,7 +35,7 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
               source={
                 item.photoURL
                   ? {uri: item.photoURL}
-                  : require('../assets/imgs/profile_placeholder_image.png')
+                  : Images.PlaceholderImg
               }
               style={styles.contactImage}
             />

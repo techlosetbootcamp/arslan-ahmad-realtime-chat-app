@@ -1,7 +1,7 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {color} from '../constants/colors';
 import {SettingsItemProps} from '../types/settingsListItem';
-import appNavigate from '../hooks/useNavigation';
+import appNavigate from '../hooks/useNavigationHook';
 
 const SettingsItem: React.FC<SettingsItemProps> = ({
   title,

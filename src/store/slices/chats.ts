@@ -88,7 +88,6 @@ const chatSlice = createSlice({
             : null,
         },
       ];
-      console.log('%c message', 'font-size:25px;color:orange;', message);
     },
     deleteChatFromStore(state, action: PayloadAction<string>) {
       const chatId = action.payload;
@@ -120,6 +119,7 @@ export const fetchUserChats =
         return acc;
       }, {} as Record<string, Chat>);
       dispatch(setChats(chatMap));
+      dispatch(setLoading(false));
     } catch (error) {
       dispatch(
         setError(

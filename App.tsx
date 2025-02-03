@@ -13,6 +13,8 @@ const App = () => {
     GoogleSignin.configure({webClientId: Config.GOOGLE_AUTH_CLIENTID});
   }, []);
 
+  console.log('%cApp.tsx', 'color: red; font-size: 18px');
+
   return (
     <>
       <GestureHandlerRootView style={{flex: 1}}>

@@ -1,8 +1,7 @@
-import { Dimensions, StyleSheet } from "react-native";
-import { color } from "../constants/colors";
+import {Dimensions, StyleSheet} from 'react-native';
+import {color} from '../constants/colors';
 
-export 
-const ContnetViewerStyles = StyleSheet.create({
+export const ContnetViewerStyles = StyleSheet.create({
   Maincontainer: {
     flex: 1,
   },

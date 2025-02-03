@@ -1,11 +1,11 @@
-import {FirebaseError} from '@firebase/util';
-import {useAppDispatch, useAppSelector} from './../store/store';
 import {useEffect, useState} from 'react';
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {login, signUp, observeAuthState} from '../services/auth';
-import {UseAuthReturn} from '../types/auth';
-import {setLoading, setUser, UserState} from '../store/slices/user';
 import { ToastAndroid } from 'react-native';
+import {FirebaseError} from '@firebase/util';
+import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {UseAuthReturn} from '../types/auth';
+import {useAppDispatch, useAppSelector} from './../store/store';
+import {login, signUp, observeAuthState} from '../services/auth';
+import {setLoading, setUser, UserState} from '../store/slices/user';
 
 const appAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);

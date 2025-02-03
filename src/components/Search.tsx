@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {SearchBarProps} from '../hooks/useSearchBar';
+import { SearchBarProps } from '../types/search';
 
 const SearchBar: React.FC<SearchBarProps> = ({searchText, setSearchText}) => {
   const handleClear = () => {

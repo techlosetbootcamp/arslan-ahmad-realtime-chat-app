@@ -1,12 +1,12 @@
 import {useRoute} from '@react-navigation/native';
 import appAuth from './useAuth';
-import appNavigate from './useNavigation';
+import useNavigate from './useNavigationHook';
 
 const appContentViewer = () => {
   const route = useRoute();
   const {user} = appAuth();
   const isFullNav = route.name === 'Home' || route.name === 'Contacts';
-  const {navigation} = appNavigate();
+  const {navigation} = useNavigate();
 
   const handlePressLeft = async () => {
     if (isFullNav) {

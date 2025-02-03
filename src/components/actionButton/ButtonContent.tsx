@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Text, TouchableOpacity} from 'react-native';
 import {ActionButtonProps} from '../../types/actionButton';
 import {showToast} from '../Toast';
 import { color } from '../../constants/colors';

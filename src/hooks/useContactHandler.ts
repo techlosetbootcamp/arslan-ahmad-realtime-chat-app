@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { createNewChat } from '../services/chats';
 import {userProfile} from '../types/profile';
 import useAuth from './useAuth';
-import appNavigate from './useNavigation';
+import appNavigate from './useNavigationHook';
 import { showToast } from '../components/Toast';
 
 const useContactHandler = () => {

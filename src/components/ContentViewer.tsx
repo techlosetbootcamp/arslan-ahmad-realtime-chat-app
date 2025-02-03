@@ -3,6 +3,7 @@ import {View, Text, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import useContentViewer from '../hooks/useContentViewer';
 import {ContnetViewerStyles} from '../styles/contentViewer';
+import Images from '../constants/imgs';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   const {handlePressLeft, isFullNav, navigation, user, route} =
@@ -26,11 +27,7 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                 style={ContnetViewerStyles.iconContainer}
                 onPress={handlePressLeft}>
                 <Image
-                  source={
-                    !isFullNav
-                      ? require('../assets/icons/back.png')
-                      : require('../assets/icons/search.png')
-                  }
+                  source={!isFullNav ? Images.BackIcon : Images.SearchIcon}
                   style={{
                     ...ContnetViewerStyles.iconText,
                     width: !isFullNav ? 30 : 20,
@@ -60,8 +57,8 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                       route.name !== 'Contacts'
                         ? user?.photoURL
                           ? {uri: user.photoURL}
-                          : require('../assets/imgs/profile_placeholder_image.png')
-                        : require('../assets/icons/add_user.png')
+                          : Images.PlaceholderImg
+                        : Images.AddUserIcon
                     }
                     style={ContnetViewerStyles.profileImage}
                   />

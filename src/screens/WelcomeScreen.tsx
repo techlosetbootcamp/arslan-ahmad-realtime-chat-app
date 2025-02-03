@@ -5,7 +5,7 @@ import IconButton from '../components/IconButton';
 import ActionButton from '../components/actionButton/ActionButton';
 import {color} from '../constants/colors';
 import {signInWithGoogle} from '../services/auth';
-import useNavigate from '../hooks/useNavigation';
+import useNavigate from '../hooks/useNavigationHook';
 import ActionText from '../components/ActionText';
 import SimpleText from '../components/SimpleText';
 
