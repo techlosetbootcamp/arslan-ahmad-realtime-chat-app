@@ -8,28 +8,33 @@ import {
   View,
 } from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
-import {Chat, User} from '../../types/firestoreService';
+import {User} from '../../types/firestoreService';
 import {useAppDispatch, useAppSelector} from '../../store/store';
 import {ChatNavigatorStyles} from '../../styles/chatComponents/navigator';
 import appNavigate from '../../hooks/useNavigationHook';
 import {getRelativeTime} from '../../constants/sideFucntions';
-import {color} from '../../constants/colors';
+import {COLOR} from '../../constants/colors';
 import Images from '../../constants/imgs';
-import {deleteChatFromFirebase} from '../../store/slices/chats';
+import {deleteChatFromFirebase} from '../../store/slices/chats.slice';
 import {showToast} from '../Toast';
+import {ChatItem} from '../../types/chat';
 
 interface RenderChatItemProps {
-  item: Chat;
+  item: ChatItem;
 }
 
-const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
+const RenderChatItem: React.FC<RenderChatItemProps> = ({
+  item,
+}: {
+  item: ChatItem;
+}) => {
   const {navigation} = appNavigate();
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const userId = user?.uid;
 
-  const participants = item.participantsDetails?.filter(
-    (participant: User) => participant.uid !== userId,
+  const participants = item?.participantsDetails?.filter(
+    (participant: User) => participant?.uid !== userId,
   );
 
   const participant = participants?.[0];
@@ -41,22 +46,18 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
       participant: {
         uid: participant?.uid || '',
         displayName: participantName,
-        photoURL: participantImage,
-        status: participant?.status || 'Offline',
+        photoURL: participantImage || null,
+        status: participant?.status === 'online' ? 'online' : 'Offline',
       },
     });
   };
 
   const lastActivityTime = getRelativeTime(item.lastActive);
   const [isSwiped, setIsSwiped] = useState(false);
-  console.log('Chat item =>', item.unreadMessages);
 
   const renderRightActions = (
-    progressAnimatedValue: Animated.AnimatedInterpolation<string | number>,
     dragAnimatedValue: Animated.AnimatedInterpolation<string | number>,
   ) => {
-    const progress =
-      progressAnimatedValue as Animated.AnimatedInterpolation<number>;
     const dragX = dragAnimatedValue as Animated.Value;
     const scale = dragX.interpolate({
       inputRange: [-100, 0],
@@ -143,7 +144,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}: {item: any}) => {
             {item.unreadMessages !== 0 && (
               <Text
                 style={{
-                  backgroundColor: color.red,
+                  backgroundColor: COLOR.red,
                   paddingHorizontal: 8,
                   paddingVertical: 2,
                   borderRadius: 20,
@@ -166,7 +167,7 @@ const slider = StyleSheet.create({
     justifyContent: 'flex-end',
     columnGap: 10,
     paddingHorizontal: 10,
-    backgroundColor: color.bluish_white,
+    backgroundColor: COLOR.bluish_white,
   },
   actionButton: {
     width: 30,
@@ -176,10 +177,10 @@ const slider = StyleSheet.create({
     alignItems: 'center',
   },
   deleteButton: {
-    backgroundColor: color.light_red,
+    backgroundColor: COLOR.light_red,
   },
   notificationButton: {
-    backgroundColor: color.black,
+    backgroundColor: COLOR.black,
   },
   actionText: {
     color: '#fff',
@@ -187,7 +188,7 @@ const slider = StyleSheet.create({
     fontSize: 14,
   },
   swipedChatItem: {
-    backgroundColor: color.bluish_white,
+    backgroundColor: COLOR.bluish_white,
   },
 });
 

@@ -1,5 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 
 export const ContnetViewerStyles = StyleSheet.create({
   Maincontainer: {
@@ -7,7 +7,7 @@ export const ContnetViewerStyles = StyleSheet.create({
   },
   content: {
     flex: 9,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: COLOR.white,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     padding: 25,
@@ -35,7 +35,7 @@ export const ContnetViewerStyles = StyleSheet.create({
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.ghost,
+    backgroundColor: COLOR.ghost,
     borderRadius: 25,
   },
   iconText: {
@@ -44,14 +44,14 @@ export const ContnetViewerStyles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#ffffff',
+    color: COLOR.white,
     textAlign: 'center',
   },
   profileImage: {
     width: 34,
     height: 34,
     borderRadius: 20,
-    backgroundColor: color.ghost,
+    backgroundColor: COLOR.ghost,
   },
   childView: {
     width: '20%',

@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {AuthHeaderSectionProps} from '../types/sectionHeaders';
 import SimpleText from './SimpleText';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 
 const AuthHeaderSection: React.FC<AuthHeaderSectionProps> = ({
   title,
@@ -19,7 +19,7 @@ const AuthHeaderSection: React.FC<AuthHeaderSectionProps> = ({
       />
       <SimpleText
         text={subText}
-        color={color.black}
+        color={COLOR.black}
         align="center"
         styles={StyleSheet.flatten([styleSubTitle])}
       />
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     margin: 'auto',
   },
   title: {
-    color: color.blue,
+    color: COLOR.blue,
     fontSize: 18,
     fontWeight: '700',
     textAlign: 'center',

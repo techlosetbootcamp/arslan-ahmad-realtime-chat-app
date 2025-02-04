@@ -12,7 +12,7 @@ import ActionButton from '../../components/actionButton/ActionButton';
 import ContentViewer from '../../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
 import Images from '../../constants/imgs';
-import {color} from '../../constants/colors';
+import {COLOR} from '../../constants/colors';
 import LoaderScreen from '../../components/loader/Loader';
 import useProfile from './useProfile';
 
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     padding: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.black,
+    backgroundColor: COLOR.black,
   },
 });
 

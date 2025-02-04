@@ -25,8 +25,8 @@ export const createNewChat = async (
       });
 
       await Promise.all(
-        participants.map(uid =>
-          usersRef.doc(uid).update({
+        participants?.map(uid =>
+          usersRef.doc(uid)?.update({
             chats: firestore.FieldValue.arrayUnion(chatId),
           }),
         ),
@@ -50,7 +50,7 @@ export const fetchChats = (
     .orderBy('lastActive', 'desc')
     .onSnapshot(
       async snapshot => {
-        const chats = snapshot.docs.map(doc => {
+        const chats = snapshot.docs?.map(doc => {
           const chatData = doc.data();
 
           const lastActive = chatData.lastActive
@@ -64,7 +64,7 @@ export const fetchChats = (
           let participantsDetails: User[] = [];
 
           if (chatData.participantsDetails) {
-            participantsDetails = chatData.participantsDetails.map(
+            participantsDetails = chatData.participantsDetails?.map(
               (participant: Partial<User>) => ({
                 ...participant,
                 createdAt:
@@ -87,9 +87,9 @@ export const fetchChats = (
           };
         });
 
-        const userPromises = chats.map(async chat => {
+        const userPromises = chats?.map(async chat => {
           const userDetails = await Promise.all(
-            chat.participants.map(async (participantId: string) => {
+            chat.participants?.map(async (participantId: string) => {
               const user = await fetchUser(participantId);
               return {uid: participantId, ...user};
             }),
@@ -122,7 +122,7 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
     await chatRef.delete();
 
     await Promise.all(
-      participants.map(uid =>
+      participants?.map(uid =>
         usersRef.doc(uid).update({
           chats: firestore.FieldValue.arrayRemove(chatId),
         }),

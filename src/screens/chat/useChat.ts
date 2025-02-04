@@ -5,7 +5,7 @@ import {
   listenToMessages,
   sendMessage,
 } from '../../services/messages';
-import {addMessage} from '../../store/slices/chats';
+import {addMessage} from '../../store/slices/chats.slice';
 import useAuth from '../../hooks/useAuth';
 import {Message} from '../../types/firestoreService';
 import {useAppDispatch, useAppSelector} from '../../store/store';

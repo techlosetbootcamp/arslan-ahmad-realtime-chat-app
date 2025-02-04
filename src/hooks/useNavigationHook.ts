@@ -1,32 +1,32 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
 import {fetchUsers} from '../services/user';
 import {Chat} from '../types/firestoreService';
-import {setChats} from '../store/slices/chats';
+import {setChats} from '../store/slices/chats.slice';
 import {observeAuthState} from '../services/auth';
-import {fetchContactsThunk} from '../store/slices/contacts';
+import {fetchContactsThunk} from '../store/slices/contacts.slice';
 import {fetchChats} from '../services/chats';
 import {getUserFromStorage} from '../services/async_storage';
-import {setLoading, setUser} from '../store/slices/user';
-import {setLoading as setChatLoading} from '../store/slices/chats';
 import {useAppDispatch, useAppSelector} from '../store/store';
+import {setUser} from '../store/slices/user';
 
 const appNavigate = () => {
   const navigation =
     useNavigation<BottomTabNavigationProp<RootStackParamList>>();
 
   const user = useAppSelector(state => state.user);
-  const {isLoading: userLoader} = useAppSelector(state => state.user);
-  const {isLoading: chatLoader} = useAppSelector(state => state.chat);
   const {users: usersInStore} = useAppSelector(state => state.users);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [userLoader, setUserLoader] = useState(false);
+  const [chatLoader, setChatLoader] = useState(false);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const checkAuthState = () => {
-      dispatch(setLoading(true));
       observeAuthState(async firebaseUser => {
+        setUserLoader(true);
         if (firebaseUser) {
           if (firebaseUser.uid) {
             dispatch(setUser({...firebaseUser, uid: firebaseUser.uid!}));
@@ -35,7 +35,8 @@ const appNavigate = () => {
             await dispatch(fetchContactsThunk(firebaseUser.uid));
           }
         }
-        dispatch(setLoading(false));
+        setUserLoader(false);
+        setIsAuthChecked(true);
       });
     };
     checkAuthState();
@@ -43,28 +44,29 @@ const appNavigate = () => {
 
   useEffect(() => {
     const checkUserSession = async () => {
-      dispatch(setLoading(true));
+      setUserLoader(true);
       const storedUser = await getUserFromStorage();
 
       if (storedUser.uid) {
         dispatch(setUser(storedUser));
       }
-      dispatch(setLoading(false));
+      setIsAuthChecked(true);
     };
     checkUserSession();
+    setUserLoader(false);
   }, [dispatch]);
 
   useEffect(() => {
     if (user.uid) {
-      dispatch(setChatLoading(true));
+      setChatLoader(true);
       fetchChats(user.uid, (chats: Chat[]) => {
         const chatMap = chats.reduce((acc, chat) => {
           acc[chat.id] = chat;
           return acc;
         }, {} as Record<string, Chat>);
         dispatch(setChats(chatMap));
+        setChatLoader(false);
       });
-      dispatch(setChatLoading(false));
     }
   }, [user.uid, dispatch]);
 
@@ -78,7 +80,7 @@ const appNavigate = () => {
     fetchAllUsers(user.uid || '');
   }, [user?.uid, usersInStore.length, dispatch]);
 
-  return {navigation, userLoader, chatLoader, user};
+  return {navigation, user, isAuthChecked, userLoader, chatLoader};
 };
 
 export default appNavigate;

@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 import {SettingsItemProps} from '../types/settingsListItem';
 import appNavigate from '../hooks/useNavigationHook';
 
@@ -40,7 +40,7 @@ const ItemStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: color.bluish_white,
+    backgroundColor: COLOR.bluish_white,
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -48,7 +48,7 @@ const ItemStyles = StyleSheet.create({
   icon: {
     width: 25,
     height: 25,
-    tintColor: color.blue,
+    tintColor: COLOR.blue,
   },
   text: {
     fontSize: 16,
@@ -56,7 +56,7 @@ const ItemStyles = StyleSheet.create({
   },
   subtext: {
     fontSize: 12,
-    color: color.light_grey,
+    color: COLOR.light_grey,
   },
 });
 export default SettingsItem;

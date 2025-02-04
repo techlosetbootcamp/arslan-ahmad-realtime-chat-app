@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {IconButtonProps} from '../types/IconButton';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 
 const IconButton: React.FC<IconButtonProps> = ({src, size, onPress}) => {
   return (
@@ -24,9 +24,9 @@ const styles = StyleSheet.create({
     borderRadius: '50%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.ghost,
+    backgroundColor: COLOR.ghost,
     alignSelf: 'center',
-    shadowColor: color.light_grey,
+    shadowColor: COLOR.light_grey,
     shadowOffset: {
       width: 0,
       height: 2,

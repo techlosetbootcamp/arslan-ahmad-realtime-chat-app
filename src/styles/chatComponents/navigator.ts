@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import { COLOR } from '../../constants/colors';
 
 export const ChatNavigatorStyles = StyleSheet.create({
   chatItem: {
@@ -27,7 +28,7 @@ export const ChatNavigatorStyles = StyleSheet.create({
     marginRight: 10,
   },
   defaultImageText: {
-    color: '#fff',
+    color: COLOR.white,
     fontWeight: 'bold',
   },
   chatDetails: {
@@ -36,7 +37,7 @@ export const ChatNavigatorStyles = StyleSheet.create({
   chatText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+    color: COLOR.black,
   },
   lastMessage: {
     fontSize: 14,

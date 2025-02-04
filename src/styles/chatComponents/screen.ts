@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {color} from '../../constants/colors';
+import {COLOR} from '../../constants/colors';
 
 export const chatScreenStyles = StyleSheet.create({
   container: {flex: 1},
@@ -23,17 +23,17 @@ export const chatScreenStyles = StyleSheet.create({
     paddingHorizontal: 10,
     height: 45,
     textAlignVertical: 'top',
-    backgroundColor: color.offwhite,
+    backgroundColor: COLOR.offwhite,
   },
   input: {
     fontSize: 16,
-    color: color.black,
+    color: COLOR.black,
     width: '80%',
   },
   inputIcon: {
     width: 20,
     height: 20,
-    tintColor: color.dark_gray,
+    tintColor: COLOR.dark_gray,
   },
   cameraButton: {
     padding: 10,
@@ -41,7 +41,7 @@ export const chatScreenStyles = StyleSheet.create({
   cameraIcon: {
     width: 25,
     height: 25,
-    tintColor: color.dark_gray,
+    tintColor: COLOR.dark_gray,
   },
   messageContainer: {
     padding: 10,
@@ -57,25 +57,25 @@ export const chatScreenStyles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   userMessageText: {
-    color: color.offwhite,
+    color: COLOR.offwhite,
     fontSize: 16,
-    backgroundColor: color.light_blue,
+    backgroundColor: COLOR.light_blue,
     padding: 10,
     borderTopLeftRadius: 18,
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
   },
   participantMessageText: {
-    color: color.black,
+    color: COLOR.black,
     fontSize: 16,
-    backgroundColor: color.bluish_white,
+    backgroundColor: COLOR.bluish_white,
     padding: 10,
     borderTopRightRadius: 18,
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
   },
   timestampText: {
-    color: color.dark_gray,
+    color: COLOR.dark_gray,
     fontSize: 12,
     marginTop: 5,
     textAlign: 'right',

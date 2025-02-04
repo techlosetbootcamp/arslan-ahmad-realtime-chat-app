@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TextInput} from 'react-native';
 import {InputFieldProps} from '../types/inputField';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 import useInputValidation from '../hooks/useInputValidation';
 
 function InputField({
@@ -24,7 +24,7 @@ function InputField({
     <View>
       <Text
         style={{
-          color: isError ? color.red : color.primary,
+          color: isError ? COLOR.red : COLOR.primary,
           fontWeight: '500',
           fontSize: 16,
         }}>
@@ -34,12 +34,12 @@ function InputField({
         style={{
           height: 38,
           borderBottomWidth: 1,
-          borderBottomColor: isError ? color.light_red : color.light_grey,
+          borderBottomColor: isError ? COLOR.light_red : COLOR.light_grey,
           paddingInlineStart: 0,
-          color: color.light_grey,
+          color: COLOR.light_grey,
         }}
         placeholder={placeholder || ''}
-        placeholderTextColor={color.dark_gray}
+        placeholderTextColor={COLOR.black}
         value={val}
         secureTextEntry={secureTextEntry}
         onChangeText={text => handleChange(text)}
@@ -49,7 +49,7 @@ function InputField({
       {isError && (
         <Text
           style={{
-            color: color.red,
+            color: COLOR.red,
             fontSize: 12,
             fontWeight: '300',
             marginTop: 2,

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Dimensions, Image, Modal, StyleSheet, View} from 'react-native';
 import Images from '../../constants/imgs';
-import { color } from '../../constants/colors';
+import { COLOR } from '../../constants/colors';
 
 const LoaderScreen = () => {
   return (
@@ -22,6 +22,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-    backgroundColor: color.black,
+    backgroundColor: COLOR.black,
   },
 });

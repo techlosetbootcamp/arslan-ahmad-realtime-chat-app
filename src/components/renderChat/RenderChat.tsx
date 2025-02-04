@@ -3,12 +3,13 @@ import {useAppSelector} from '../../store/store';
 import {User} from '../../types/firestoreService';
 import {ChatNavigatorStyles} from '../../styles/chatComponents/navigator';
 import appNavigate from '../../hooks/useNavigationHook';
+import {ChatItem} from '../../types/chat';
 
 export const useRenderChatItem = () => {
   const user = useAppSelector(state => state.user);
   const {navigation} = appNavigate();
 
-  return ({item}: {item: any}) => {
+  return ({item}: {item: ChatItem}) => {
     const participants = item.participantsDetails?.filter(
       (participant: User) => participant.uid !== user.uid,
     );
@@ -26,7 +27,7 @@ export const useRenderChatItem = () => {
               uid: participant?.uid || ('' as string),
               displayName: participantName as string,
               photoURL: participantImage as string,
-              status: participant?.status || 'Offline',
+              status: participant?.status === 'online' ? 'online' : 'Offline',
             },
           })
         }>

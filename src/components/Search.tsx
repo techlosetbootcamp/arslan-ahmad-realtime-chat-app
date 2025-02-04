@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SearchBarProps } from '../types/search';
+import { COLOR } from '../constants/colors';
 
 const SearchBar: React.FC<SearchBarProps> = ({searchText, setSearchText}) => {
   const handleClear = () => {
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    color: COLOR.gray,
   },
   clearButton: {
     padding: 5,

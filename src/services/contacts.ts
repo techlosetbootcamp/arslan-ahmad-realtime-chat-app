@@ -22,7 +22,7 @@ export const fetchContacts = (
         .where(firestore.FieldPath.documentId(), 'in', contactIds)
         .get();
 
-      const contacts = contactsSnapshot.docs.map(doc => {
+      const contacts = contactsSnapshot.docs?.map(doc => {
         const data = doc.data();
         return {
           uid: doc.id,

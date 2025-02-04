@@ -44,7 +44,7 @@ export const fetchMessages = async (chatId: string): Promise<Message[]> => {
     .orderBy('timestamp', 'asc')
     .get();
 
-  return snapshot.docs.map(doc => ({
+  return snapshot.docs?.map(doc => ({
     id: doc.id,
     ...doc.data(),
     timestamp: doc.data().timestamp?.toDate().toISOString(),
@@ -62,7 +62,7 @@ export const listenToMessages = (
     .orderBy('timestamp', 'asc')
     .onSnapshot(
       snapshot => {
-        const messages = snapshot.docs.map(doc => ({
+        const messages = snapshot.docs?.map(doc => ({
           id: doc.id,
           ...doc.data(),
           timestamp: doc.data().timestamp?.toDate().toISOString(),

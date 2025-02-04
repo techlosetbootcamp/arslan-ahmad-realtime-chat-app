@@ -10,7 +10,7 @@ import {
 import {ContactsProps} from '../types/contactList';
 import {userProfile} from '../types/profile';
 import useContactHandler from '../hooks/useContactHandler';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 import Loader from './loader/Loader';
 import Images from '../constants/imgs';
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   contactStatus: {
     fontSize: 14,
-    color: color.dark_gray,
+    color: COLOR.dark_gray,
     fontWeight: '400',
     marginLeft: 10,
   },

@@ -1,4 +1,4 @@
-export const color = {
+export const COLOR = {
   primary: '#3D4A7A',
   ghost: 'rgba(255, 255, 255, 0.4)',
   gray: 'rgb(188, 189, 189)',

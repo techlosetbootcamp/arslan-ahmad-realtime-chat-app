@@ -1,16 +1,16 @@
-import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import RulerText from '../components/RulerText';
-import IconButton from '../components/IconButton';
-import ActionButton from '../components/actionButton/ActionButton';
-import {color} from '../constants/colors';
-import {signInWithGoogle} from '../services/auth';
-import useNavigate from '../hooks/useNavigationHook';
-import ActionText from '../components/ActionText';
-import SimpleText from '../components/SimpleText';
+import {View, Text, StyleSheet} from 'react-native';
+import {COLOR} from '../../constants/colors';
+import useWelcomeScreen from './useWelcomeScreen';
+import RulerText from '../../components/RulerText';
+import IconButton from '../../components/IconButton';
+import {signInWithGoogle} from '../../services/auth';
+import ActionText from '../../components/ActionText';
+import SimpleText from '../../components/SimpleText';
+import ActionButton from '../../components/actionButton/ActionButton';
 
 const Welcome = () => {
-  const {navigation} = useNavigate();
+  const {navigation} = useWelcomeScreen();
 
   return (
     <View style={styles.container}>
@@ -18,11 +18,11 @@ const Welcome = () => {
       <SimpleText
         text="Our chat app is the perfect way to stay connected with friends and
         family."
-        color={color.light_grey}
+        color={COLOR.light_grey}
       />
 
       <IconButton
-        src={require('../assets/icons/google_icon.png')}
+        src={require('../../assets/icons/google_icon.png')}
         onPress={signInWithGoogle}
       />
 
@@ -31,7 +31,7 @@ const Welcome = () => {
       <ActionButton
         onClick={() => navigation.navigate('SignUp')}
         loader={false}
-        color="rgba(255, 255, 255, 0.30)"
+        color={COLOR.white}
         onLoadText="Signing up...">
         Sign up with mail
       </ActionButton>
@@ -40,7 +40,7 @@ const Welcome = () => {
         styles={{
           ...styles.description,
           fontSize: 14,
-          color: color.white,
+          color: COLOR.white,
           textAlign: 'center',
           marginTop: 20,
         }}
@@ -49,7 +49,7 @@ const Welcome = () => {
         <SimpleText
           text="Log In"
           styles={{fontWeight: 600}}
-          color={color.light_grey}
+          color={COLOR.light_grey}
         />{' '}
       </ActionText>
     </View>
@@ -68,19 +68,19 @@ const styles = StyleSheet.create({
     fontSize: 68,
     lineHeight: 80,
     fontWeight: 400,
-    color: color.white,
+    color: COLOR.white,
     paddingVertical: 15,
   },
   description: {
     fontSize: 16,
     lineHeight: 26,
     fontWeight: 400,
-    color: color.light_grey,
+    color: COLOR.light_grey,
     paddingVertical: 15,
   },
   ghostButton_text: {
     textAlign: 'center',
-    color: color.white,
+    color: COLOR.white,
     fontSize: 18,
   },
   ghostIcon: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     borderRadius: '50%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.ghost,
+    backgroundColor: COLOR.ghost,
     alignSelf: 'center',
   },
 });

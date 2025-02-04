@@ -4,7 +4,7 @@ import ContentViewer from '../../components/ContentViewer';
 import SettingsItem from '../../components/SettingListItem';
 import useSettings from './useSettings';
 import {settingItems} from '../../constants/settingsListOptions';
-import { color } from '../../constants/colors';
+import { COLOR } from '../../constants/colors';
 import Images from '../../constants/imgs';
 
 const Settings = () => {
@@ -33,7 +33,7 @@ const Settings = () => {
           </View>
         </TouchableOpacity>
         <View style={{flex: 6, paddingTop: 20}}>
-          {settingItems.map((item, index) => (
+          {settingItems?.map((item, index) => (
             <SettingsItem
               key={index}
               icon={item.icon}
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     gap: 10,
     borderBottomWidth: 1,
-    borderBottomColor: color.light_grey,
+    borderBottomColor: COLOR.light_grey,
   },
   userImage: {
     width: 60,
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   userStatus: {
     fontSize: 14,
-    color: color.light_grey,
+    color: COLOR.light_grey,
     fontWeight: '400',
     marginLeft: 10,
   },

@@ -13,20 +13,18 @@ import {Timestamp} from '@react-native-firebase/firestore';
 interface ChatState {
   chats: Record<string, Chat>;
   messages: Record<string, Message[]>;
-  isLoading: boolean;
-  error?: string | null;
+  error: string | null;
 }
 
 const initialState: ChatState = {
   chats: {},
   messages: {},
-  isLoading: false,
+  error: null,
 };
 
 export const deleteChatFromFirebase =
   (chatId: string, participants: string[]): AppThunk =>
   async dispatch => {
-    dispatch(setLoading(true));
     dispatch(setError(null));
     try {
       await deleteChat(chatId, participants);
@@ -37,8 +35,61 @@ export const deleteChatFromFirebase =
           error instanceof Error ? error.message : 'Failed to delete chat',
         ),
       );
-    } finally {
-      dispatch(setLoading(false));
+    }
+  };
+
+export const fetchUserChats =
+  (userId: string): AppThunk =>
+  async dispatch => {
+    dispatch(setError(null));
+    try {
+      const chats = await new Promise<Chat[]>((resolve, reject) => {
+        fetchChats(userId, (chats: Chat[]) => {
+          resolve(chats);
+        });
+      });
+      const chatMap = chats.reduce((acc: Record<string, Chat>, chat: Chat) => {
+        acc[chat.id] = chat;
+        return acc;
+      }, {} as Record<string, Chat>);
+      dispatch(setChats(chatMap));
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to fetch chats',
+        ),
+      );
+    }
+  };
+
+export const startChat =
+  (userId: string, contactId: string): AppThunk =>
+  async dispatch => {
+    dispatch(setError(null));
+    try {
+      const chats = await new Promise<Chat[]>((resolve, reject) => {
+        fetchChats(userId, (chats: Chat[]) => {
+          resolve(chats);
+        });
+      });
+      const existingChat = chats.find(chat =>
+        chat?.participants?.includes(contactId),
+      );
+      let chatId = existingChat?.id;
+
+      if (!chatId) {
+        chatId = await createNewChat([userId, contactId]);
+      }
+
+      dispatch(fetchUserChats(userId));
+      return chatId;
+    } catch (error) {
+      dispatch(
+        setError(
+          error instanceof Error ? error.message : 'Failed to start chat',
+        ),
+      );
+      throw error;
     }
   };
 
@@ -65,7 +116,7 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<{chatId: string; messages: Message[]}>,
     ) {
-      state.messages[action.payload.chatId] = action.payload.messages.map(
+      state.messages[action.payload?.chatId] = action.payload?.messages?.map(
         message => ({
           ...message,
           timestamp: message.timestamp ? message.timestamp : null,
@@ -91,11 +142,8 @@ const chatSlice = createSlice({
     },
     deleteChatFromStore(state, action: PayloadAction<string>) {
       const chatId = action.payload;
-      delete state.chats[chatId];
-      delete state.messages[chatId];
-    },
-    setLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
+      delete state?.chats[chatId];
+      delete state?.messages[chatId];
     },
     setError(state, action: PayloadAction<string | null>) {
       state.error = action.payload;
@@ -103,72 +151,10 @@ const chatSlice = createSlice({
   },
 });
 
-export const fetchUserChats =
-  (userId: string): AppThunk =>
-  async dispatch => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const chats = await new Promise<Chat[]>((resolve, reject) => {
-        fetchChats(userId, (chats: Chat[]) => {
-          resolve(chats);
-        });
-      });
-      const chatMap = chats.reduce((acc: Record<string, Chat>, chat: Chat) => {
-        acc[chat.id] = chat;
-        return acc;
-      }, {} as Record<string, Chat>);
-      dispatch(setChats(chatMap));
-      dispatch(setLoading(false));
-    } catch (error) {
-      dispatch(
-        setError(
-          error instanceof Error ? error.message : 'Failed to fetch chats',
-        ),
-      );
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-export const startChat =
-  (userId: string, contactId: string): AppThunk =>
-  async dispatch => {
-    dispatch(setLoading(true));
-    dispatch(setError(null));
-    try {
-      const chats = await new Promise<Chat[]>((resolve, reject) => {
-        fetchChats(userId, (chats: Chat[]) => {
-          resolve(chats);
-        });
-      });
-      const existingChat = chats.find(chat =>
-        chat.participants.includes(contactId),
-      );
-      let chatId = existingChat?.id;
-
-      if (!chatId) {
-        chatId = await createNewChat([userId, contactId]);
-      }
-
-      dispatch(fetchUserChats(userId));
-      return chatId;
-    } catch (error) {
-      dispatch(
-        setError(
-          error instanceof Error ? error.message : 'Failed to start chat',
-        ),
-      );
-      throw error;
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
 export const {
   setChats,
   setMessages,
   addMessage,
-  setLoading,
   setError,
   deleteChatFromStore,
 } = chatSlice.actions;

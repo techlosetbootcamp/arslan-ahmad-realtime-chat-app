@@ -1,7 +1,7 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import userReducer from './slices/user';
-import chatReducer from './slices/chats';
-import contactsReducer from './slices/contacts';
+import chatReducer from './slices/chats.slice';
+import contactsReducer from './slices/contacts.slice';
 import usersReducer from './slices/users';
 import {useDispatch, useSelector, TypedUseSelectorHook} from 'react-redux';
 

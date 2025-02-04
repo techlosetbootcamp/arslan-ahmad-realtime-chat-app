@@ -12,7 +12,7 @@ import RulerText from '../../../components/RulerText';
 import InputField from '../../../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
 import ActionButton from '../../../components/actionButton/ActionButton';
-import {color} from '../../../constants/colors';
+import {COLOR} from '../../../constants/colors';
 import AuthHeaderSection from '../../../components/AuthSectionHeader';
 import useSign from './useSignIn';
 import Images from '../../../constants/imgs';
@@ -90,7 +90,7 @@ const SignIn: React.FC = () => {
                 style={{
                   textAlign: 'center',
                   marginTop: 15,
-                  color: color.blue,
+                  color: COLOR.blue,
                   fontWeight: 600,
                 }}>
                 Forgot password?
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     borderRadius: '50%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.ghost,
+    backgroundColor: COLOR.ghost,
     alignSelf: 'center',
   },
   gapVertical: {marginTop: 10},

@@ -11,6 +11,7 @@ import {User} from '../../types/firestoreService';
 import SearchBar from '../../components/Search';
 import useSearch from './useSearch';
 import Images from '../../constants/imgs';
+import { COLOR } from '../../constants/colors';
 
 const Search = () => {
   const {handleAddContact, handleSearch, searchText, filteredUsers, contacts} =
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: COLOR.gray,
     marginVertical: 10,
   },
   addContactButton: {
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 16,
-    color: '#333',
+    color: COLOR.gray,
   },
   noResultsContainer: {
     justifyContent: 'center',

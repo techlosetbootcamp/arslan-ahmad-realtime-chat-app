@@ -4,7 +4,7 @@ import ContentViewer from '../../components/ContentViewer';
 import ActionButton from '../../components/actionButton/ActionButton';
 import useChangePassword from './useChangePassword';
 import InputField from '../../components/InputField';
-import {color} from '../../constants/colors';
+import {COLOR} from '../../constants/colors';
 
 const ForgotPasswordScreen = () => {
   const {setPasswords, passwords, handlePasswordReset} = useChangePassword();
@@ -35,7 +35,7 @@ const ForgotPasswordScreen = () => {
       </View>
       <View>
         <ActionButton
-          color={color.primary}
+          color={COLOR.primary}
           onLoadText="Resetting Password..."
           onClick={handlePasswordReset}>
           Reset Password

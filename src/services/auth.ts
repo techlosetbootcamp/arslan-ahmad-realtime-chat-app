@@ -240,7 +240,7 @@ export const signInWithGoogle = async () => {
 
 export const logoutUser = async () => {
   try {
-    const providers = auth().currentUser?.providerData.map(
+    const providers = auth().currentUser?.providerData?.map(
       provider => provider.providerId,
     );
     if (providers?.includes('google.com')) {

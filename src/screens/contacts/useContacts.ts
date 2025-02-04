@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';;
 import useAuth from '../../hooks/useAuth';
-import {fetchContactsThunk, setContactsLoading} from '../../store/slices/contacts';
+import {fetchContactsThunk, setContactsLoading} from '../../store/slices/contacts.slice';
 import { User } from '../../types/firestoreService';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 
@@ -41,8 +41,8 @@ const groupContactsByAlphabet = (contacts: User[]) => {
   });
 
   const sections = Object.keys(grouped)
-    .sort()
-    .map(letter => ({
+    ?.sort()
+    ?.map(letter => ({
       title: letter,
       data: grouped[letter],
     }));

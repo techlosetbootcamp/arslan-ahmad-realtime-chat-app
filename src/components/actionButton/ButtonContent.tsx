@@ -2,7 +2,7 @@ import React from 'react';
 import {ActivityIndicator, Text, TouchableOpacity} from 'react-native';
 import {ActionButtonProps} from '../../types/actionButton';
 import {showToast} from '../Toast';
-import { color } from '../../constants/colors';
+import { COLOR } from '../../constants/colors';
 
 const ButtonContent: React.FC<ActionButtonProps> = ({
   onClick,
@@ -28,7 +28,7 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
         style={{
           fontSize: 18,
           textAlign: 'center',
-          color: color.white,
+          color: COLOR.white,
           fontWeight: 600,
         }}>
         {!error && loader ? <ActivityIndicator color="#fff" /> : children}

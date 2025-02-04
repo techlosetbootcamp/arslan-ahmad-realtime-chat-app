@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import WelcomeScreen from '../screens/WelcomeScreen';
+import WelcomeScreen from '../screens/welcomescreen/WelcomeScreen';
 import SignInScreen from '../screens/authScreens/signin/SignIn';
 import SignUp from '../screens/authScreens/signup/SignUp';
 import Profile from '../screens/profile/Profile';
@@ -10,16 +10,18 @@ import ChangePassword from '../screens/changePassword/ChangePassword';
 import ChatScreen from '../screens/chat/Chat';
 import ForgetPassword from '../screens/forgetPassword/ForgetPassword';
 import useNavigationHook from '../hooks/useNavigationHook';
-import { useAppSelector } from '../store/store';
+import Loader from '../components/loader/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {user} = useNavigationHook();
-  const {chats} = useAppSelector(store => store.chat);
+  const {user, isAuthChecked, userLoader} = useNavigationHook();
 
+  if (userLoader) {
+    return <Loader />;
+  }
 
-  return user.uid ? (
+  return user.uid && isAuthChecked ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,

@@ -1,11 +1,11 @@
 import React from 'react';
 import {Image} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../screens/Home';
+import Home from '../screens/home/Home';
 import ContactsScreen from '../screens/contacts/Contacts';
 import {RootStackParamList} from '../types/navigation';
 import Settings from '../screens/settings/Settings';
-import {color} from '../constants/colors';
+import {COLOR} from '../constants/colors';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -42,7 +42,7 @@ const BottomTabsNavigator = () => {
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: 'bold',
-          color: color.light_grey,
+          color: COLOR.light_grey,
         },
       })}>
       <Tab.Screen name="Home" component={Home} />

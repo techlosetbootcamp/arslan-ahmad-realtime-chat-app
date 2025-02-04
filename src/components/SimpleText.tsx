@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, TextStyle} from 'react-native';
-import {color as ThemeColor} from '../constants/colors';
+import {COLOR as ThemeColor} from '../constants/colors';
 
 type SimpleTextProps = {
   text: string;

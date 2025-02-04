@@ -7,7 +7,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import ActionButton from '../../../components/actionButton/ActionButton';
 import AuthHeaderSection from '../../../components/AuthSectionHeader';
 import Images from '../../../constants/imgs';
-import {color} from '../../../constants/colors';
+import {COLOR} from '../../../constants/colors';
 import Loader from '../../../components/loader/Loader';
 import useSignup from './useSignup';
 
@@ -40,7 +40,7 @@ const SignIn: React.FC = () => {
             onPress={() => console.log("'Google Icon' on Sign Clicked")}
           />
           <View style={styles.gapVertical}>
-            <RulerText lineColor={color.dark_gray} />
+            <RulerText lineColor={COLOR.dark_gray} />
           </View>
 
           <View style={{gap: 25}}>

@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {addContact} from '../../services/contacts';
-import {addContact as addContactToStore} from '../../store/slices/contacts';
+import {addContact as addContactToStore} from '../../store/slices/contacts.slice';
 import {addUserToContact} from '../../store/slices/user';
 import useAuth from '../../hooks/useAuth';
 import {useAppDispatch, useAppSelector} from '../../store/store';

@@ -1,6 +1,6 @@
 import React from 'react';
 import {ActivityIndicator, Dimensions, StyleSheet, View} from 'react-native';
-import {color, color as ThemeColor} from '../../constants/colors';
+import {COLOR as ThemeColor} from '../../constants/colors';
 
 const Loader: React.FC = ({
   size = 'large',
@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: color.light_grey,
+    backgroundColor: ThemeColor.light_grey,
   },
   loaderContainer: {
-    backgroundColor: color.white,
+    backgroundColor: ThemeColor.white,
     zIndex: 10,
     height: 80,
     width: 80,

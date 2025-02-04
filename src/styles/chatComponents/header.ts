@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {color} from '../../constants/colors';
+import {COLOR} from '../../constants/colors';
 
 export const ChatHeaderStyles = StyleSheet.create({
   container: {
@@ -25,12 +25,12 @@ export const ChatHeaderStyles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 7.5,
-    backgroundColor: color.green,
+    backgroundColor: COLOR.green,
     position: 'absolute',
     right: 10,
     bottom: -2,
     borderWidth: 2,
-    borderColor: color.white,
+    borderColor: COLOR.white,
   },
   profileImage: {
     width: 40,
@@ -44,6 +44,6 @@ export const ChatHeaderStyles = StyleSheet.create({
   },
   status: {
     fontSize: 12,
-    color: color.pure_gray,
+    color: COLOR.pure_gray,
   },
 });

@@ -14,7 +14,7 @@ export const fetchUsers = async (userId?: string): Promise<User[]> => {
   }
   const snapshot = await query.get();
 
-  return snapshot.docs.map(doc => {
+  return snapshot.docs?.map(doc => {
     const data = doc.data();
     return {
       uid: doc.id,

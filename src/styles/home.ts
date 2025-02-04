@@ -1,4 +1,5 @@
 import {Dimensions, StyleSheet} from 'react-native';
+import { COLOR } from '../constants/colors';
 
 const HomeStyles = StyleSheet.create({
   container: {
@@ -6,7 +7,7 @@ const HomeStyles = StyleSheet.create({
   },
   content: {
     flex: 8,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: COLOR.white,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },
@@ -25,10 +26,10 @@ const HomeStyles = StyleSheet.create({
   chatItem: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: COLOR.light_grey,
   },
   Icon: {
-    backgroundColor: '#ccc',
+    backgroundColor: COLOR.light_grey,
     padding: 12,
     borderRadius: 50,
     width: 30,
