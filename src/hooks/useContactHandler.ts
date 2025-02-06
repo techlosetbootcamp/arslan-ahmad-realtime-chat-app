@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { createNewChat } from '../services/chats';
+import {useState} from 'react';
+import {createNewChat} from '../services/chats';
 import {userProfile} from '../types/profile';
 import useAuth from './useAuth';
 import appNavigate from './useNavigationHook';
-import { showToast } from '../components/Toast';
+import {showToast} from '../components/Toast';
 
 const useContactHandler = () => {
   const {navigation} = appNavigate();
-  const [loader, setLoader] = useState(false);
-const {user} = useAuth();
+  const [newChatLoader, setNewChatLoader] = useState(false);
+  const {user} = useAuth();
 
   const handleContactClick = async (
     contactId: string,
@@ -17,13 +17,13 @@ const {user} = useAuth();
     if (!user?.uid) return;
 
     try {
-      setLoader(true);
       const userChats = user.chats;
       
+      setNewChatLoader(true);
       const existingChat = userChats?.find(chatId =>
-        chatId.includes(contactId),
+        chatId?.includes(contactId),
       );
-      
+
       if (existingChat) {
         navigation.navigate('Chat', {
           chatId: existingChat,
@@ -31,10 +31,9 @@ const {user} = useAuth();
             uid: participant.uid,
             displayName: participant.displayName,
             photoURL: participant.photoURL || null,
-            status: participant.status || 'Offline',
+            status: participant.status,
           },
         });
-        setLoader(false);
       } else {
         const chatId = await createNewChat([user.uid, contactId]);
         navigation.navigate('Chat', {
@@ -43,19 +42,19 @@ const {user} = useAuth();
             uid: participant.uid,
             displayName: participant.displayName,
             photoURL: participant.photoURL || null,
-            status: participant.status || 'Offline',
+            status: participant.status,
           },
         });
       }
-      setLoader(false);
     } catch (error) {
       showToast('Error', 'An error occurred while starting chat', 'error');
       console.error('Error starting or navigating to chat:', error);
-      setLoader(false);
+    } finally {
+      setNewChatLoader(false);
     }
   };
 
-  return {handleContactClick, loader};
+  return {handleContactClick, loader: newChatLoader};
 };
 
 export default useContactHandler;

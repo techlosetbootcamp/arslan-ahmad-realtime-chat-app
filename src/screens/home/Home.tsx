@@ -7,11 +7,9 @@ import {HomeScreenProps} from '../../types/home';
 import {Chat} from '../../types/firestoreService';
 import ContentViewer from '../../components/ContentViewer';
 import RenderChatItem from '../../components/renderChat/RenderChatItem';
-import Loader from '../../components/loader/Loader';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const {chats, chatLoader} = useHome();
-  console.log('Chat is load...', chatLoader);
   return (
     <ContentViewer title="Home">
       <View style={HomeStyles.content}>

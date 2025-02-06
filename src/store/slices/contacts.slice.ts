@@ -1,7 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {User} from '../../types/firestoreService';
 import {RootState} from '../store';
-import { ToastAndroid } from 'react-native';
 
 interface ContactsState {
   contacts: User[];
@@ -67,6 +66,7 @@ const contactsSlice = createSlice({
 
         if (!isAlreadyContact) {
           state.contacts.push(action.payload);
+          console.log('User added to contacts:', action.payload);
         } else {
           console.warn('User is already in contacts:', action.payload);
         }

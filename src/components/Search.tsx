@@ -6,12 +6,14 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { SearchBarProps } from '../types/search';
-import { COLOR } from '../constants/colors';
+import {SearchBarProps} from '../types/search';
+import {COLOR} from '../constants/colors';
+import useNavigationHook from '../hooks/useNavigationHook';
 
 const SearchBar: React.FC<SearchBarProps> = ({searchText, setSearchText}) => {
-  const handleClear = () => {
-    setSearchText('');
+  const {navigation} = useNavigationHook();
+  const handleExit = () => {
+    navigation.goBack();
   };
 
   return (
@@ -29,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({searchText, setSearchText}) => {
           onChangeText={text => setSearchText(text)}
         />
       </View>
-      <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
+      <TouchableOpacity onPress={handleExit} style={styles.clearButton}>
         <Image
           source={require('../assets/icons/cross_dark.png')}
           style={styles.icon}

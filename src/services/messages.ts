@@ -44,11 +44,17 @@ export const fetchMessages = async (chatId: string): Promise<Message[]> => {
     .orderBy('timestamp', 'asc')
     .get();
 
-  return snapshot.docs?.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    timestamp: doc.data().timestamp?.toDate().toISOString(),
-  })) as Message[];
+  return snapshot.docs?.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      timestamp:
+        data?.timestamp instanceof firestore.Timestamp
+          ? data.timestamp.toDate().toISOString()
+          : data?.timestamp || null,
+    };
+  }) as Message[];
 };
 
 export const listenToMessages = (
@@ -56,17 +62,23 @@ export const listenToMessages = (
   callback: (messages: Message[]) => void,
 ) => {
   return firestore()
-    .collection('chats')
-    .doc(chatId)
-    .collection('messages')
-    .orderBy('timestamp', 'asc')
-    .onSnapshot(
+    ?.collection('chats')
+    ?.doc(chatId)
+    ?.collection('messages')
+    ?.orderBy('timestamp', 'asc')
+    ?.onSnapshot(
       snapshot => {
-        const messages = snapshot.docs?.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          timestamp: doc.data().timestamp?.toDate().toISOString(),
-        })) as Message[];
+        const messages = snapshot.docs?.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            timestamp:
+              data?.timestamp instanceof firestore.Timestamp
+                ? data.timestamp.toDate().toISOString()
+                : data?.timestamp || null,
+          };
+        }) as Message[];
         callback(messages);
       },
       error => {
@@ -81,10 +93,10 @@ export const deleteMessage = async (
   messageId: string,
 ): Promise<void> => {
   const messageRef = firestore()
-    .collection('chats')
-    .doc(chatId)
-    .collection('messages')
-    .doc(messageId);
+    ?.collection('chats')
+    ?.doc(chatId)
+    ?.collection('messages')
+    ?.doc(messageId);
 
   await messageRef.delete();
 };

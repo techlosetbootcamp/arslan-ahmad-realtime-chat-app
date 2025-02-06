@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Image,
   StyleSheet,
@@ -54,6 +55,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({
 
   const lastActivityTime = getRelativeTime(item.lastActive);
   const [isSwiped, setIsSwiped] = useState(false);
+  const [deleteClicked, setDeleteClicked] = useState(false);
 
   const renderRightActions = (
     dragAnimatedValue: Animated.AnimatedInterpolation<string | number>,
@@ -66,7 +68,9 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({
     });
 
     const handleDeleteChat = (chatId: string, participants: string[]) => {
+      setDeleteClicked(true);
       dispatch(deleteChatFromFirebase(chatId, participants));
+      setDeleteClicked(false);
     };
 
     const handleNotiClick = (chatId: string) => {
@@ -94,7 +98,14 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({
           style={[slider.actionButton, slider.deleteButton]}
           onPress={() => handleDeleteChat(item.id, item.participants)}>
           <Animated.Text style={[slider.actionText, {transform: [{scale}]}]}>
-            <Image source={Images.DeleteIcon} style={{width: 16, height: 16}} />
+            {deleteClicked ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Image
+                source={Images.DeleteIcon}
+                style={{width: 16, height: 16}}
+              />
+            )}
           </Animated.Text>
         </TouchableOpacity>
       </View>

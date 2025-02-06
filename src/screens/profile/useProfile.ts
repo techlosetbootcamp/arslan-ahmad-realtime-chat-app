@@ -4,7 +4,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {useAppDispatch, useAppSelector} from '../../store/store';
 import {showToast} from '../../components/Toast';
 import {logoutUser} from '../../services/auth';
-import {clearUser, setLoading, setUser} from '../../store/slices/user';
+import {clearUser, setLoading, setUser} from '../../store/slices/user.slice';
 
 const appProfile = () => {
   const {isLoading, ...user} = useAppSelector(state => state.user);

@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {addContact} from '../../services/contacts';
 import {addContact as addContactToStore} from '../../store/slices/contacts.slice';
-import {addUserToContact} from '../../store/slices/user';
+import {addUserToContact} from '../../store/slices/user.slice';
 import useAuth from '../../hooks/useAuth';
 import {useAppDispatch, useAppSelector} from '../../store/store';
 import {saveUserToStorage} from '../../services/async_storage';
@@ -32,6 +32,7 @@ const appSearch = () => {
       if (contactId) {
         dispatch(addContactToStore(contactId));
         dispatch(addUserToContact(contactId));
+        console.log('Added via User...', user?.contacts);
         await addContact(user?.uid || '', contactId);
         if (user) {
           await saveUserToStorage(user);
@@ -40,7 +41,7 @@ const appSearch = () => {
             'font-size:16px;color:green;',
           );
         }
-        console.log('User...', user);
+        console.log('Added via Store...', contacts);
       }
     } catch (error) {
       console.error('Error adding contact:', error);

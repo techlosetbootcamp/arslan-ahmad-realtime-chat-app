@@ -27,12 +27,12 @@ const Navigation = () => {
         headerShown: false,
       }}
       initialRouteName="MainTabs">
-      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
-      <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
     </Stack.Navigator>
   ) : (
     <Stack.Navigator
@@ -40,9 +40,9 @@ const Navigation = () => {
         headerShown: false,
       }}
       initialRouteName="WelcomeScreen">
-      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-      <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
     </Stack.Navigator>
   );

@@ -5,7 +5,7 @@ import {User} from '../types/firestoreService';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Alert} from 'react-native';
-import {setUser, UserState} from '../store/slices/user';
+import {setUser, UserState} from '../store/slices/user.slice';
 import {showToast} from '../components/Toast';
 
 export const observeAuthState = (

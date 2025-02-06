@@ -47,6 +47,12 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
               {isFullNav && (
                 <TouchableOpacity
                   activeOpacity={0.8}
+                  style={
+                    route.name === 'Contacts' && [
+                      ContnetViewerStyles.profileImage,
+                      {justifyContent: 'center', alignItems: 'center'},
+                    ]
+                  }
                   onPress={
                     route.name !== 'Contacts'
                       ? () => navigation.navigate('Profile')
@@ -60,7 +66,10 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                           : Images.PlaceholderImg
                         : Images.AddUserIcon
                     }
-                    style={ContnetViewerStyles.profileImage}
+                    style={
+                      route.name !== 'Contacts' &&
+                      ContnetViewerStyles.profileImage
+                    }
                   />
                 </TouchableOpacity>
               )}

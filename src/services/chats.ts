@@ -1,7 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {fetchUser} from './user';
 import {Chat, User} from '../types/firestoreService';
-import { ToastAndroid } from 'react-native';
 
 export const createNewChat = async (
   participants: string[],
@@ -19,7 +18,7 @@ export const createNewChat = async (
       await chatRef.set({
         participants,
         lastMessage: '',
-        lastActive: firestore.FieldValue.serverTimestamp(),
+        lastActive: Date.now(),
         notificationStatus: 'allowed',
         unreadCount: {[user1]: 0, [user2]: 0},
       });
@@ -53,9 +52,11 @@ export const fetchChats = (
         const chats = snapshot.docs?.map(doc => {
           const chatData = doc.data();
 
-          const lastActive = chatData.lastActive
-            ? chatData.lastActive.toDate().toISOString()
-            : null;
+          const lastActive =
+            chatData.lastActive instanceof firestore.Timestamp
+              ? chatData.lastActive.toDate().toISOString()
+              : null;
+
           const participants = chatData.participants || [];
           const lastMessage = chatData.lastMessage || '';
           const unreadMessages = chatData.unreadMessages || 0;
@@ -63,16 +64,22 @@ export const fetchChats = (
 
           let participantsDetails: User[] = [];
 
-          if (chatData.participantsDetails) {
-            participantsDetails = chatData.participantsDetails?.map(
-              (participant: Partial<User>) => ({
-                ...participant,
-                createdAt:
-                  'createdAt' in participant &&
-                  participant.createdAt instanceof firestore.Timestamp
-                    ? participant.createdAt.toDate().toISOString()
-                    : null,
-              }),
+          if (Array.isArray(chatData.participantsDetails)) {
+            participantsDetails = chatData.participantsDetails.map(
+              (participant: Partial<User>) => {
+                if (!participant) return {} as User; // Ensure participant exists
+                return {
+                  uid: participant.uid || '',
+                  displayName: participant.displayName || '',
+                  email: participant.email || '',
+                  status: participant.status || '',
+                  createdAt:
+                    'createdAt' in participant &&
+                    participant.createdAt instanceof firestore.Timestamp
+                      ? participant.createdAt.toDate().toISOString()
+                      : null,
+                };
+              },
             );
           }
 
@@ -87,13 +94,23 @@ export const fetchChats = (
           };
         });
 
-        const userPromises = chats?.map(async chat => {
+        if (!chats || chats.length === 0) {
+          console.log('No chats found for user:', userId);
+          callback([]);
+          return;
+        }
+
+        const userPromises = chats.map(async chat => {
           const userDetails = await Promise.all(
-            chat.participants?.map(async (participantId: string) => {
+            chat.participants.map(async (participantId: string) => {
+              console.log(
+                `Fetching user details for participant: ${participantId}`,
+              );
               const user = await fetchUser(participantId);
               return {uid: participantId, ...user};
             }),
           );
+
           return {...chat, participantsDetails: userDetails};
         });
 
@@ -114,11 +131,11 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
   const usersRef = firestore().collection('users');
 
   try {
-    const messagesRef = chatRef.collection("messages")
-    messagesRef.get().then((querySnapshot) => {
-      Promise.all(querySnapshot.docs.map((d) => d.ref.delete()));
+    const messagesRef = chatRef.collection('messages');
+    messagesRef.get().then(querySnapshot => {
+      Promise.all(querySnapshot.docs.map(d => d.ref.delete()));
     });
-    
+
     await chatRef.delete();
 
     await Promise.all(

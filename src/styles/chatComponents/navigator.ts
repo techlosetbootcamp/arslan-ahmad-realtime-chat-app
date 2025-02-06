@@ -6,7 +6,7 @@ export const ChatNavigatorStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: COLOR.white,
   },
   chatRow: {
     flexDirection: 'row',

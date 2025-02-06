@@ -17,7 +17,7 @@ const Search = () => {
   const {handleAddContact, handleSearch, searchText, filteredUsers, contacts} =
     useSearch();
 
-  const renderUserItem = ({item}: {item: User}) => {
+  const RenderUserItem = ({item}: {item: User}) => {
     const isContact = contacts.some(contact => contact.uid === item.uid);
     return (
       <View style={styles.itemContainer}>
@@ -46,6 +46,7 @@ const Search = () => {
       </View>
     );
   };
+
   const renderNoResultsMessage = (type: 'People' | 'Group') => (
     <View style={styles.noResultsContainer}>
       <Text style={styles.noResultsText}>No {type} found</Text>
@@ -64,7 +65,7 @@ const Search = () => {
           <FlatList
             data={filteredUsers}
             keyExtractor={(item, index) => item.uid || `key-${index}`}
-            renderItem={renderUserItem}
+            renderItem={RenderUserItem}
           />
         ) : (
           renderNoResultsMessage('People')
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLOR.gray,
+    color: COLOR.black,
     marginVertical: 10,
   },
   addContactButton: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 16,
-    color: COLOR.gray,
+    color: COLOR.pure_gray,
   },
   noResultsContainer: {
     justifyContent: 'center',
