@@ -32,7 +32,6 @@ const appSearch = () => {
       if (contactId) {
         dispatch(addContactToStore(contactId));
         dispatch(addUserToContact(contactId));
-        console.log('Added via User...', user?.contacts);
         await addContact(user?.uid || '', contactId);
         if (user) {
           await saveUserToStorage(user);
@@ -41,10 +40,14 @@ const appSearch = () => {
             'font-size:16px;color:green;',
           );
         }
-        console.log('Added via Store...', contacts);
       }
     } catch (error) {
       console.error('Error adding contact:', error);
+    } finally {
+      console.log(
+        'Added via Store...',
+        contacts.map(c => c?.displayName),
+      );
     }
   };
 

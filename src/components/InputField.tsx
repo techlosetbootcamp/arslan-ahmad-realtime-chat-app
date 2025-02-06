@@ -36,10 +36,10 @@ function InputField({
           borderBottomWidth: 1,
           borderBottomColor: isError ? COLOR.light_red : COLOR.light_grey,
           paddingInlineStart: 0,
-          color: COLOR.light_grey,
+          color: COLOR.black,
         }}
         placeholder={placeholder || ''}
-        placeholderTextColor={COLOR.black}
+        placeholderTextColor={COLOR.gray}
         value={val}
         secureTextEntry={secureTextEntry}
         onChangeText={text => handleChange(text)}

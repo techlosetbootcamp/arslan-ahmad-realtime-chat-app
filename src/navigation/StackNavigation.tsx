@@ -40,9 +40,9 @@ const Navigation = () => {
         headerShown: false,
       }}
       initialRouteName="WelcomeScreen">
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
-      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
     </Stack.Navigator>
   );

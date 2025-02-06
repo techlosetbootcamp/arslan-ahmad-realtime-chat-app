@@ -31,7 +31,6 @@ const Welcome = () => {
       <ActionButton
         onClick={() => navigation.navigate('SignUp')}
         loader={false}
-        color={COLOR.white}
         onLoadText="Signing up...">
         Sign up with mail
       </ActionButton>

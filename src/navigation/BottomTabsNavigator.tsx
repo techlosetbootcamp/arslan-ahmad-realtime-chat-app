@@ -52,7 +52,6 @@ const BottomTabsNavigator = () => {
   );
 };
 
-
 const styles = {
   icon: {
     width: 24,

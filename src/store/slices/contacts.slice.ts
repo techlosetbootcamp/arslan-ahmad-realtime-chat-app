@@ -45,7 +45,6 @@ export const addContact = createAsyncThunk<
     console.error('User not found in users slice:', uid);
     return rejectWithValue('User not found');
   }
-
   return userToAdd;
 });
 
@@ -66,7 +65,7 @@ const contactsSlice = createSlice({
 
         if (!isAlreadyContact) {
           state.contacts.push(action.payload);
-          console.log('User added to contacts:', action.payload);
+          console.log('+> (contact.slice.ts)', state.contacts.map(c => c.displayName));
         } else {
           console.warn('User is already in contacts:', action.payload);
         }
