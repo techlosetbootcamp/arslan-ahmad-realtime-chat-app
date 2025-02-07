@@ -10,21 +10,18 @@ import ChangePassword from '../screens/changePassword/ChangePassword';
 import ChatScreen from '../screens/chat/Chat';
 import ForgetPassword from '../screens/forgetPassword/ForgetPassword';
 import useNavigationHook from '../hooks/useNavigationHook';
-import Loader from '../components/loader/Loader';
+import LoaderScreen from '../components/loader/LoaderScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {user, isAuthChecked, userLoader} = useNavigationHook();
+  const {user, isAuthChecked, open} = useNavigationHook();
 
-  
-  if (userLoader) {
-    return <Loader />;
+  if (open) {
+    return <LoaderScreen />;
   }
 
-  console.log('user.uid => ', user?.uid);
-  
-  return user.uid && isAuthChecked ? (
+  return user?.uid && isAuthChecked ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,

@@ -18,6 +18,7 @@ const appNavigate = () => {
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [userLoader, setUserLoader] = useState(false);
   const dispatch = useAppDispatch();
+  const [open, setOpen] = useState<boolean>(true);
 
   useEffect(() => {
     const checkAuthState = () => {
@@ -37,6 +38,11 @@ const appNavigate = () => {
     };
     checkAuthState();
   }, [dispatch]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setOpen(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -64,7 +70,7 @@ const appNavigate = () => {
     }
   }, [user?.uid, usersInStore.length, dispatch]);
 
-  return {navigation, user, isAuthChecked, userLoader};
+  return {navigation, user, isAuthChecked, userLoader, open};
 };
 
 export default appNavigate;
