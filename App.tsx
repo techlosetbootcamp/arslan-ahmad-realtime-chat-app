@@ -15,7 +15,7 @@ const App = () => {
 
   return (
     <>
-      <GestureHandlerRootView style={{flex: 1}}>
+      <GestureHandlerRootView style={{flex: 1, position: 'relative'}}>
         <Provider store={store}>
           <NavigationContainer>
             <Navigation />

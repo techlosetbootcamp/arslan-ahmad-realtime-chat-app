@@ -14,7 +14,8 @@ const appSignup = () => {
   const {navigation} = useNavigate();
   const [userData, setUserData] = useState(initialState);
   const [error, setError] = useState<string>('');
-  const {handleSignUp, loading, observeAuth} = useAuth();
+  const {handleSignUp, observeAuth} = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = observeAuth();

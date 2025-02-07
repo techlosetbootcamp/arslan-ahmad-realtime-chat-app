@@ -17,33 +17,30 @@ export const fetchContacts = (
         return;
       }
 
-      const contactsSnapshot = await firestore()
-        .collection('users')
-        .where(firestore.FieldPath.documentId(), 'in', contactIds)
-        .get();
+      const unsubscribeContacts = firestore()
+      .collection('users')
+      .where(firestore.FieldPath.documentId(), 'in', contactIds)
+      .onSnapshot(snapshot => {
+        const contacts = snapshot.docs?.map(doc => {
+          const data = doc.data();
+          return {
+            uid: doc.id,
+            displayName: data.displayName || '',
+            email: data.email || '',
+            photoURL: data.photoURL || null,
+            description: data.description || '',
+            status: data.status || null,
+          };
+        }) as User[];
 
-      const contacts = contactsSnapshot.docs?.map(doc => {
-        const data = doc.data();
-        return {
-          uid: doc.id,
-          displayName: data.displayName || '',
-          email: data.email || '',
-          photoURL: data.photoURL || null,
-          description: data.description || '',
-          status: data.status || null,
-        };
-      }) as User[];
-
-      callback(contacts);
-    },
-    error => {
-      console.error('Error fetching contacts:', error);
-      callback([]);
-    },
-  );
-
-  return unsubscribe;
-};
+        callback(contacts);
+      });
+    
+      return unsubscribeContacts;
+    });
+  
+    return () => unsubscribe();
+  };
 
 export const addContact = async (userId: string, contactId: string) => {
   try {

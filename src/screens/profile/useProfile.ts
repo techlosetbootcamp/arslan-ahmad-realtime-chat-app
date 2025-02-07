@@ -15,6 +15,7 @@ const appProfile = () => {
     imageUri: user.photoURL || '',
   });
   const [updateLoader, setUpdateLoader] = useState(isLoading);
+  const [logoutLoader, setLogoutLoader] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
 
@@ -136,19 +137,18 @@ const appProfile = () => {
 
   const handleLogout = async () => {
     try {
-      setLoading(true);
-      dispatch(clearUser());
+      setLogoutLoader(true);
       await logoutUser();
+      dispatch(clearUser());
     } catch (error) {
       console.error('Failed to logout:', error);
       showToast('Error', 'Failed to logout', 'error');
     } finally {
-      setLoading(false);
+      setLogoutLoader(false);
     }
   };
 
   return {
-    isLoading,
     userData,
     updateLoader,
     error,
@@ -156,6 +156,7 @@ const appProfile = () => {
     handlePickAndUploadImage,
     handleUpdateProfile,
     handleLogout,
+    logoutLoader,
   };
 };
 

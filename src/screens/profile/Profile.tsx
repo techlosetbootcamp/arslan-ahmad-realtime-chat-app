@@ -19,13 +19,13 @@ import useProfile from './useProfile';
 const Profile: React.FC = () => {
   const {
     handlePickAndUploadImage,
-    isLoading,
     userData,
     handleInputChange,
     error,
     handleLogout,
     handleUpdateProfile,
     updateLoader,
+    logoutLoader,
   } = useProfile();
 
   return (
@@ -82,6 +82,7 @@ const Profile: React.FC = () => {
             <ActionButton
               onClick={handleUpdateProfile}
               color="#3D4A7A"
+              loader={updateLoader}
               onLoadText="Updating...">
               Update Profile
             </ActionButton>
@@ -89,7 +90,7 @@ const Profile: React.FC = () => {
             <ActionButton
               onClick={handleLogout}
               color="tomato"
-              loader={isLoading}
+              loader={logoutLoader}
               onLoadText="Logging out...">
               Logout
             </ActionButton>

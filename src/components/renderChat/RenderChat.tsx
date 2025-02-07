@@ -27,7 +27,7 @@ export const useRenderChatItem = () => {
               uid: participant?.uid || ('' as string),
               displayName: participantName as string,
               photoURL: participantImage as string,
-              status: participant?.status === 'online' ? 'online' : 'Offline',
+              status: participant?.status ? participant?.status : '',
             },
           })
         }>

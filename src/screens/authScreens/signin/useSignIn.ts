@@ -11,7 +11,8 @@ const initialState = {
 
 const appSign = () => {
   const [signInData, setSignInData] = useState(initialState);
-  const {handleLogin, loading, observeAuth} = appAuth();
+  const {handleLogin, observeAuth} = appAuth();
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
 
@@ -28,6 +29,7 @@ const appSign = () => {
   };
 
   const handleSignIn = async () => {
+    setLoading(true);
     try {
       if (!signInData.email || !signInData.password) {
         return showToast('Error', 'Please fill in all fields', 'error');
@@ -42,6 +44,8 @@ const appSign = () => {
       }
     } catch {
       showToast('Error', error || 'An unknown error occurred', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 

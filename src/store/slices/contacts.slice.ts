@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {User} from '../../types/firestoreService';
 import {RootState} from '../store';
+import { fetchContacts } from '../../services/contacts';
 
 interface ContactsState {
   contacts: User[];
@@ -16,17 +17,18 @@ const initialState: ContactsState = {
 
 export const fetchContactsThunk = createAsyncThunk(
   'contacts/fetchContacts',
-  async (userId: string, {getState, rejectWithValue}) => {
+  async (userId: string, {dispatch, rejectWithValue}) => {
     try {
-      const state = getState() as RootState;
-      const allUsers = state.users.users;
-      const currentUser = state.user;
-      const userContacts = currentUser.contacts;
+      return new Promise<void>((resolve, reject) => {
+        const unsubscribe = fetchContacts(userId, contacts => {
+          dispatch(setContacts(contacts)); 
+          resolve();
+        });
 
-      const filteredContacts = allUsers.filter(
-        user => user && user.uid && userContacts.includes(user.uid),
-      );
-      return filteredContacts;
+        return () => {
+          unsubscribe(); 
+        };
+      });
     } catch (error) {
       return rejectWithValue('Failed to filter contacts');
     }
@@ -55,6 +57,9 @@ const contactsSlice = createSlice({
     setContactsLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    setContacts: (state, action: PayloadAction<User[]>) => {
+      state.contacts = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(addContact.fulfilled, (state, action) => {
@@ -62,10 +67,10 @@ const contactsSlice = createSlice({
         const isAlreadyContact = state.contacts.some(
           contact => contact.uid === action.payload?.uid,
         );
-
+        
         if (!isAlreadyContact) {
-          state.contacts.push(action.payload);
-          console.log('+> (contact.slice.ts)', state.contacts.map(c => c.displayName));
+          state.contacts = [...state.contacts, action.payload];
+          console.log('Contacts =+> (contact.slice.ts)', state.contacts.map(c => c.displayName));
         } else {
           console.warn('User is already in contacts:', action.payload);
         }
@@ -75,13 +80,6 @@ const contactsSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(
-      fetchContactsThunk.fulfilled,
-      (state, action: PayloadAction<User[]>) => {
-        state.loading = false;
-        state.contacts = action.payload;
-      },
-    );
     builder.addCase(fetchContactsThunk.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
@@ -89,6 +87,6 @@ const contactsSlice = createSlice({
   },
 });
 
-export const {setContactsLoading} = contactsSlice.actions;
+export const {setContactsLoading, setContacts} = contactsSlice.actions;
 
 export default contactsSlice.reducer;

@@ -126,6 +126,45 @@ export const fetchChats = (
   return unsubscribe;
 };
 
+export const listenToChats = (
+  userId: string,
+  callback: (chats: Chat[]) => void
+) => {
+  return firestore()
+    .collection('chats')
+    .where('participants', 'array-contains', userId)
+    .orderBy('lastActive', 'desc')
+    .onSnapshot(
+      async snapshot => {
+        const chats = await Promise.all(snapshot.docs.map(async doc => {
+          const chatData = doc.data();
+          const participantsDetails = await Promise.all(
+            (chatData.participants || []).map(async (participantId: string) => {
+              const user = await fetchUser(participantId);
+              return { uid: participantId, ...user };
+            })
+          );
+          return {
+            id: doc.id,
+            participants: chatData.participants || [],
+            lastMessage: chatData.lastMessage || '',
+            unreadMessages: chatData.unreadCount?.[userId] || 0,
+            notificationStatus: chatData.notificationStatus ?? true,
+            lastActive: chatData.lastActive?.toDate().toISOString() || null,
+            participantsDetails,
+          };
+        }));
+
+        callback(chats);
+      },
+      error => {
+        console.error('Error listening to chats:', error);
+        callback([]);
+      }
+    );
+};
+
+
 export const deleteChat = async (chatId: string, participants: string[]) => {
   const chatRef = firestore().collection('chats').doc(chatId);
   const usersRef = firestore().collection('users');

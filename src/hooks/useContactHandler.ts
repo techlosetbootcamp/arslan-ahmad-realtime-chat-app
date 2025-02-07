@@ -17,9 +17,8 @@ const useContactHandler = () => {
     if (!user?.uid) return;
 
     try {
-      const userChats = user.chats;
-      
       setNewChatLoader(true);
+      const userChats = user.chats;
       const existingChat = userChats?.find(chatId =>
         chatId?.includes(contactId),
       );

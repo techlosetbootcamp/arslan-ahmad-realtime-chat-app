@@ -17,5 +17,5 @@ export type userProfile = {
   uid: string;
   displayName: string;
   photoURL: string | null;
-  status: 'online' | 'Offline';
+  status?: string;
 };

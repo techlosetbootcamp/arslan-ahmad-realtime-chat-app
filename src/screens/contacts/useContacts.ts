@@ -9,6 +9,8 @@ const useContacts = () => {
   const {user} = useAuth();
   const dispatch = useAppDispatch();
   const {contacts, error} = useAppSelector(state => state.contacts);
+  console.log('contacts', contacts);
+  
 
   useEffect(() => {
     if (user?.uid) {

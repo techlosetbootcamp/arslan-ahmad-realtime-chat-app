@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
-import {fetchUsers} from '../services/user';
+import {listenToUsers} from '../services/user';
 import {observeAuthState} from '../services/auth';
 import {fetchContactsThunk} from '../store/slices/contacts.slice';
 import {getUserFromStorage} from '../services/async_storage';
@@ -53,13 +53,15 @@ const appNavigate = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const fetchAllUsers = async (userId?: string) => {
-      if (userId && usersInStore.length === 0) {
-        const users = await fetchUsers(userId);
+    if (!user?.uid) return;
+
+    if (user?.uid && usersInStore.length === 0) {
+      const unsubscribe = listenToUsers(user.uid, users => {
         dispatch({type: 'users/setAllUsers', payload: users});
-      }
-    };
-    fetchAllUsers(user.uid || '');
+      });
+
+      return () => unsubscribe();
+    }
   }, [user?.uid, usersInStore.length, dispatch]);
 
   return {navigation, user, isAuthChecked, userLoader};

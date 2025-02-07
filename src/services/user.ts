@@ -27,6 +27,34 @@ export const fetchUsers = async (userId?: string): Promise<User[]> => {
   }) as User[];
 };
 
+export const listenToUsers = (currentUserId: string,callback: (users: User[]) => void) => {
+  return firestore()
+    .collection('users')
+    .onSnapshot(
+      snapshot => {
+        const users = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            uid: doc.id,
+            displayName: data.displayName || '',
+            email: data.email || '',
+            photoURL: data.photoURL || null,
+            description: data.description || '',
+            status: data.status || null,
+          };
+        })
+        .filter(user => user.uid !== currentUserId);;
+
+        callback(users);
+      },
+      error => {
+        console.error('Error listening to users:', error);
+        callback([]);
+      }
+    );
+};
+
+
 export const createUser = async (uid: string, userData: Partial<User>) => {
   await firestore().collection('users').doc(uid).set(userData, {merge: true});
 };

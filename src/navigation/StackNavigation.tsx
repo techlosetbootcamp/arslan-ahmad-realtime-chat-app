@@ -17,10 +17,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Navigation = () => {
   const {user, isAuthChecked, userLoader} = useNavigationHook();
 
+  
   if (userLoader) {
     return <Loader />;
   }
 
+  console.log('user.uid => ', user?.uid);
+  
   return user.uid && isAuthChecked ? (
     <Stack.Navigator
       screenOptions={{
