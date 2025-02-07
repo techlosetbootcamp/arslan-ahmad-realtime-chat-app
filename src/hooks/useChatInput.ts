@@ -1,7 +1,7 @@
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import { ToastAndroid } from 'react-native';
-import { Message } from '../types/firestoreService';
+import firestore, {Timestamp} from '@react-native-firebase/firestore';
+import {ToastAndroid} from 'react-native';
+import {Message} from '../types/firestoreService';
 
 const useChat = () => {
   const handleCamera = async (chatId: string, senderId: string) => {
@@ -18,22 +18,23 @@ const useChat = () => {
       }
 
       if (response.errorCode) {
-        ToastAndroid.show('Something went wrong... \n Sorry, for that 😶', ToastAndroid.SHORT);
+        ToastAndroid.show(
+          'Something went wrong... \n Sorry, for that 😶',
+          ToastAndroid.SHORT,
+        );
         console.error('Camera Error:(useChatInput.tsx)', response.errorMessage);
         return;
       }
 
       const base64Image = response.assets?.[0]?.base64;
-      console.log('base64Image => ', base64Image);
       if (base64Image) {
-          await sendImageMessage(chatId, senderId, base64Image);
+        await sendImageMessage(chatId, senderId, base64Image);
       }
-      console.log('%c Image sent.... 🤩', 'font-size:20px;color:yellow;', base64Image);
     } catch (error) {
       console.error('Error handling camera:', error);
     }
   };
-  
+
   const handleSelectImages = async (chatId: string, senderId: string) => {
     try {
       const response = await launchImageLibrary({
@@ -41,23 +42,20 @@ const useChat = () => {
         quality: 1,
         includeBase64: true,
       });
-      
+
       if (response.didCancel) {
-        console.log('User canceled image picker');
         return;
       }
-      
+
       if (response.errorCode) {
         console.error('Image Picker Error:', response.errorMessage);
         return;
       }
-      
+
       const base64Image = response.assets?.[0]?.base64;
-      console.log('base64Image => ', base64Image);
       if (base64Image) {
-          await sendImageMessage(chatId, senderId, base64Image);
-        }
-        console.log('%c Image sent.... 🤩', 'font-size:20px;color:yellow;', base64Image);
+        await sendImageMessage(chatId, senderId, base64Image);
+      }
     } catch (error) {
       console.error('Error selecting image:', error);
     }
@@ -82,9 +80,8 @@ const useChat = () => {
         status: {sender: 'sent', receiver: 'unread'},
       };
 
-      
       await messageRef.set(messageData);
-      
+
       await chatRef.set(
         {
           lastMessage: '📸 Image',
@@ -93,8 +90,6 @@ const useChat = () => {
         },
         {merge: true},
       );
-      console.log('%c Congratulations 🎉, Image sent successfully....', 'font-size:24px;color:white;backgroung-color:pink;');
-      console.log('messageData => ', messageData);
     } catch (error) {
       console.error('Error sending message:', error);
     }

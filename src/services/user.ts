@@ -92,9 +92,6 @@ export const updateUserProfile = async ({
 export const getCurrentUserProfile = async () => {
   try {
     const user = await getUserFromStorage();
-    if (!user) {
-      console.log('No user profile found in storage.');
-    }
     return user;
   } catch (error) {
     console.error('Failed to get user profile from storage:', error);

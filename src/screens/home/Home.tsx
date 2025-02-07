@@ -10,7 +10,6 @@ import RenderChatItem from '../../components/renderChat/RenderChatItem';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const {chats, chatLoader} = useHome();
-  console.log('chats', chats);
   return (
     <ContentViewer title="Home">
       <View style={HomeStyles.content}>

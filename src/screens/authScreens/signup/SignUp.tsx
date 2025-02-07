@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import IconButton from '../../../components/IconButton';
 import RulerText from '../../../components/RulerText';
@@ -12,8 +12,16 @@ import Loader from '../../../components/loader/Loader';
 import useSignup from './useSignup';
 
 const SignIn: React.FC = () => {
-  const {userData, handleInputChange, SignUphandler, loading, error, setError} =
-    useSignup();
+  const {
+    userData,
+    handleInputChange,
+    SignUphandler,
+    loading,
+    error,
+    setError,
+    googleLoader,
+    handleGoogleSignIn,
+  } = useSignup();
 
   return (
     <>
@@ -37,7 +45,8 @@ const SignIn: React.FC = () => {
         <View style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
           <IconButton
             src={Images.GoogleIcon}
-            onPress={() => console.log("'Google Icon' on Sign Clicked")}
+            loader={googleLoader}
+            onPress={handleGoogleSignIn}
           />
           <View style={styles.gapVertical}>
             <RulerText lineColor={COLOR.dark_gray} />

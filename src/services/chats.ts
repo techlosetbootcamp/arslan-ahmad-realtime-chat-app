@@ -67,7 +67,7 @@ export const fetchChats = (
           if (Array.isArray(chatData.participantsDetails)) {
             participantsDetails = chatData.participantsDetails.map(
               (participant: Partial<User>) => {
-                if (!participant) return {} as User; // Ensure participant exists
+                if (!participant) return {} as User;
                 return {
                   uid: participant.uid || '',
                   displayName: participant.displayName || '',
@@ -95,7 +95,6 @@ export const fetchChats = (
         });
 
         if (!chats || chats.length === 0) {
-          console.log('No chats found for user:', userId);
           callback([]);
           return;
         }
@@ -103,9 +102,6 @@ export const fetchChats = (
         const userPromises = chats.map(async chat => {
           const userDetails = await Promise.all(
             chat.participants.map(async (participantId: string) => {
-              console.log(
-                `Fetching user details for participant: ${participantId}`,
-              );
               const user = await fetchUser(participantId);
               return {uid: participantId, ...user};
             }),
@@ -128,7 +124,7 @@ export const fetchChats = (
 
 export const listenToChats = (
   userId: string,
-  callback: (chats: Chat[]) => void
+  callback: (chats: Chat[]) => void,
 ) => {
   return firestore()
     .collection('chats')
@@ -136,34 +132,37 @@ export const listenToChats = (
     .orderBy('lastActive', 'desc')
     .onSnapshot(
       async snapshot => {
-        const chats = await Promise.all(snapshot.docs.map(async doc => {
-          const chatData = doc.data();
-          const participantsDetails = await Promise.all(
-            (chatData.participants || []).map(async (participantId: string) => {
-              const user = await fetchUser(participantId);
-              return { uid: participantId, ...user };
-            })
-          );
-          return {
-            id: doc.id,
-            participants: chatData.participants || [],
-            lastMessage: chatData.lastMessage || '',
-            unreadMessages: chatData.unreadCount?.[userId] || 0,
-            notificationStatus: chatData.notificationStatus ?? true,
-            lastActive: chatData.lastActive?.toDate().toISOString() || null,
-            participantsDetails,
-          };
-        }));
+        const chats = await Promise.all(
+          snapshot.docs.map(async doc => {
+            const chatData = doc.data();
+            const participantsDetails = await Promise.all(
+              (chatData.participants || []).map(
+                async (participantId: string) => {
+                  const user = await fetchUser(participantId);
+                  return {uid: participantId, ...user};
+                },
+              ),
+            );
+            return {
+              id: doc.id,
+              participants: chatData.participants || [],
+              lastMessage: chatData.lastMessage || '',
+              unreadMessages: chatData.unreadCount?.[userId] || 0,
+              notificationStatus: chatData.notificationStatus ?? true,
+              lastActive: chatData.lastActive?.toDate().toISOString() || null,
+              participantsDetails,
+            };
+          }),
+        );
 
         callback(chats);
       },
       error => {
         console.error('Error listening to chats:', error);
         callback([]);
-      }
+      },
     );
 };
-
 
 export const deleteChat = async (chatId: string, participants: string[]) => {
   const chatRef = firestore().collection('chats').doc(chatId);
@@ -185,7 +184,6 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
       ),
     );
 
-    console.log(`Chat ${chatId} deleted successfully`);
   } catch (error) {
     console.error('Error deleting chat:', error);
     throw error;
