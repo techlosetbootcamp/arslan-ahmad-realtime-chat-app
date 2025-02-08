@@ -1,76 +1,54 @@
-import {useEffect, useState} from 'react';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '../types/navigation';
-import {listenToUsers} from '../services/user';
-import {observeAuthState} from '../services/auth';
-import {fetchContactsThunk} from '../store/slices/contacts.slice';
-import {getUserFromStorage} from '../services/async_storage';
-import {useAppDispatch, useAppSelector} from '../store/store';
-import {setUser} from '../store/slices/user.slice';
+import { useEffect, useState } from 'react';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../types/navigation';
+import { listenToUsers } from '../services/user';
+import { observeAuthState } from '../services/auth';
+import { fetchContactsThunk } from '../store/slices/contacts.slice';
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { setUser, UserState } from '../store/slices/user.slice';
 
-const appNavigate = () => {
-  const navigation =
-    useNavigation<BottomTabNavigationProp<RootStackParamList>>();
-
+const useNavigationHook = () => {
+  const navigation = useNavigation<BottomTabNavigationProp<RootStackParamList>>();
   const user = useAppSelector(state => state.user);
-  const {users: usersInStore} = useAppSelector(state => state.users);
+  const { users: usersInStore } = useAppSelector(state => state.users);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [userLoader, setUserLoader] = useState(false);
   const dispatch = useAppDispatch();
-  const [open, setOpen] = useState<boolean>(true);
 
   useEffect(() => {
-    const checkAuthState = () => {
-      observeAuthState(async firebaseUser => {
-        setUserLoader(true);
-        if (firebaseUser) {
-          if (firebaseUser.uid) {
-            dispatch(setUser({...firebaseUser, uid: firebaseUser.uid!}));
-          }
-          if (firebaseUser.uid) {
-            await dispatch(fetchContactsThunk(firebaseUser.uid));
-          }
-        }
-        setUserLoader(false);
-        setIsAuthChecked(true);
-      });
-    };
-    checkAuthState();
-  }, [dispatch]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setOpen(false), 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const checkUserSession = async () => {
+    const unsubscribe = observeAuthState(async firebaseUser => {
       setUserLoader(true);
-      const storedUser = await getUserFromStorage();
-
-      if (storedUser.uid) {
-        dispatch(setUser(storedUser));
+      if (firebaseUser) {
+        if (firebaseUser.uid) {
+          dispatch(setUser({ ...firebaseUser, uid: firebaseUser.uid })); // Ensure uid is a string
+        }
+        if (firebaseUser.uid) {
+          await dispatch(fetchContactsThunk(firebaseUser.uid));
+        }
+      } else {
+        dispatch(setUser({ uid: '' } as Partial<UserState> & { uid: string })); // Clear user state if not authenticated
       }
+      setUserLoader(false);
       setIsAuthChecked(true);
-    };
-    checkUserSession();
-    setUserLoader(false);
+    });
+
+    return () => unsubscribe(); // Clean up subscription on unmount
   }, [dispatch]);
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) return; // Check if uid is null
 
-    if (user?.uid && usersInStore.length === 0) {
+    if (user.uid && usersInStore.length === 0) {
       const unsubscribe = listenToUsers(user.uid, users => {
-        dispatch({type: 'users/setAllUsers', payload: users});
+        dispatch({ type: 'users/setAllUsers', payload: users });
       });
 
       return () => unsubscribe();
     }
   }, [user?.uid, usersInStore.length, dispatch]);
 
-  return {navigation, user, isAuthChecked, userLoader, open};
+  return { navigation, user, isAuthChecked, userLoader };
 };
 
-export default appNavigate;
+export default useNavigationHook;

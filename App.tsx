@@ -7,12 +7,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import Config from 'react-native-config';
 import Toast from 'react-native-toast-message';
+import { GOOGLE_CLIENT_ID } from '@env';
 
 const App = () => {
-  useEffect(() => {
-    GoogleSignin.configure({webClientId: Config.GOOGLE_AUTH_CLIENTID});
-  }, []);
-
   return (
     <>
       <GestureHandlerRootView style={{flex: 1, position: 'relative'}}>

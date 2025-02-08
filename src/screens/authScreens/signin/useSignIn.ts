@@ -13,6 +13,7 @@ const appSign = () => {
   const [signInData, setSignInData] = useState(initialState);
   const {handleLogin, observeAuth} = appAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const [googleLoader, setGoogleLoader] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
 
@@ -49,15 +50,27 @@ const appSign = () => {
     }
   };
 
+  const handleGoogleSignIn = () => {
+    setGoogleLoader(true);
+    try {
+      signInWithGoogle();
+    } catch (error) {
+      console.error('Failed to sign in with Google:', error);
+    } finally {
+      setGoogleLoader(false);
+    }
+  };
+
   return {
     handleInputChange,
     handleSignIn,
     loading,
     signInData,
     navigation,
-    signInWithGoogle,
+    googleLoader,
     error,
     setError,
+    handleGoogleSignIn
   };
 };
 
