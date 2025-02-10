@@ -14,6 +14,8 @@ import {COLOR} from '../constants/colors';
 import Loader from './loader/Loader';
 import Images from '../constants/imgs';
 
+const ListEmptyComponent: React.FC = () => <Text>No contacts found</Text>;
+
 const Contacts: React.FC<ContactsProps> = ({sections}) => {
   const {handleContactClick, loader} = useContactHandler();
 
@@ -23,7 +25,7 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
       <SectionList
         sections={sections}
         keyExtractor={item => item.uid as string}
-        ListEmptyComponent={() => <Text>No contacts found</Text>}
+        ListEmptyComponent={ListEmptyComponent}
         renderItem={({item}) => (
           <TouchableOpacity
             activeOpacity={0.8}

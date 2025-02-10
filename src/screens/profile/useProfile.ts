@@ -6,7 +6,7 @@ import {showToast} from '../../components/Toast';
 import {logoutUser} from '../../services/auth';
 import {clearUser, setLoading, setUser} from '../../store/slices/user.slice';
 
-const appProfile = () => {
+const useAppProfile = () => {
   const {isLoading, ...user} = useAppSelector(state => state.user);
   const [userData, setUserData] = useState({
     name: user.displayName || '',
@@ -51,7 +51,7 @@ const appProfile = () => {
 
       const imageBase64 = response.assets?.[0].base64;
       if (!imageBase64) {
-        showToast('Error', 'Failed to get image data', 'error');
+        showToast('No Image', 'Failed to get image data', 'error');
         setLoading(false);
         setUpdateLoader(false);
         return;
@@ -62,7 +62,8 @@ const appProfile = () => {
 
       const userId = user?.uid;
       if (!userId) {
-        throw new Error('User ID is not available');
+        showToast('User is missing', 'User ID is not available', 'error');
+        return;
       }
 
       await firestore().collection('users').doc(userId).set(
@@ -73,11 +74,6 @@ const appProfile = () => {
       );
 
       if (user) {
-        const updatedUser = {
-          ...user,
-          photoURL: imageDataUri,
-        };
-
         setUserData(prevState => ({
           ...prevState,
           imageUri: imageDataUri,
@@ -88,9 +84,9 @@ const appProfile = () => {
         dispatch(setUser({...user, photoURL: imageDataUri, uid: user.uid}));
       }
       setUpdateLoader(false);
-    } catch (error) {
-      console.error('Error handling image:', error);
-      showToast('Error', 'Failed to upload image', 'error');
+    } catch (imageError) {
+      console.error('Error handling image:', imageError);
+      showToast('Image Not Uploaded', 'Failed to upload image', 'error');
     } finally {
       setLoading(false);
     }
@@ -123,8 +119,8 @@ const appProfile = () => {
       }
 
       showToast('Success', 'Profile updated successfully', 'success');
-    } catch (error) {
-      console.error('Failed to update profile (Profile.tsx):', error);
+    } catch (updateError) {
+      console.error('Failed to update profile (Profile.tsx):', updateError);
       showToast(
         'Failed to update profile',
         'There are some issue, that your profile is not updated. Please try again later.',
@@ -140,9 +136,9 @@ const appProfile = () => {
       setLogoutLoader(true);
       await logoutUser();
       dispatch(clearUser());
-    } catch (error) {
-      console.error('Failed to logout:', error);
-      showToast('Error', 'Failed to logout', 'error');
+    } catch (logoutError) {
+      console.error('Failed to logout:', logoutError);
+      showToast('Not Logged-out', 'Failed to logout', 'error');
     } finally {
       setLogoutLoader(false);
     }
@@ -160,4 +156,4 @@ const appProfile = () => {
   };
 };
 
-export default appProfile;
+export default useAppProfile;

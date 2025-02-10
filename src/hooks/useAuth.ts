@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from './../store/store';
 import {login, signUp, observeAuthState} from '../services/auth';
 import {setLoading, setUser, UserState} from '../store/slices/user.slice';
 
-const appAuth = (): UseAuthReturn => {
+const useAppAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
@@ -15,11 +15,12 @@ const appAuth = (): UseAuthReturn => {
 
   useEffect(() => {
     const unsubscribe = observeAuthState(currentUser => {
-      if (currentUser)
+      if (currentUser) {
         dispatch(setUser(currentUser as Partial<UserState> & {uid: string}));
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [dispatch]);
 
   const handleLogin = async (
     email: string,
@@ -123,4 +124,4 @@ const appAuth = (): UseAuthReturn => {
   };
 };
 
-export default appAuth;
+export default useAppAuth;

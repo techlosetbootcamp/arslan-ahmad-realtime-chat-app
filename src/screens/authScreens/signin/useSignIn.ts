@@ -9,7 +9,7 @@ const initialState = {
   password: '',
 };
 
-const appSign = () => {
+const useAppSign = () => {
   const [signInData, setSignInData] = useState(initialState);
   const {handleLogin, observeAuth} = appAuth();
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,18 +33,17 @@ const appSign = () => {
     setLoading(true);
     try {
       if (!signInData.email || !signInData.password) {
-        return showToast('Error', 'Please fill in all fields', 'error');
+        return showToast('Fill all Fields', 'Please fill in all fields', 'error');
       }
       const userCredential = await handleLogin(
         signInData.email,
         signInData.password,
       );
       if (userCredential) {
-        showToast('Success', 'You are successfully logged in!', 'success');
         setSignInData(initialState);
       }
     } catch {
-      showToast('Error', error || 'An unknown error occurred', 'error');
+      showToast('Unknown Error', error || 'An unknown error occurred', 'error');
     } finally {
       setLoading(false);
     }
@@ -54,8 +53,8 @@ const appSign = () => {
     setGoogleLoader(true);
     try {
       signInWithGoogle();
-    } catch (error) {
-      console.error('Failed to sign in with Google:', error);
+    } catch (googleError) {
+      console.error('Failed to sign in with Google:', googleError);
     } finally {
       setGoogleLoader(false);
     }
@@ -70,8 +69,8 @@ const appSign = () => {
     googleLoader,
     error,
     setError,
-    handleGoogleSignIn
+    handleGoogleSignIn,
   };
 };
 
-export default appSign;
+export default useAppSign;

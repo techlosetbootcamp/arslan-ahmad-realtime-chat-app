@@ -1,13 +1,10 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Provider} from 'react-redux';
 import {store} from './src/store/store';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Navigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import Config from 'react-native-config';
 import Toast from 'react-native-toast-message';
-import { GOOGLE_CLIENT_ID } from '@env';
 
 const App = () => {
   return (

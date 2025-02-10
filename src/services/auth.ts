@@ -1,16 +1,11 @@
+import { ToastAndroid } from 'react-native';
 import {FirebaseError} from '@firebase/util';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {User} from '../types/firestoreService';
-import {UserState} from '../store/slices/user.slice';
-import {showToast} from '../components/Toast';
 import {GOOGLE_CLIENT_ID} from '@env';
-
-GoogleSignin.configure({
-  webClientId: GOOGLE_CLIENT_ID,
-  offlineAccess: true,
-});
+import {User} from '../types/firestoreService';
+import {showToast} from '../components/Toast';
 
 const getUserDataFromFirestore = async (uid: string): Promise<User | null> => {
   const userDoc = await firestore().collection('users').doc(uid).get();
@@ -32,10 +27,15 @@ const getUserDataFromFirestore = async (uid: string): Promise<User | null> => {
 export const observeAuthState = (
   callback: (user: User | null) => void,
 ): (() => void) => {
-  return auth().onAuthStateChanged(async firebaseUser => {
+  return auth().onAuthStateChanged(async (firebaseUser) => {
     if (firebaseUser) {
       try {
         const user = await getUserDataFromFirestore(firebaseUser.uid);
+        if (!user) {
+          console.warn(`No Firestore document found for user: ${firebaseUser.uid}`);
+          callback(null);
+          return;
+        }
         callback(user);
       } catch (error) {
         console.error('Error mapping Firebase user to custom User:', error);
@@ -47,6 +47,7 @@ export const observeAuthState = (
   });
 };
 
+
 export const login = async (
   email: string,
   password: string,
@@ -56,7 +57,7 @@ export const login = async (
       email,
       password,
     );
-    const user = await getUserDataFromFirestore(userCredential.user.uid);
+    await getUserDataFromFirestore(userCredential.user.uid);
     showToast('Success', 'Logged in successfully... 🌟', 'success');
     return userCredential;
   } catch (error) {
@@ -99,26 +100,32 @@ export const signUp = async (
     return null;
   }
 };
-
+GoogleSignin.configure({
+  webClientId: GOOGLE_CLIENT_ID,
+  offlineAccess: true,
+});
 export const signInWithGoogle = async () => {
   try {
-    const userInfo = await GoogleSignin.signIn();
-    const idToken = userInfo.data?.idToken;
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
-    if (!idToken) {
-      throw new Error('Google Sign-In failed: No ID token found.');
+    await GoogleSignin.signOut();
+
+    const signInResponse = await GoogleSignin.signIn();
+    const { data } = signInResponse;
+
+    if (!data?.idToken) {
+      throw new Error('Google Sign-In failed: idToken is null.');
     }
 
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    const userCredential = await auth().signInWithCredential(googleCredential);
-    const user = await getUserDataFromFirestore(userCredential.user.uid);
-
-    showToast('Success', 'Logged in successfully... 😎', 'success');
-    return userCredential.user as Partial<UserState> & {uid: string};
-  } catch (error) {
-    console.error('Error during Google Sign-In:', error);
-    
-    throw error;
+    const googleCredential = auth.GoogleAuthProvider.credential(data.idToken);
+    const response = await auth().signInWithCredential(googleCredential);
+    const { uid, email, displayName, photoURL } = response?.user;
+    showToast('Success', 'Logged in successfully... 🌟', 'success');
+    return { uid, email, displayName, photoURL };
+  } catch (err) {
+    const error = err as FirebaseError;
+    ToastAndroid.show('Google login failed. Please try again.', ToastAndroid.LONG);
+    throw error.message || 'An unknown error occurred';
   }
 };
 
@@ -135,11 +142,10 @@ export const logoutUser = async () => {
     showToast('Success', 'Logged out successfully... 🙂', 'success');
   } catch (error) {
     console.error('Failed to log out:', error);
-    showToast('Error', 'Failed to log out', 'error');
+    showToast('Not logged-out', 'Failed to log out', 'error');
   }
 };
 
-// Handle authentication errors
 const handleAuthError = (error: any) => {
   if (error instanceof FirebaseError) {
     const errorCode = error.code;
@@ -168,7 +174,7 @@ const handleAuthError = (error: any) => {
         );
         break;
       default:
-        showToast('Error', 'An unexpected error occurred.', 'error');
+        showToast('Failed to Authenticate', 'An unexpected error occurred.', 'error');
     }
   }
 };

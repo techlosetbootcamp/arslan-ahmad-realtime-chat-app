@@ -2,13 +2,13 @@ import {useState} from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {showToast} from '../../components/Toast';
 
-const appForgetPassword = () => {
+const useAppForgetPassword = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
   const handlePasswordReset = async () => {
     if (!email) {
-      showToast('Error', 'Please enter your email address.', 'error');
+      showToast('Email is missing', 'Please enter your email address.', 'error');
       return;
     }
 
@@ -19,20 +19,20 @@ const appForgetPassword = () => {
         'A password reset link has been sent to your email address.',
         'success',
       );
-    } catch (error) {
+    } catch (err) {
       if (
-        (error as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        (err as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
         'auth/user-not-found'
       ) {
-        showToast('Error', 'No user found with this email address.', 'error');
+        showToast('Email Not Found', 'No user found with this email address.', 'error');
       } else if (
-        (error as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        (err as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
         'auth/invalid-email'
       ) {
-        showToast('Error', 'The email address is not valid.', 'error');
+        showToast('Invalid Email', 'The email address is not valid.', 'error');
       } else {
         showToast(
-          'Error',
+          'Not reset, Try again',
           'Something went wrong. Please try again later.',
           'error',
         );
@@ -42,4 +42,4 @@ const appForgetPassword = () => {
   return {email, setEmail, error, setError, handlePasswordReset};
 };
 
-export default appForgetPassword;
+export default useAppForgetPassword;

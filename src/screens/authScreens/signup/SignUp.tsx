@@ -8,7 +8,6 @@ import ActionButton from '../../../components/actionButton/ActionButton';
 import AuthHeaderSection from '../../../components/AuthSectionHeader';
 import Images from '../../../constants/imgs';
 import {COLOR} from '../../../constants/colors';
-import Loader from '../../../components/loader/Loader';
 import useSignup from './useSignup';
 
 const SignIn: React.FC = () => {
@@ -25,16 +24,7 @@ const SignIn: React.FC = () => {
 
   return (
     <>
-      {loading && <Loader />}
-      <ScrollView
-        showsVerticalScrollIndicator={true}
-        style={{
-          flex: 1,
-          flexDirection: 'column',
-          paddingHorizontal: 20,
-          paddingVertical: 60,
-          columnGap: 40,
-        }}>
+      <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
         <AuthHeaderSection
           title="Sign up with Email"
           subText="Get chatting with friends and family today by signing up for our chat
@@ -42,7 +32,7 @@ const SignIn: React.FC = () => {
           styleSubTitle={{width: '80%'}}
         />
 
-        <View style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
+        <View style={styles.content}>
           <IconButton
             src={Images.GoogleIcon}
             loader={googleLoader}
@@ -92,7 +82,7 @@ const SignIn: React.FC = () => {
           </View>
         </View>
 
-        <View style={{flex: 2, marginTop: 20, paddingVertical: 10}}>
+        <View style={styles.btnContainer}>
           <ActionButton
             onClick={SignUphandler}
             loader={loading}
@@ -119,5 +109,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     alignSelf: 'center',
   },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    paddingVertical: 60,
+    gap: 40,
+  },
+  content: {flex: 6, paddingHorizontal: 10, paddingVertical: 10},
+  btnContainer: {flex: 2, marginTop: 20, paddingVertical: 10},
   gapVertical: {marginTop: 10},
 });

@@ -33,7 +33,6 @@ const SignIn: React.FC = () => {
 
   return (
     <>
-      {loading && <Loader />}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'android' ? 'padding' : undefined}
         style={{flex: 1, flexDirection: 'column', padding: 20}}>
