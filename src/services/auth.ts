@@ -1,4 +1,4 @@
-import { ToastAndroid } from 'react-native';
+import {ToastAndroid} from 'react-native';
 import {FirebaseError} from '@firebase/util';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -23,30 +23,6 @@ const getUserDataFromFirestore = async (uid: string): Promise<User | null> => {
     contacts: userData?.contacts || [],
   } as User;
 };
-
-export const observeAuthState = (
-  callback: (user: User | null) => void,
-): (() => void) => {
-  return auth().onAuthStateChanged(async (firebaseUser) => {
-    if (firebaseUser) {
-      try {
-        const user = await getUserDataFromFirestore(firebaseUser.uid);
-        if (!user) {
-          console.warn(`No Firestore document found for user: ${firebaseUser.uid}`);
-          callback(null);
-          return;
-        }
-        callback(user);
-      } catch (error) {
-        console.error('Error mapping Firebase user to custom User:', error);
-        callback(null);
-      }
-    } else {
-      callback(null);
-    }
-  });
-};
-
 
 export const login = async (
   email: string,
@@ -100,18 +76,19 @@ export const signUp = async (
     return null;
   }
 };
+
 GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
   offlineAccess: true,
 });
+
 export const signInWithGoogle = async () => {
   try {
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
     await GoogleSignin.signOut();
 
     const signInResponse = await GoogleSignin.signIn();
-    const { data } = signInResponse;
+    const {data} = signInResponse;
 
     if (!data?.idToken) {
       throw new Error('Google Sign-In failed: idToken is null.');
@@ -119,17 +96,65 @@ export const signInWithGoogle = async () => {
 
     const googleCredential = auth.GoogleAuthProvider.credential(data.idToken);
     const response = await auth().signInWithCredential(googleCredential);
-    const { uid, email, displayName, photoURL } = response?.user;
+    const {uid, email, displayName, photoURL} = response?.user;
+
+    const userDocRef = firestore().collection('users').doc(uid);
+    const userDocSnapshot = await userDocRef.get();
+
+    let userData: User;
+
+    if (userDocSnapshot.exists) {
+      const firestoreData = userDocSnapshot.data();
+      userData = {
+        uid,
+        email: email || firestoreData?.email || null,
+        displayName: displayName || firestoreData?.displayName || null,
+        photoURL: photoURL || firestoreData?.photoURL || null,
+        status: firestoreData?.status || null,
+        chats: firestoreData?.chats || [],
+        contacts: firestoreData?.contacts || [],
+      };
+    } else {
+      userData = {
+        uid,
+        email,
+        displayName,
+        photoURL,
+        status: null,
+        chats: [],
+        contacts: [],
+      };
+
+      await userDocRef.set({
+        uid,
+        email,
+        displayName,
+        photoURL,
+        lastLogin: firestore.FieldValue.serverTimestamp(),
+      });
+    }
+
     showToast('Success', 'Logged in successfully... 🌟', 'success');
-    return { uid, email, displayName, photoURL };
+    return {
+      uid,
+      email: email || null,
+      displayName: displayName || null,
+      photoURL: photoURL || null,
+      description: null,
+      status: null,
+      contacts: [],
+      chats: [],
+    };
   } catch (err) {
     const error = err as FirebaseError;
-    ToastAndroid.show('Google login failed. Please try again.', ToastAndroid.LONG);
+    ToastAndroid.show(
+      'Google login failed. Please try again.',
+      ToastAndroid.LONG,
+    );
     throw error.message || 'An unknown error occurred';
   }
 };
 
-// Logout function
 export const logoutUser = async () => {
   try {
     const providers = auth().currentUser?.providerData?.map(
@@ -174,7 +199,11 @@ const handleAuthError = (error: any) => {
         );
         break;
       default:
-        showToast('Failed to Authenticate', 'An unexpected error occurred.', 'error');
+        showToast(
+          'Failed to Authenticate',
+          'An unexpected error occurred.',
+          'error',
+        );
     }
   }
 };

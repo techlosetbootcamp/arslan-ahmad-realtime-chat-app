@@ -1,4 +1,4 @@
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { User } from "./firestoreService";
 
 export interface UseAuthReturn {

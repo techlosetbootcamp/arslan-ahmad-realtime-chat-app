@@ -2,7 +2,6 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {WritableDraft} from 'immer';
 import {AppThunk} from '../store';
 import {
-  createNewChat as createChat,
   fetchChats,
   createNewChat,
   deleteChat,
@@ -43,9 +42,9 @@ export const fetchUserChats =
   async dispatch => {
     dispatch(setError(null));
     try {
-      const chats = await new Promise<Chat[]>((resolve, reject) => {
-        fetchChats(userId, (chats: Chat[]) => {
-          resolve(chats);
+      const chats = await new Promise<Chat[]>((resolve, _reject) => {
+        fetchChats(userId, (_fetchedChats: Chat[]) => {
+          resolve(_fetchedChats);
         });
       });
       const chatMap = chats.reduce((acc: Record<string, Chat>, chat: Chat) => {
@@ -67,9 +66,9 @@ export const startChat =
   async dispatch => {
     dispatch(setError(null));
     try {
-      const chats = await new Promise<Chat[]>((resolve, reject) => {
-        fetchChats(userId, (chats: Chat[]) => {
-          resolve(chats);
+      const chats = await new Promise<Chat[]>((resolve, _reject) => {
+        fetchChats(userId, (fetchedChats: Chat[]) => {
+          resolve(fetchedChats);
         });
       });
       const existingChat = chats.find(chat =>

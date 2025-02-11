@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('screen').width,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.2)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   loaderContainer: {
     backgroundColor: COLOR.white,

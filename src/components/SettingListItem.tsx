@@ -1,3 +1,4 @@
+import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLOR} from '../constants/colors';
 import {SettingsItemProps} from '../types/settingsListItem';

@@ -13,16 +13,11 @@ import {
   SignUpScreen,
   WelcomeScreen,
 } from '../constants/screens';
-import Loader from '../components/loader/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {user, isAuthChecked, userLoader} = useNavigationHook();
-
-  if (userLoader) {
-    return <Loader />;
-  }
+  const {user, isAuthChecked} = useNavigationHook();
 
   return isAuthChecked ? (
     <Stack.Navigator
@@ -32,10 +27,10 @@ const Navigation = () => {
       initialRouteName={user?.uid ? 'MainTabs' : 'WelcomeScreen'}>
       {user?.uid ? (
         <>
-          <Stack.Screen name="Search" component={SearchScreen} />
-          <Stack.Screen name="Chat" component={ChatScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen
             name="ChangePassword"
             component={ChangePasswordScreen}

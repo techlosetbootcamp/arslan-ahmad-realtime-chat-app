@@ -3,6 +3,8 @@ import appNavigate from '../../../hooks/useNavigationHook';
 import appAuth from '../../../hooks/useAuth';
 import {signInWithGoogle} from '../../../services/auth';
 import {showToast} from '../../../components/Toast';
+import { setUser } from '../../../store/slices/user.slice';
+import { useAppDispatch } from '../../../store/store';
 
 const initialState = {
   email: '',
@@ -16,6 +18,7 @@ const useAppSign = () => {
   const [googleLoader, setGoogleLoader] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const unsubscribe = observeAuth();
@@ -33,7 +36,11 @@ const useAppSign = () => {
     setLoading(true);
     try {
       if (!signInData.email || !signInData.password) {
-        return showToast('Fill all Fields', 'Please fill in all fields', 'error');
+        return showToast(
+          'Fill all Fields',
+          'Please fill in all fields',
+          'error',
+        );
       }
       const userCredential = await handleLogin(
         signInData.email,
@@ -49,10 +56,13 @@ const useAppSign = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     setGoogleLoader(true);
     try {
-      signInWithGoogle();
+      const user = await signInWithGoogle();
+      if (user) {
+        dispatch(setUser(user));
+      }
     } catch (googleError) {
       console.error('Failed to sign in with Google:', googleError);
     } finally {

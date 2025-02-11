@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TextInput} from 'react-native';
+import {View, Text, TextInput, StyleSheet} from 'react-native';
 import {InputFieldProps} from '../types/inputField';
 import {COLOR} from '../constants/colors';
 import useInputValidation from '../hooks/useInputValidation';
@@ -48,18 +48,22 @@ function InputField({
       />
       {isError && (
         <Text
-          style={{
-            color: COLOR.red,
-            fontSize: 12,
-            fontWeight: '300',
-            marginTop: 2,
-            textAlign: 'right',
-          }}>
+          style={styles.errorText}>
           {isError}
         </Text>
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  errorText: {
+    color: COLOR.red,
+    fontSize: 12,
+    fontWeight: '300',
+    marginTop: 2,
+    textAlign: 'right',
+  },
+});
 
 export default InputField;

@@ -7,9 +7,10 @@ import IconButton from '../../components/IconButton';
 import ActionText from '../../components/ActionText';
 import SimpleText from '../../components/SimpleText';
 import ActionButton from '../../components/actionButton/ActionButton';
+// import { signInWithGoogle } from '../../services/auth';
 
 const Welcome = () => {
-  const {navigation, handleGoogleSignIn, googleLoader} = useWelcomeScreen();
+  const {navigation, googleLoader, handleGoogleSignIn} = useWelcomeScreen();
 
   return (
     <View style={styles.container}>

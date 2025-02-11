@@ -2,7 +2,7 @@ import {useRoute} from '@react-navigation/native';
 import appAuth from './useAuth';
 import useNavigate from './useNavigationHook';
 
-const appContentViewer = () => {
+const useAppContentViewer = () => {
   const route = useRoute();
   const {user} = appAuth();
   const isFullNav = route.name === 'Home' || route.name === 'Contacts';
@@ -18,4 +18,4 @@ const appContentViewer = () => {
   };
   return {handlePressLeft, user, isFullNav, navigation, route};
 };
-export default appContentViewer;
+export default useAppContentViewer;

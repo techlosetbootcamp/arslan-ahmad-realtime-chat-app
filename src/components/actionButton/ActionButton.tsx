@@ -1,6 +1,4 @@
-import {
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {ActionButtonProps} from '../../types/actionButton';
@@ -18,10 +16,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     <LinearGradient
       start={{x: 0, y: 1}}
       end={{x: 1, y: 1}}
-      style={{
-        padding: 14,
-        borderRadius: 16,
-      }}
+      style={styles.linearGradient}
       colors={['#010102', '#192f6a', '#3b5998']}>
       <ButtonContent
         onClick={onClick}
@@ -32,12 +27,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       />
     </LinearGradient>
   ) : (
-    <View
-      style={{
-        padding: 14,
-        borderRadius: 16,
-        backgroundColor: color,
-      }}>
+    <View style={[styles.button, {backgroundColor: color}]}>
       <ButtonContent
         onClick={onClick}
         loader={loader}
@@ -47,5 +37,16 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  linearGradient: {
+    padding: 14,
+    borderRadius: 16,
+  },
+  button: {
+    padding: 14,
+    borderRadius: 16,
+  },
+});
 
 export default ActionButton;

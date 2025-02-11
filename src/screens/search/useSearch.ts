@@ -22,7 +22,7 @@ const useAppSearch = () => {
       (u: User) =>
         u.displayName?.toLowerCase().includes(text.toLowerCase()) ||
         u.email?.toLowerCase().includes(text.toLowerCase()),
-    );
+    ).filter((u: User) => u.uid !== user?.uid);
 
     setFilteredUsers(filtered);
   };
