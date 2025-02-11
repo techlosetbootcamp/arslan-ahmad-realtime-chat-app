@@ -10,7 +10,6 @@ const useContacts = () => {
   const dispatch = useAppDispatch();
   const {contacts, error} = useAppSelector(state => state.contacts);
 
-
   useEffect(() => {
     if (user?.uid) {
       setContactsLoading(true);

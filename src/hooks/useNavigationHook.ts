@@ -5,24 +5,32 @@ import {RootStackParamList} from '../types/navigation';
 import {listenToUsers} from '../services/user';
 import auth from '@react-native-firebase/auth';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {setUser} from '../store/slices/user.slice';
+import {UserState} from '../store/slices/user.slice';
 
 const useNavigationHook = () => {
   const navigation =
-    useNavigation<BottomTabNavigationProp<RootStackParamList>>();
-  const user = useAppSelector(state => state.user);
+  useNavigation<BottomTabNavigationProp<RootStackParamList>>();
+  const [user, setUser] = useState<UserState>({} as UserState);
   const {users: usersInStore} = useAppSelector(state => state.users);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   // const [userLoader, setUserLoader] = useState(false);
   const dispatch = useAppDispatch();
 
+
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(async firebaseUser => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      } else {
-        setUser({uid: ''});
-      }
+    const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
+      const userData: UserState = {
+        uid: firebaseUser?.uid || '',
+        displayName: firebaseUser?.displayName || null,
+        email: firebaseUser?.email || null,
+        photoURL: firebaseUser?.photoURL || null,
+        description: '',
+        status: null,
+        contacts: [],
+        chats: [],
+        isLoading: false,
+      };
+      setUser(userData);
       setIsAuthChecked(true);
     });
 

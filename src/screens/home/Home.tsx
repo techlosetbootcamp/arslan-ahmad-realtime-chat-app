@@ -7,12 +7,9 @@ import {HomeScreenProps} from '../../types/home';
 import {Chat} from '../../types/firestoreService';
 import ContentViewer from '../../components/ContentViewer';
 import RenderChatItem from '../../components/renderChat/RenderChatItem';
-import { useAppSelector } from '../../store/store';
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const {chats, chatLoader} = useHome();
-  const user = useAppSelector((state) => state.user);
-  console.log('user (Home.tsx) => ', user);
   return (
     <ContentViewer title="Home">
       <View style={HomeStyles.content}>
