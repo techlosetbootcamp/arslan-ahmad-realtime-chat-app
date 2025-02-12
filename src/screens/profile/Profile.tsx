@@ -12,7 +12,6 @@ import ActionButton from '../../components/actionButton/ActionButton';
 import ContentViewer from '../../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
 import {COLOR} from '../../constants/colors';
-import LoaderScreen from '../../components/loader/Loader';
 import useProfile from './useProfile';
 import Images from '../../constants/imgs';
 
@@ -30,7 +29,6 @@ const Profile: React.FC = () => {
 
   return (
     <>
-      {updateLoader && <LoaderScreen />}
       <ContentViewer title="Profile">
         <ScrollView style={{flex: 1, paddingHorizontal: 12}}>
           <TouchableOpacity

@@ -5,8 +5,9 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Navigation from './src/navigation/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
-
+import SplashScreen from 'react-native-splash-screen';
 const App = () => {
+  SplashScreen.hide();
   return (
     <>
       <GestureHandlerRootView style={{flex: 1, position: 'relative'}}>

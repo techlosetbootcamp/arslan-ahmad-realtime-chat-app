@@ -6,7 +6,7 @@ export const ContentViewerStyles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flex: 9,
+    flex: 8,
     backgroundColor: COLOR.white,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
