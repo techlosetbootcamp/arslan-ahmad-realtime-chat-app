@@ -18,6 +18,11 @@ const BottomTabsNavigator = () => {
         tabBarActiveTintColor: COLOR.primary,
         tabBarInactiveTintColor: COLOR.light_grey,
         headerShown: false,
+        tabBarStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+        },
         tabBarIcon: ({focused}) => {
           let iconSource;
 
@@ -42,9 +47,9 @@ const BottomTabsNavigator = () => {
           fontWeight: 'bold',
         },
       })}>
-      <Tab.Screen name="Home" component={Home} options={{title: 'Home'}} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{title: 'Contacts'}} />
-      <Tab.Screen name="Settings" component={Settings} options={{title: 'Settings'}} />
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Contacts" component={ContactsScreen} />
+      <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
 };

@@ -7,7 +7,7 @@ const LoaderScreen = () => {
   return (
     <Modal transparent visible animationType="fade">
       <View style={styles.loaderContainer}>
-        <Image source={Images.SplashScreen} style={styles.image} />
+        <Image source={Images.SplashScreen} style={{width: '100%', height: '100%'}} />
       </View>
     </Modal>
   );
@@ -23,9 +23,5 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
     backgroundColor: COLOR.black,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
 });

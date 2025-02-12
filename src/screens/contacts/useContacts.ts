@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';;
 import useAuth from '../../hooks/useAuth';
 import {fetchContactsThunk, setContactsLoading} from '../../store/slices/contacts.slice';
 import { User } from '../../types/firestoreService';
@@ -9,6 +9,8 @@ const useContacts = () => {
   const {user} = useAuth();
   const dispatch = useAppDispatch();
   const {contacts, error} = useAppSelector(state => state.contacts);
+  console.log('contacts', contacts);
+  
 
   useEffect(() => {
     if (user?.uid) {

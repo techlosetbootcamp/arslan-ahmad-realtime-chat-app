@@ -46,11 +46,11 @@ const useInputValidation = (
   const validateField = (text: string) => {
     let error = '';
     if (text.length === 0 && touched) {
-      let fieldTitle = title;
+      let text = title;
       if (title.split(' ')[0] === 'Enter') {
-        fieldTitle = title.split(' ')[1];
+        text = title.split(' ')[1];
       }
-      error = `${fieldTitle} is important.`;
+      error = `${text} is important.`;
     } else if (type === 'email-address') {
       if (!validateEmail(text)) {
         error = 'Please enter a valid email address.';

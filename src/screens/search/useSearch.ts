@@ -4,10 +4,10 @@ import {addContact as addContactToStore} from '../../store/slices/contacts.slice
 import {addUserToContact} from '../../store/slices/user.slice';
 import useAuth from '../../hooks/useAuth';
 import {useAppDispatch, useAppSelector} from '../../store/store';
+import {saveUserToStorage} from '../../services/async_storage';
 import {User} from '../../types/firestoreService';
-import {showToast} from '../../components/Toast';
 
-const useAppSearch = () => {
+const appSearch = () => {
   const [searchText, setSearchText] = useState<string>('');
   const {user} = useAuth();
   const dispatch = useAppDispatch();
@@ -19,10 +19,10 @@ const useAppSearch = () => {
     setSearchText(text);
 
     const filtered = usersInStore.filter(
-      (u: User) =>
-        u.displayName?.toLowerCase().includes(text.toLowerCase()) ||
-        u.email?.toLowerCase().includes(text.toLowerCase()),
-    ).filter((u: User) => u.uid !== user?.uid);
+      (user: User) =>
+        user.displayName?.toLowerCase().includes(text.toLowerCase()) ||
+        user.email?.toLowerCase().includes(text.toLowerCase()),
+    );
 
     setFilteredUsers(filtered);
   };
@@ -33,10 +33,21 @@ const useAppSearch = () => {
         dispatch(addContactToStore(contactId));
         dispatch(addUserToContact(contactId));
         await addContact(user?.uid || '', contactId);
+        if (user) {
+          await saveUserToStorage(user);
+          console.log(
+            '%c Contact added successfully...',
+            'font-size:16px;color:green;',
+          );
+        }
       }
     } catch (error) {
       console.error('Error adding contact:', error);
-      showToast('Not Added to Contact', 'Failed to add contact', 'error');
+    } finally {
+      console.log(
+        'Added via Store...',
+        contacts.map(c => c?.displayName),
+      );
     }
   };
 
@@ -50,4 +61,4 @@ const useAppSearch = () => {
   };
 };
 
-export default useAppSearch;
+export default appSearch;

@@ -10,7 +10,7 @@ const initialState = {
   confirmPassword: '',
 };
 
-const useChangePassword = () => {
+const appChangePassword = () => {
   const [passwords, setPasswords] = useState(initialState);
   const {navigation} = useNavigate();
   const user = auth().currentUser;
@@ -19,26 +19,26 @@ const useChangePassword = () => {
     const {currentPassword, newPassword, confirmPassword} = passwords;
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      showToast('Need to fill all', 'All fields are required.', 'error');
+      showToast('Error', 'All fields are required.', 'error');
       return;
     }
 
     if (newPassword !== confirmPassword) {
       showToast(
-        'Password Mismatch',
+        'Error',
         'Passwords & Confirm Password are different.',
         'error',
       );
       return;
     }
     if (!user) {
-      showToast('User Not found', 'No authenticated user found.', 'error');
+      showToast('Error', 'No authenticated user found.', 'error');
       return;
     }
 
     try {
       if (!user.email) {
-        showToast('Email is missing', 'No email found for the user.', 'error');
+        showToast('Error', 'No email found for the user.', 'error');
         return;
       }
       const credential = auth.EmailAuthProvider.credential(
@@ -54,16 +54,16 @@ const useChangePassword = () => {
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/wrong-password') {
-          showToast("Incorrect 'Current Password'", 'The current password is incorrect.', 'error');
+          showToast('Error', 'The current password is incorrect.', 'error');
         } else {
           showToast(
-            'Password Not-Updated',
+            'Error',
             'Failed to update the password. Please try again.',
             'error',
           );
         }
       } else {
-        showToast('Unknown Error Occurred', 'An unexpected error occurred.', 'error');
+        showToast('Error', 'An unexpected error occurred.', 'error');
       }
     }
   };
@@ -71,4 +71,4 @@ const useChangePassword = () => {
   return {passwords, setPasswords, handlePasswordReset};
 };
 
-export default useChangePassword;
+export default appChangePassword;

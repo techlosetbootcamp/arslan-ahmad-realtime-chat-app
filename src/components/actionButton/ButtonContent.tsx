@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {ActivityIndicator, Text, TouchableOpacity} from 'react-native';
 import {ActionButtonProps} from '../../types/actionButton';
 import {showToast} from '../Toast';
-import {COLOR} from '../../constants/colors';
+import { COLOR } from '../../constants/colors';
 
 const ButtonContent: React.FC<ActionButtonProps> = ({
   onClick,
@@ -29,20 +24,17 @@ const ButtonContent: React.FC<ActionButtonProps> = ({
       activeOpacity={0.9}
       onPress={handleClick}
       disabled={loader}>
-      <Text style={styles.button}>
+      <Text
+        style={{
+          fontSize: 18,
+          textAlign: 'center',
+          color: COLOR.white,
+          fontWeight: 600,
+        }}>
         {!error && loader ? <ActivityIndicator color="#fff" /> : children}
       </Text>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    fontSize: 18,
-    textAlign: 'center',
-    color: COLOR.white,
-    fontWeight: 600,
-  },
-});
 
 export default ButtonContent;

@@ -16,7 +16,6 @@ import {COLOR} from '../../../constants/colors';
 import AuthHeaderSection from '../../../components/AuthSectionHeader';
 import useSign from './useSignIn';
 import Images from '../../../constants/imgs';
-import Loader from '../../../components/loader/Loader';
 
 const SignIn: React.FC = () => {
   const {
@@ -25,8 +24,7 @@ const SignIn: React.FC = () => {
     handleSignIn,
     loading,
     navigation,
-    handleGoogleSignIn,
-    googleLoader,
+    signInWithGoogle,
     error,
     setError,
   } = useSign();
@@ -47,7 +45,7 @@ const SignIn: React.FC = () => {
           </View>
 
           <View style={{flex: 6}}>
-            <IconButton loader={googleLoader} src={Images.GoogleIcon} onPress={handleGoogleSignIn} />
+            <IconButton src={Images.GoogleIcon} onPress={signInWithGoogle} />
             <View style={styles.gapVertical}>
               <RulerText />
             </View>

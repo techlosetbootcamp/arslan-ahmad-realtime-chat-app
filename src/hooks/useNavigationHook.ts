@@ -3,45 +3,59 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
 import {listenToUsers} from '../services/user';
-import auth from '@react-native-firebase/auth';
+import {observeAuthState} from '../services/auth';
+import {fetchContactsThunk} from '../store/slices/contacts.slice';
+import {getUserFromStorage} from '../services/async_storage';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {UserState} from '../store/slices/user.slice';
+import {setUser} from '../store/slices/user.slice';
 
-const useNavigationHook = () => {
+const appNavigate = () => {
   const navigation =
-  useNavigation<BottomTabNavigationProp<RootStackParamList>>();
-  const [user, setUser] = useState<UserState>({} as UserState);
+    useNavigation<BottomTabNavigationProp<RootStackParamList>>();
+
+  const user = useAppSelector(state => state.user);
   const {users: usersInStore} = useAppSelector(state => state.users);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
-  // const [userLoader, setUserLoader] = useState(false);
+  const [userLoader, setUserLoader] = useState(false);
   const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    const checkAuthState = () => {
+      observeAuthState(async firebaseUser => {
+        setUserLoader(true);
+        if (firebaseUser) {
+          if (firebaseUser.uid) {
+            dispatch(setUser({...firebaseUser, uid: firebaseUser.uid!}));
+          }
+          if (firebaseUser.uid) {
+            await dispatch(fetchContactsThunk(firebaseUser.uid));
+          }
+        }
+        setUserLoader(false);
+        setIsAuthChecked(true);
+      });
+    };
+    checkAuthState();
+  }, [dispatch]);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
-      const userData: UserState = {
-        uid: firebaseUser?.uid || '',
-        displayName: firebaseUser?.displayName || null,
-        email: firebaseUser?.email || null,
-        photoURL: firebaseUser?.photoURL || null,
-        description: '',
-        status: null,
-        contacts: [],
-        chats: [],
-        isLoading: false,
-      };
-      setUser(userData);
+    const checkUserSession = async () => {
+      setUserLoader(true);
+      const storedUser = await getUserFromStorage();
+
+      if (storedUser.uid) {
+        dispatch(setUser(storedUser));
+      }
       setIsAuthChecked(true);
-    });
-
-    return () => unsubscribe();
-  }, []);
+    };
+    checkUserSession();
+    setUserLoader(false);
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!user?.uid) {
-      return;
-    }
-    if (user.uid && usersInStore.length === 0) {
+    if (!user?.uid) return;
+
+    if (user?.uid && usersInStore.length === 0) {
       const unsubscribe = listenToUsers(user.uid, users => {
         dispatch({type: 'users/setAllUsers', payload: users});
       });
@@ -50,7 +64,7 @@ const useNavigationHook = () => {
     }
   }, [user?.uid, usersInStore.length, dispatch]);
 
-  return {navigation, user, isAuthChecked};
+  return {navigation, user, isAuthChecked, userLoader};
 };
 
-export default useNavigationHook;
+export default appNavigate;

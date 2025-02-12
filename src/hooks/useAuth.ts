@@ -1,39 +1,25 @@
 import {useEffect, useState} from 'react';
-import {ToastAndroid} from 'react-native';
+import { ToastAndroid } from 'react-native';
 import {FirebaseError} from '@firebase/util';
-import auth from '@react-native-firebase/auth';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {UseAuthReturn} from '../types/auth';
 import {useAppDispatch, useAppSelector} from './../store/store';
-import {login, signUp} from '../services/auth';
+import {login, signUp, observeAuthState} from '../services/auth';
 import {setLoading, setUser, UserState} from '../store/slices/user.slice';
 
-const useAppAuth = (): UseAuthReturn => {
+const appAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const loading = user.isLoading;
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
-      if (firebaseUser) {
-        const userData: Partial<UserState> & {uid: string} = {
-          uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName || null,
-          email: firebaseUser.email || null,
-          photoURL: firebaseUser.photoURL || null,
-          status: null,
-          chats: [],
-          contacts: [],
-        };
-        console.log('userData (useAuth.ts) => ', userData);
-        dispatch(setUser(userData));
-      } else {
-        dispatch(setUser({} as Partial<UserState> & {uid: string}));
-      }
+    const unsubscribe = observeAuthState(currentUser => {
+      if (currentUser)
+        dispatch(setUser(currentUser as Partial<UserState> & {uid: string}));
     });
     return () => unsubscribe();
-  }, [dispatch]);
+  }, []);
 
   const handleLogin = async (
     email: string,
@@ -82,6 +68,7 @@ const useAppAuth = (): UseAuthReturn => {
 
     try {
       const userCredential = await signUp(email, password, name);
+
       const firebaseUser = userCredential?.user;
 
       if (firebaseUser) {
@@ -136,4 +123,4 @@ const useAppAuth = (): UseAuthReturn => {
   };
 };
 
-export default useAppAuth;
+export default appAuth;

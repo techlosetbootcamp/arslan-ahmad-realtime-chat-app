@@ -19,14 +19,14 @@ export const fetchContactsThunk = createAsyncThunk(
   'contacts/fetchContacts',
   async (userId: string, {dispatch, rejectWithValue}) => {
     try {
-      return new Promise<void>((resolve, _reject) => {
+      return new Promise<void>((resolve, reject) => {
         const unsubscribe = fetchContacts(userId, contacts => {
-          dispatch(setContacts(contacts));
+          dispatch(setContacts(contacts)); 
           resolve();
         });
 
         return () => {
-          unsubscribe();
+          unsubscribe(); 
         };
       });
     } catch (error) {
@@ -67,9 +67,10 @@ const contactsSlice = createSlice({
         const isAlreadyContact = state.contacts.some(
           contact => contact.uid === action.payload?.uid,
         );
-
+        
         if (!isAlreadyContact) {
           state.contacts = [...state.contacts, action.payload];
+          console.log('Contacts =+> (contact.slice.ts)', state.contacts.map(c => c.displayName));
         } else {
           console.warn('User is already in contacts:', action.payload);
         }

@@ -88,7 +88,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}) => {
                   paddingHorizontal: 8,
                   paddingVertical: 2,
                   borderRadius: 20,
-                  color: COLOR.white,
+                  color: '#fff',
                 }}>
                 {item.unreadMessages}
               </Text>

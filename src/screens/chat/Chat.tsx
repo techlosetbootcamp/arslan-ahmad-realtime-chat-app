@@ -6,7 +6,6 @@ import ChatHeader from '../../components/chatComponents/ChatHeader';
 import MessageBubble from '../../components/chatComponents/MessageBubble';
 import useChat from './useChat';
 import {ChatProps} from '../../types/chat';
-import { COLOR } from '../../constants/colors';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   if (!route || !route.params) {
@@ -24,7 +23,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
         <ChatHeader
           displayName={participant.displayName}
           profileImage={participant.photoURL}
-          status={participant.status || null}
+          status={participant.status}
         />
         <FlatList
           data={messages}
@@ -39,10 +38,10 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
               timestamp={
                 item.timestamp
                   ? item.timestamp instanceof Timestamp
-                    ? item.timestamp.toDate().toLocaleString() 
+                    ? item.timestamp.toDate().toLocaleString() // Convert Firestore Timestamp to Date
                     : typeof item.timestamp === 'string'
-                    ? new Date(item.timestamp).toLocaleString() 
-                    : null 
+                    ? new Date(item.timestamp).toLocaleString() // Convert string timestamp
+                    : null // Handle unexpected cases
                   : null
               }
               previousMessage={messages[index - 1] || null}
@@ -64,7 +63,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: COLOR.white},
+  container: {flex: 1, backgroundColor: '#fff'},
 });
 
 export default ChatScreen;
