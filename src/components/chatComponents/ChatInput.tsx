@@ -1,5 +1,11 @@
 import React from 'react';
-import {View, TextInput, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import {chatScreenStyles} from '../../styles/chatComponents/screen';
 import useChatInput from '../../hooks/useChatInput';
 import Images from '../../constants/imgs';
@@ -31,19 +37,12 @@ const ChatInput: React.FC<{
           placeholderTextColor="#888"
           numberOfLines={2}
           placeholder="Write your message"
-          onKeyPress={() => console.log('Typed...')}
         />
         <TouchableOpacity
           onPress={onSend}
           style={chatScreenStyles.attachmentButton}>
-          <View
-            style={{
-              width: 27,
-              height: 27,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Image source={Images.SendIcon} style={{width: 25, height: 25}} />
+          <View style={styles.profileImage}>
+            <Image source={Images.SendIcon} style={styles.sendIcon} />
           </View>
         </TouchableOpacity>
       </View>
@@ -60,5 +59,18 @@ const ChatInput: React.FC<{
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  profileImage: {
+    width: 27,
+    height: 27,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sendIcon: {
+    width: 25,
+    height: 25,
+  },
+});
 
 export default ChatInput;

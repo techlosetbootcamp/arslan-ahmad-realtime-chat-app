@@ -32,7 +32,11 @@ const appSignup = () => {
   const SignUphandler = async () => {
     try {
       if (!userData.email || !userData.password || !userData.name) {
-        return showToast('Error', 'Please fill in all fields', 'error');
+        return showToast(
+          'Needs to fill data',
+          'Please fill in all fields',
+          'error',
+        );
       }
       const userCredential = await handleSignUp(
         userData.email,

@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLOR.black,
   },
   actionText: {
-    color: '#fff',
+    color: COLOR.white,
     fontWeight: '600',
     fontSize: 14,
   },

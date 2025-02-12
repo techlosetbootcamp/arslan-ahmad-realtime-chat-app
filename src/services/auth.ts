@@ -145,7 +145,6 @@ export const signUp = async (
 
     await firestore().collection('users').doc(userId).set(userDoc);
 
-    console.log('User saved in Database...');
     await saveUserToStorage(userDoc);
     showToast('Success', 'Account created successfully... 🤠', 'success');
     return userCredential;
@@ -179,7 +178,6 @@ GoogleSignin.configure({
   webClientId: GOOGLE_CLIENT_ID,
   offlineAccess: true,
 });
-
 
 export const signInWithGoogle = async () => {
   try {

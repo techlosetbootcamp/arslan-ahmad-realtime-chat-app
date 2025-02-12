@@ -1,15 +1,32 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {IconButtonProps} from '../types/IconButton';
 import {COLOR} from '../constants/colors';
 
-const IconButton: React.FC<IconButtonProps> = ({src, size, onPress}) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  src,
+  size,
+  onPress,
+  loader = false,
+}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={styles.ghostIcon}
       onPress={() => onPress()}>
-      <Image source={src} style={!size ? {width: 22.7, height: 23.16} : size} />
+      {loader ? (
+        <ActivityIndicator size="small" color={COLOR.white} />
+      ) : (
+        <Image
+          source={src}
+          style={!size ? {width: 22.7, height: 23.16} : size}
+        />
+      )}
     </TouchableOpacity>
   );
 };

@@ -1,54 +1,55 @@
+import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import WelcomeScreen from '../screens/welcomescreen/WelcomeScreen';
-import SignInScreen from '../screens/authScreens/signin/SignIn';
-import SignUp from '../screens/authScreens/signup/SignUp';
-import Profile from '../screens/profile/Profile';
 import {RootStackParamList} from '../types/navigation';
-import Search from '../screens/search/Search';
 import BottomTabsNavigator from './BottomTabsNavigator';
-import ChangePassword from '../screens/changePassword/ChangePassword';
-import ChatScreen from '../screens/chat/Chat';
-import ForgetPassword from '../screens/forgetPassword/ForgetPassword';
 import useNavigationHook from '../hooks/useNavigationHook';
+import {
+  ChangePasswordScreen,
+  ChatScreen,
+  ForgetPasswordScreen,
+  ProfileScreen,
+  SearchScreen,
+  SignInScreen,
+  SignUpScreen,
+  WelcomeScreen,
+} from '../constants/screens';
 import Loader from '../components/loader/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const Navigation = () => {
-  const {user, isAuthChecked, userLoader} = useNavigationHook();
+  const {user, isAuthChecked} = useNavigationHook();
 
-  
-  if (userLoader) {
-    return <Loader />;
-  }
-
-  console.log('user.uid => ', user?.uid);
-  
-  return user.uid && isAuthChecked ? (
+  return isAuthChecked ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="MainTabs">
-      <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
-      <Stack.Screen name="Chat" component={ChatScreen} />
-      <Stack.Screen name="Profile" component={Profile} />
-      <Stack.Screen name="SignIn" component={SignInScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} />
-      <Stack.Screen name="Search" component={Search} />
+      initialRouteName={user?.uid ? 'MainTabs' : 'WelcomeScreen'}>
+      {user?.uid ? (
+        <>
+          <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+          <Stack.Screen name="Search" component={SearchScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordScreen}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen
+            name="ForgetPassword"
+            component={ForgetPasswordScreen}
+          />
+        </>
+      )}
     </Stack.Navigator>
-  ) : (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="WelcomeScreen">
-      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-      <Stack.Screen name="SignUp" component={SignUp} />
-      <Stack.Screen name="SignIn" component={SignInScreen} />
-      <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
-    </Stack.Navigator>
-  );
+  ) : <Loader />;
 };
 
 export default Navigation;

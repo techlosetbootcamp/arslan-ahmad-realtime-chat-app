@@ -43,7 +43,7 @@ export const listenToUsers = (currentUserId: string,callback: (users: User[]) =>
             status: data.status || null,
           };
         })
-        .filter(user => user.uid !== currentUserId);;
+        .filter(user => user.uid !== currentUserId);
 
         callback(users);
       },
@@ -73,7 +73,9 @@ export const updateUserProfile = async ({
 }) => {
   const currentUser = auth().currentUser;
 
-  if (!currentUser) throw new Error('User is not authenticated');
+  if (!currentUser) {
+    throw new Error('User is not authenticated');
+  }
 
   await currentUser.updateProfile({
     displayName: name,
@@ -93,7 +95,7 @@ export const getCurrentUserProfile = async () => {
   try {
     const user = await getUserFromStorage();
     if (!user) {
-      console.log('No user profile found in storage.');
+      console.error('No user profile found in storage.');
     }
     return user;
   } catch (error) {

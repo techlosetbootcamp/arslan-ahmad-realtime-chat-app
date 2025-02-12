@@ -9,10 +9,11 @@ const initialState = {
   password: '',
 };
 
-const appSign = () => {
+const useAppSign = () => {
   const [signInData, setSignInData] = useState(initialState);
   const {handleLogin, observeAuth} = appAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const [googleLoader, setGoogleLoader] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
 
@@ -32,20 +33,37 @@ const appSign = () => {
     setLoading(true);
     try {
       if (!signInData.email || !signInData.password) {
-        return showToast('Error', 'Please fill in all fields', 'error');
+        return showToast(
+          'Fill all Fields',
+          'Please fill in all fields',
+          'error',
+        );
       }
       const userCredential = await handleLogin(
         signInData.email,
         signInData.password,
       );
       if (userCredential) {
-        showToast('Success', 'You are successfully logged in!', 'success');
         setSignInData(initialState);
       }
     } catch {
-      showToast('Error', error || 'An unknown error occurred', 'error');
+      showToast('Unknown Error', error || 'An unknown error occurred', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoader(true);
+    try {
+      const user = await signInWithGoogle();
+      if (user) {
+        dispatch(setUser(user));
+      }
+    } catch (googleError) {
+      console.error('Failed to sign in with Google:', googleError);
+    } finally {
+      setGoogleLoader(false);
     }
   };
 
@@ -58,7 +76,9 @@ const appSign = () => {
     signInWithGoogle,
     error,
     setError,
+    googleLoader,
+    handleGoogleSignIn,
   };
 };
 
-export default appSign;
+export default useAppSign;

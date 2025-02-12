@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import useContentViewer from '../hooks/useContentViewer';
-import {ContnetViewerStyles} from '../styles/contentViewer';
+import {ContentViewerStyles} from '../styles/contentViewer';
 import Images from '../constants/imgs';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
@@ -10,7 +10,7 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
     useContentViewer();
 
   return (
-    <SafeAreaView style={ContnetViewerStyles.Maincontainer}>
+    <SafeAreaView style={ContentViewerStyles.Maincontainer}>
       <LinearGradient
         start={{x: 0, y: 1}}
         end={{x: 1, y: 1}}
@@ -19,29 +19,29 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
           width: '100%',
         }}
         colors={['#010102', '#192f6a', '#3b5998']}>
-        <View style={ContnetViewerStyles.Maincontainer}>
-          <View style={ContnetViewerStyles.header}>
-            <View style={ContnetViewerStyles.childView}>
+        <View style={ContentViewerStyles.Maincontainer}>
+          <View style={ContentViewerStyles.header}>
+            <View style={ContentViewerStyles.childView}>
               <TouchableOpacity
                 activeOpacity={0.8}
-                style={ContnetViewerStyles.iconContainer}
+                style={ContentViewerStyles.iconContainer}
                 onPress={handlePressLeft}>
                 <Image
                   source={!isFullNav ? Images.BackIcon : Images.SearchIcon}
                   style={{
-                    ...ContnetViewerStyles.iconText,
+                    ...ContentViewerStyles.iconText,
                     width: !isFullNav ? 30 : 20,
                     height: !isFullNav ? 30 : 20,
                   }}
                 />
               </TouchableOpacity>
             </View>
-            <View style={ContnetViewerStyles.tabTitle}>
-              <Text style={ContnetViewerStyles.title}>{title}</Text>
+            <View style={ContentViewerStyles.tabTitle}>
+              <Text style={ContentViewerStyles.title}>{title}</Text>
             </View>
             <View
               style={{
-                ...ContnetViewerStyles.childView,
+                ...ContentViewerStyles.childView,
                 alignItems: 'flex-end',
               }}>
               {isFullNav && (
@@ -49,7 +49,7 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                   activeOpacity={0.8}
                   style={
                     route.name === 'Contacts' && [
-                      ContnetViewerStyles.profileImage,
+                      ContentViewerStyles.profileImage,
                       {justifyContent: 'center', alignItems: 'center'},
                     ]
                   }
@@ -68,14 +68,14 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
                     }
                     style={
                       route.name !== 'Contacts' &&
-                      ContnetViewerStyles.profileImage
+                      ContentViewerStyles.profileImage
                     }
                   />
                 </TouchableOpacity>
               )}
             </View>
           </View>
-          <View style={ContnetViewerStyles.content}>{children}</View>
+          <View style={ContentViewerStyles.content}>{children}</View>
         </View>
       </LinearGradient>
     </SafeAreaView>

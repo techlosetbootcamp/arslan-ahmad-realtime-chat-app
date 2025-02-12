@@ -14,7 +14,9 @@ const useContactHandler = () => {
     contactId: string,
     participant: userProfile,
   ) => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     try {
       setNewChatLoader(true);
@@ -46,7 +48,7 @@ const useContactHandler = () => {
         });
       }
     } catch (error) {
-      showToast('Error', 'An error occurred while starting chat', 'error');
+      showToast('Chat Not Valid', 'An error occurred while starting chat', 'error');
       console.error('Error starting or navigating to chat:', error);
     } finally {
       setNewChatLoader(false);

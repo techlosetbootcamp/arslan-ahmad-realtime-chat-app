@@ -4,13 +4,13 @@ import {COLOR} from '../../constants/colors';
 import useWelcomeScreen from './useWelcomeScreen';
 import RulerText from '../../components/RulerText';
 import IconButton from '../../components/IconButton';
-import {signInWithGoogle} from '../../services/auth';
 import ActionText from '../../components/ActionText';
 import SimpleText from '../../components/SimpleText';
 import ActionButton from '../../components/actionButton/ActionButton';
+import Images from '../../constants/imgs';
 
 const Welcome = () => {
-  const {navigation} = useWelcomeScreen();
+  const {navigation, googleLoader, handleGoogleSignIn} = useWelcomeScreen();
 
   return (
     <View style={styles.container}>
@@ -21,10 +21,7 @@ const Welcome = () => {
         color={COLOR.light_grey}
       />
 
-      <IconButton
-        src={require('../../assets/icons/google_icon.png')}
-        onPress={signInWithGoogle}
-      />
+<IconButton loader={googleLoader} src={Images.GoogleIcon} onPress={handleGoogleSignIn} />
 
       <RulerText textColor="white" />
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLOR} from '../constants/colors';
 import {SettingsItemProps} from '../types/settingsListItem';
@@ -12,7 +13,7 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
   const {navigation} = appNavigate();
 
     const handlePress = () => {
-        if (link === 'ForgetPassword') {
+        if (link === 'ChangePassword') {
           navigation.navigate(link);
         }
       };

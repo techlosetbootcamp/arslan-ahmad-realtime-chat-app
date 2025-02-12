@@ -1,5 +1,5 @@
 const Images = {
-  PlaceholderImg: require('../assets/imgs/profile_placeholder_image.png'),
+  PlaceholderImg: require('../assets/imgs/placeholder.png'),
   SearchIcon: require('../assets/icons/search.png'),
   AddUserIcon: require('../assets/icons/add_user.png'),
   ActiveContactsIcon: require('../assets/icons/active-contacts.png'),

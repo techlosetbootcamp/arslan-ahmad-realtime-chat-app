@@ -1,7 +1,7 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { RulerTextProps } from "../types/rulerText";
-import { COLOR } from "../constants/colors";
+import { View, Text } from 'react-native';
+import React from 'react';
+import { RulerTextProps } from '../types/rulerText';
+import { COLOR } from '../constants/colors';
 
 const RulerText: React.FC<RulerTextProps> = ({
   textColor = COLOR.black,
@@ -9,7 +9,7 @@ const RulerText: React.FC<RulerTextProps> = ({
 }) => {
   return (
     <View
-      style={{ flexDirection: "row", alignItems: "center", marginVertical: 20 }}
+      style={styles.row}
     >
       <View style={{ ...styles.line, backgroundColor: lineColor }} />
       <View>
@@ -22,10 +22,11 @@ const RulerText: React.FC<RulerTextProps> = ({
 
 const styles = {
   line: { flex: 1, height: 1, backgroundColor: COLOR.gray },
+  row: { flexDirection: 'row' as 'row', alignItems: 'center' as 'center', marginVertical: 20 },
   text: {
     width: 50,
-    textAlign: "center" as "center",
-    color: "white",
+    textAlign: 'center' as 'center',
+    color: 'white',
     fontWeight: 900 as 900,
   },
 };

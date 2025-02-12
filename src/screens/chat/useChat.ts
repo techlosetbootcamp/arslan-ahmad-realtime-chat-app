@@ -10,7 +10,7 @@ import useAuth from '../../hooks/useAuth';
 import {Message} from '../../types/firestoreService';
 import {useAppDispatch, useAppSelector} from '../../store/store';
 
-const appChat = (chatId: string, participantUid: string) => {
+const useChat = (chatId: string, participantUid: string) => {
   const dispatch = useAppDispatch();
   const messages = useAppSelector(state => state.chat.messages[chatId] || []);
   const {user} = useAuth();
@@ -19,8 +19,8 @@ const appChat = (chatId: string, participantUid: string) => {
   useEffect(() => {
     const loadMessages = async () => {
       try {
-        const messages = await fetchMessages(chatId);
-        dispatch({type: 'chat/setMessages', payload: {chatId, messages}});
+        const fetchedMessages = await fetchMessages(chatId);
+        dispatch({type: 'chat/setMessages', payload: {chatId, messages: fetchedMessages}});
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
@@ -68,4 +68,4 @@ const appChat = (chatId: string, participantUid: string) => {
   return {messages, newMessage, setNewMessage, handleSend, user};
 };
 
-export default appChat;
+export default useChat;

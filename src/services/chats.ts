@@ -67,7 +67,9 @@ export const fetchChats = (
           if (Array.isArray(chatData.participantsDetails)) {
             participantsDetails = chatData.participantsDetails.map(
               (participant: Partial<User>) => {
-                if (!participant) return {} as User; // Ensure participant exists
+                if (!participant) {
+                  return {} as User;
+                }
                 return {
                   uid: participant.uid || '',
                   displayName: participant.displayName || '',
@@ -95,7 +97,6 @@ export const fetchChats = (
         });
 
         if (!chats || chats.length === 0) {
-          console.log('No chats found for user:', userId);
           callback([]);
           return;
         }
@@ -103,9 +104,6 @@ export const fetchChats = (
         const userPromises = chats.map(async chat => {
           const userDetails = await Promise.all(
             chat.participants.map(async (participantId: string) => {
-              console.log(
-                `Fetching user details for participant: ${participantId}`,
-              );
               const user = await fetchUser(participantId);
               return {uid: participantId, ...user};
             }),
@@ -184,8 +182,6 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
         }),
       ),
     );
-
-    console.log(`Chat ${chatId} deleted successfully`);
   } catch (error) {
     console.error('Error deleting chat:', error);
     throw error;

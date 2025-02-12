@@ -23,7 +23,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
         <ChatHeader
           displayName={participant.displayName}
           profileImage={participant.photoURL}
-          status={participant.status}
+          status={participant.status ?? null}
         />
         <FlatList
           data={messages}
@@ -38,10 +38,10 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
               timestamp={
                 item.timestamp
                   ? item.timestamp instanceof Timestamp
-                    ? item.timestamp.toDate().toLocaleString() // Convert Firestore Timestamp to Date
+                    ? item.timestamp.toDate().toLocaleString()
                     : typeof item.timestamp === 'string'
-                    ? new Date(item.timestamp).toLocaleString() // Convert string timestamp
-                    : null // Handle unexpected cases
+                    ? new Date(item.timestamp).toLocaleString()
+                    : null
                   : null
               }
               previousMessage={messages[index - 1] || null}

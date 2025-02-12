@@ -11,10 +11,10 @@ import InputField from '../../components/InputField';
 import ActionButton from '../../components/actionButton/ActionButton';
 import ContentViewer from '../../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
-import Images from '../../constants/imgs';
 import {COLOR} from '../../constants/colors';
 import LoaderScreen from '../../components/loader/Loader';
 import useProfile from './useProfile';
+import Images from '../../constants/imgs';
 
 const Profile: React.FC = () => {
   const {
@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
             }
 
             <View style={styles.editButton}>
-              <Image source={Images.EditIcon} style={{width: 10, height: 10}} />
+              <Image source={Images?.EditIcon} style={{width: 10, height: 10}} />
             </View>
           </TouchableOpacity>
 

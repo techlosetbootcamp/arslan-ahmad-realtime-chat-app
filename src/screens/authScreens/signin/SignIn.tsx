@@ -24,7 +24,8 @@ const SignIn: React.FC = () => {
     handleSignIn,
     loading,
     navigation,
-    signInWithGoogle,
+    handleGoogleSignIn,
+    googleLoader,
     error,
     setError,
   } = useSign();
@@ -45,7 +46,7 @@ const SignIn: React.FC = () => {
           </View>
 
           <View style={{flex: 6}}>
-            <IconButton src={Images.GoogleIcon} onPress={signInWithGoogle} />
+          <IconButton loader={googleLoader} src={Images.GoogleIcon} onPress={handleGoogleSignIn} />
             <View style={styles.gapVertical}>
               <RulerText />
             </View>

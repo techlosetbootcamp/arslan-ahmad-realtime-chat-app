@@ -9,7 +9,7 @@ import {getUserFromStorage} from '../services/async_storage';
 import {useAppDispatch, useAppSelector} from '../store/store';
 import {setUser} from '../store/slices/user.slice';
 
-const appNavigate = () => {
+const useAppNavigate = () => {
   const navigation =
     useNavigation<BottomTabNavigationProp<RootStackParamList>>();
 
@@ -53,7 +53,9 @@ const appNavigate = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid) {
+      return;
+    }
 
     if (user?.uid && usersInStore.length === 0) {
       const unsubscribe = listenToUsers(user.uid, users => {
@@ -67,4 +69,4 @@ const appNavigate = () => {
   return {navigation, user, isAuthChecked, userLoader};
 };
 
-export default appNavigate;
+export default useAppNavigate;
