@@ -8,40 +8,6 @@ import {UserState} from '../store/slices/user.slice';
 import {showToast} from '../components/Toast';
 import {GOOGLE_CLIENT_ID} from '@env';
 
-export const observeAuthState = (
-  callback: (user: User | null) => void,
-): (() => void) => {
-  return auth().onAuthStateChanged(async firebaseUser => {
-    if (firebaseUser) {
-      try {
-        const userDoc = await firestore()
-          .collection('users')
-          .doc(firebaseUser?.uid)
-          .get();
-        if (!userDoc.exists) {
-          throw new Error('User document not found in Firestore.');
-        }
-        const userData = userDoc.data();
-
-        const user: User = {
-          uid: firebaseUser.uid,
-          displayName: userData?.displayName || '',
-          email: firebaseUser.email || '',
-          photoURL: userData?.photoURL || null,
-          status: userData?.status || null,
-        };
-
-        callback(user);
-      } catch (error) {
-        console.error('Error mapping Firebase user to custom User:', error);
-        callback(null);
-      }
-    } else {
-      callback(null);
-    }
-  });
-};
-
 export const login = async (
   email: string,
   password: string,

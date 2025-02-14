@@ -3,54 +3,34 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
 import {listenToUsers} from '../services/user';
-import {observeAuthState} from '../services/auth';
-import {fetchContactsThunk} from '../store/slices/contacts.slice';
-import {getUserFromStorage} from '../services/async_storage';
 import {useAppDispatch, useAppSelector} from '../store/store';
-import {setUser} from '../store/slices/user.slice';
+import {fetchUserData} from '../store/slices/user.slice';
+import auth from '@react-native-firebase/auth';
 
 const useAppNavigate = () => {
   const navigation =
     useNavigation<BottomTabNavigationProp<RootStackParamList>>();
-
-  const user = useAppSelector(state => state.user);
   const {users: usersInStore} = useAppSelector(state => state.users);
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
-  const [userLoader, setUserLoader] = useState(false);
   const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.user);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
-    const checkAuthState = () => {
-      observeAuthState(async firebaseUser => {
-        setUserLoader(true);
-        if (firebaseUser) {
-          if (firebaseUser.uid) {
-            dispatch(setUser({...firebaseUser, uid: firebaseUser.uid!}));
-          }
-          if (firebaseUser.uid) {
-            await dispatch(fetchContactsThunk(firebaseUser.uid));
-          }
-        }
-        setUserLoader(false);
-        setIsAuthChecked(true);
-      });
-    };
-    checkAuthState();
-  }, [dispatch]);
-
-  useEffect(() => {
-    const checkUserSession = async () => {
-      setUserLoader(true);
-      const storedUser = await getUserFromStorage();
-
-      if (storedUser.uid) {
-        dispatch(setUser(storedUser));
+    const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
+      if (firebaseUser?.uid) {
+        dispatch(fetchUserData(firebaseUser.uid));
       }
       setIsAuthChecked(true);
-    };
-    checkUserSession();
-    setUserLoader(false);
+    });
+
+    return () => unsubscribe();
   }, [dispatch]);
+
+  useEffect(() => {
+    if (user.uid && !user.photoURL) {
+      dispatch(fetchUserData(user.uid));
+    }
+  }, [dispatch, user.uid, user.photoURL]);
 
   useEffect(() => {
     if (!user?.uid) {
@@ -66,7 +46,7 @@ const useAppNavigate = () => {
     }
   }, [user?.uid, usersInStore.length, dispatch]);
 
-  return {navigation, user, isAuthChecked, userLoader};
+  return {navigation, user, isAuthChecked};
 };
 
 export default useAppNavigate;

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';;
+import {useEffect, useState} from 'react';
 import useAuth from '../../hooks/useAuth';
 import {fetchContactsThunk, setContactsLoading} from '../../store/slices/contacts.slice';
 import { User } from '../../types/firestoreService';

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import useAuth from '../../../hooks/useAuth';
 import {showToast} from '../../../components/Toast';
 import useNavigate from '../../../hooks/useNavigationHook';
@@ -10,17 +10,12 @@ const initialState = {
   confirmPassword: '',
 };
 
-const appSignup = () => {
+const useSignup = () => {
   const {navigation} = useNavigate();
   const [userData, setUserData] = useState(initialState);
   const [error, setError] = useState<string>('');
-  const {handleSignUp, observeAuth} = useAuth();
+  const {handleSignUp} = useAuth();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = observeAuth();
-    return unsubscribe;
-  }, [observeAuth]);
 
   const handleInputChange = (field: string, value: string) => {
     setUserData(prevState => ({
@@ -38,6 +33,7 @@ const appSignup = () => {
           'error',
         );
       }
+      setLoading(true);
       const userCredential = await handleSignUp(
         userData.email,
         userData.password,
@@ -50,10 +46,12 @@ const appSignup = () => {
       }
     } catch {
       showToast('Error', error || 'An unknown error occurred', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   return {userData, handleInputChange, SignUphandler, loading, error, setError};
 };
 
-export default appSignup;
+export default useSignup;

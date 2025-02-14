@@ -1,8 +1,10 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import appNavigate from '../../../hooks/useNavigationHook';
 import appAuth from '../../../hooks/useAuth';
 import {signInWithGoogle} from '../../../services/auth';
 import {showToast} from '../../../components/Toast';
+import { useAppDispatch } from '../../../store/store';
+import { setUser } from '../../../store/slices/user.slice';
 
 const initialState = {
   email: '',
@@ -11,16 +13,12 @@ const initialState = {
 
 const useAppSign = () => {
   const [signInData, setSignInData] = useState(initialState);
-  const {handleLogin, observeAuth} = appAuth();
+  const {handleLogin} = appAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [googleLoader, setGoogleLoader] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const {navigation} = appNavigate();
-
-  useEffect(() => {
-    const unsubscribe = observeAuth();
-    return unsubscribe;
-  }, [observeAuth]);
+  const dispatch = useAppDispatch();
 
   const handleInputChange = (field: string, value: string) => {
     setSignInData(prevState => ({

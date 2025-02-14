@@ -1,10 +1,10 @@
-import {useEffect, useState} from 'react';
+import { useState} from 'react';
 import { ToastAndroid } from 'react-native';
 import {FirebaseError} from '@firebase/util';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {UseAuthReturn} from '../types/auth';
 import {useAppDispatch, useAppSelector} from './../store/store';
-import {login, signUp, observeAuthState} from '../services/auth';
+import {login, signUp} from '../services/auth';
 import {setLoading, setUser, UserState} from '../store/slices/user.slice';
 
 const useAppAuth = (): UseAuthReturn => {
@@ -12,15 +12,6 @@ const useAppAuth = (): UseAuthReturn => {
   const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const loading = user.isLoading;
-
-  useEffect(() => {
-    const unsubscribe = observeAuthState(currentUser => {
-      if (currentUser) {
-        dispatch(setUser(currentUser as Partial<UserState> & {uid: string}));
-      }
-    });
-    return () => unsubscribe();
-  }, [dispatch]);
 
   const handleLogin = async (
     email: string,
@@ -120,7 +111,6 @@ const useAppAuth = (): UseAuthReturn => {
     handleSignUp,
     error,
     loading,
-    observeAuth: () => () => {},
   };
 };
 
