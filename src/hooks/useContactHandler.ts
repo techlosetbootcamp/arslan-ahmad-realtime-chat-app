@@ -20,10 +20,9 @@ const useContactHandler = () => {
 
     try {
       setNewChatLoader(true);
-      const userChats = user.chats;
-      const existingChat = userChats?.find(chatId =>
-        chatId?.includes(contactId),
-      );
+      const userChats = user.chats || [];
+
+      const existingChat = userChats.find(chatId => chatId === contactId);
 
       if (existingChat) {
         navigation.navigate('Chat', {
@@ -37,18 +36,30 @@ const useContactHandler = () => {
         });
       } else {
         const chatId = await createNewChat([user.uid, contactId]);
-        navigation.navigate('Chat', {
-          chatId,
-          participant: {
-            uid: participant.uid,
-            displayName: participant.displayName,
-            photoURL: participant.photoURL || null,
-            status: participant.status,
-          },
-        });
+        if (chatId) {
+          navigation.navigate('Chat', {
+            chatId,
+            participant: {
+              uid: participant.uid,
+              displayName: participant.displayName,
+              photoURL: participant.photoURL || null,
+              status: participant.status,
+            },
+          });
+        } else {
+          showToast(
+            'No Chat Initialized',
+            'Failed to create a new chat.',
+            'error',
+          );
+        }
       }
     } catch (error) {
-      showToast('Chat Not Valid', 'An error occurred while starting chat', 'error');
+      showToast(
+        'Chat Not Valid',
+        'An error occurred while starting chat',
+        'error',
+      );
       console.error('Error starting or navigating to chat:', error);
     } finally {
       setNewChatLoader(false);
