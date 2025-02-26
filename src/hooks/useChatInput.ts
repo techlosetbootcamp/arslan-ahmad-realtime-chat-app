@@ -1,7 +1,8 @@
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import firestore, { Timestamp } from '@react-native-firebase/firestore';
-import { ToastAndroid } from 'react-native';
-import { Message } from '../types/firestoreService';
+import firestore, {Timestamp} from '@react-native-firebase/firestore';
+import {ToastAndroid} from 'react-native';
+import {Message} from '../types/firestoreService';
+import {FIREBASE_COLLECTIONS} from '../constants/db_collections';
 
 const useChat = () => {
   const handleCamera = async (chatId: string, senderId: string) => {
@@ -18,14 +19,17 @@ const useChat = () => {
       }
 
       if (response.errorCode) {
-        ToastAndroid.show('Something went wrong... \n Sorry, for that 😶', ToastAndroid.SHORT);
+        ToastAndroid.show(
+          'Something went wrong... \n Sorry, for that 😶',
+          ToastAndroid.SHORT,
+        );
         console.error('Camera Error:(useChatInput.tsx)', response.errorMessage);
         return;
       }
 
       const base64Image = response.assets?.[0]?.base64;
       if (base64Image) {
-          await sendImageMessage(chatId, senderId, base64Image);
+        await sendImageMessage(chatId, senderId, base64Image);
       }
     } catch (error) {
       console.error('Error handling camera:', error);
@@ -52,8 +56,8 @@ const useChat = () => {
 
       const base64Image = response.assets?.[0]?.base64;
       if (base64Image) {
-          await sendImageMessage(chatId, senderId, base64Image);
-        }
+        await sendImageMessage(chatId, senderId, base64Image);
+      }
     } catch (error) {
       console.error('Error selecting image:', error);
     }
@@ -66,8 +70,10 @@ const useChat = () => {
   ) => {
     const chatId = senderId < recvId ? senderId + recvId : recvId + senderId;
 
-    const chatRef = firestore().collection('chats').doc(chatId);
-    const messageRef = chatRef.collection('messages').doc();
+    const chatRef = firestore()
+      .collection(FIREBASE_COLLECTIONS.CHATS)
+      ?.doc(chatId);
+    const messageRef = chatRef.collection(FIREBASE_COLLECTIONS.MESSAGES)?.doc();
     try {
       const messageData: Message = {
         id: `${Date.now()}`,
@@ -77,7 +83,6 @@ const useChat = () => {
         timestamp: Timestamp.fromDate(new Date()),
         status: {sender: 'sent', receiver: 'unread'},
       };
-
 
       await messageRef.set(messageData);
 

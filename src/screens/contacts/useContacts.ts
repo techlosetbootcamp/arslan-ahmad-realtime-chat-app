@@ -1,8 +1,11 @@
 import {useEffect, useState} from 'react';
 import useAuth from '../../hooks/useAuth';
-import {fetchContactsThunk, setContactsLoading} from '../../store/slices/contacts.slice';
-import { User } from '../../types/firestoreService';
-import { useAppDispatch, useAppSelector } from '../../store/store';
+import {
+  fetchContactsThunk,
+  setContactsLoading,
+} from '../../store/slices/contacts.slice';
+import {User} from '../../types/firestoreService';
+import {useAppDispatch, useAppSelector} from '../../store/store';
 
 const useContacts = () => {
   const [sections, setSections] = useState<{title: string; data: User[]}[]>([]);
@@ -30,9 +33,9 @@ const useContacts = () => {
 const groupContactsByAlphabet = (contacts: User[]) => {
   const grouped: {[key: string]: User[]} = {};
 
-  contacts.forEach(contact => {
-    const firstLetter = contact.displayName
-      ? contact?.displayName[0].toUpperCase()
+  contacts?.forEach(contact => {
+    const firstLetter = contact?.displayName
+      ? contact?.displayName[0]?.toUpperCase()
       : '';
     if (!grouped[firstLetter]) {
       grouped[firstLetter] = [];

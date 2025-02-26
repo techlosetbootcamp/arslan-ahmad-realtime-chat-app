@@ -19,15 +19,15 @@ export const profileStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
-    color: '#3D4A7A',
+    color: COLOR.primary,
   },
   emailText: {
     fontSize: 16,
-    color: '#3D4A7A',
+    color: COLOR.primary,
     marginBottom: 10,
   },
   error: {
-    color: 'red',
+    color: COLOR.red,
     fontSize: 14,
     marginTop: 10,
   },

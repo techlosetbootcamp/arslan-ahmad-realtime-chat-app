@@ -5,7 +5,7 @@ export const ChatHeaderStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
+    backgroundColor: COLOR.whitish_gray,
     padding: 15,
     elevation: 2,
   },

@@ -6,6 +6,7 @@ import ChatHeader from '../../components/chatComponents/ChatHeader';
 import MessageBubble from '../../components/chatComponents/MessageBubble';
 import useChat from './useChat';
 import {ChatProps} from '../../types/chat';
+import {COLOR} from '../../constants/colors';
 
 const ChatScreen: React.FC<ChatProps> = ({route}) => {
   if (!route || !route.params) {
@@ -63,7 +64,7 @@ const ChatScreen: React.FC<ChatProps> = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
+  container: {flex: 1, backgroundColor: COLOR.white},
 });
 
 export default ChatScreen;

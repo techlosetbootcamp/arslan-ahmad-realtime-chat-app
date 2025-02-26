@@ -12,16 +12,21 @@ const SettingsItem: React.FC<SettingsItemProps> = ({
 }) => {
   const {navigation} = appNavigate();
 
-    const handlePress = () => {
-        if (link === 'ChangePassword') {
-          navigation.navigate(link);
-        }
-      };
+  const handlePress = () => {
+    if (link === 'ChangePassword') {
+      navigation.navigate(link);
+    }
+  };
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.9}
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={0.9}
       style={ItemStyles.container}>
       <View style={ItemStyles.notificationCircle}>
-        <Image source={icon || require('../assets/icons/contacts.png')} style={ItemStyles.icon} />
+        <Image
+          source={icon || require('../assets/icons/contacts.png')}
+          style={ItemStyles.icon}
+        />
       </View>
       <View style={{flexDirection: 'column'}}>
         <Text style={ItemStyles.text}>{title}</Text>

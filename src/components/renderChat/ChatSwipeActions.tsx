@@ -36,7 +36,7 @@ const ChatSwipeActions: React.FC<ChatSwipeActionsProps> = ({
     setDeleteClicked(true);
 
     try {
-      dispatch(deleteChatFromFirebase(item.id, item.participants));
+      dispatch(deleteChatFromFirebase(item?.id, item?.participants));
     } catch (error) {
       console.error('Failed to delete chat:', error);
     } finally {

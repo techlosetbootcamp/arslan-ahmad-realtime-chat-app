@@ -41,13 +41,13 @@ const HomeStyles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 14,
-    color: '#555',
+    color: COLOR.light_grey,
   },
   emptyText: {
     flex: 1,
     textAlign: 'center',
     justifyContent: 'center',
-    color: '#888',
+    color: COLOR.light_grey,
   },
 });
 

@@ -12,7 +12,7 @@ export const useRenderChatItem = () => {
 
   return ({item}: {item: ChatItem}) => {
     const participants = item.participantsDetails?.filter(
-      (participant: User) => participant.uid !== user.uid,
+      (participant: User) => participant?.uid !== user?.uid,
     );
     const participant = participants?.[0];
     const participantImage = participant?.photoURL;

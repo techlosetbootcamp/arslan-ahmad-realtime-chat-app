@@ -48,7 +48,7 @@ export const listenToUsers = (
               status: data.status || null,
             };
           })
-          .filter(user => user.uid !== currentUserId);
+          ?.filter(user => user.uid !== currentUserId);
 
         callback(users);
       },
@@ -62,15 +62,15 @@ export const listenToUsers = (
 export const createUser = async (uid: string, userData: Partial<User>) => {
   await firestore()
     .collection(FIREBASE_COLLECTIONS.USERS)
-    .doc(uid)
-    .set(userData, {merge: true});
+    ?.doc(uid)
+    ?.set(userData, {merge: true});
 };
 
 export const fetchUser = async (uid: string) => {
   const userDoc = await firestore()
     .collection(FIREBASE_COLLECTIONS.USERS)
-    .doc(uid)
-    .get();
+    ?.doc(uid)
+    ?.get();
   return userDoc.exists ? userDoc.data() : null;
 };
 
@@ -97,8 +97,8 @@ export const updateUserProfile = async ({
 
   await firestore()
     .collection(FIREBASE_COLLECTIONS.USERS)
-    .doc(currentUser.uid)
-    .update({
+    ?.doc(currentUser.uid)
+    ?.update({
       displayName: name,
       email: email,
     });

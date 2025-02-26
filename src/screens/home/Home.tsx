@@ -17,7 +17,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
           <FlatList
-            data={Object.values(chats) as Chat[]}
+            data={Object?.values(chats) as Chat[]}
             keyExtractor={item => item?.id}
             renderItem={({item}) => (
               <RenderChatItem item={item as unknown as ChatItem} />

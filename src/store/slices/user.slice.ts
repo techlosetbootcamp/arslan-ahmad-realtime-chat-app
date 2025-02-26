@@ -27,19 +27,19 @@ export const fetchUserData =
       dispatch(
         setUser({
           uid,
-          displayName: userData.displayName || null,
-          email: userData.email || null,
-          photoURL: userData.photoURL || null,
-          description: userData.description || null,
-          status: userData.status || null,
-          contacts: userData.contacts || [],
+          displayName: userData?.displayName || null,
+          email: userData?.email || null,
+          photoURL: userData?.photoURL || null,
+          description: userData?.description || null,
+          status: userData?.status || null,
+          contacts: userData?.contacts || [],
           chats:
-            userData.chats?.map((chat: Chat) => ({
+            userData?.chats?.map((chat: Chat) => ({
               ...chat,
               participantsDetails: chat.participantsDetails?.map(
                 (participant: Participant) => ({
                   ...participant,
-                  createdAt: participant.createdAt?.toMillis() || null,
+                  createdAt: participant?.createdAt?.toMillis() || null,
                 }),
               ),
             })) || [],
@@ -55,7 +55,7 @@ export const createUserProfile =
   async dispatch => {
     const userPayload: Partial<User> = {
       ...userData,
-      uid: userData.uid !== null ? userData.uid : uid,
+      uid: userData.uid !== null ? userData?.uid : uid,
     };
 
     await createUser(uid, userPayload);
@@ -77,7 +77,7 @@ const userSlice = createSlice({
         state.contacts = [];
       }
 
-      const alreadyExists = state.contacts.some(
+      const alreadyExists = state?.contacts?.some(
         contactId => contactId === action.payload,
       );
       if (!alreadyExists && action.payload) {

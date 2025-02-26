@@ -3,6 +3,7 @@ import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {ActionButtonProps} from '../../types/actionButton';
 import ButtonContent from './ButtonContent';
+import {COLOR} from '../../constants/colors';
 
 const ActionButton: React.FC<ActionButtonProps> = ({
   onClick,
@@ -17,7 +18,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
       start={{x: 0, y: 1}}
       end={{x: 1, y: 1}}
       style={styles.linearGradient}
-      colors={['#010102', '#192f6a', '#3b5998']}>
+      colors={COLOR.gradient_colors}>
       <ButtonContent
         onClick={onClick}
         loader={loader}

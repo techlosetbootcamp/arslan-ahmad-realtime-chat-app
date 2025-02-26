@@ -66,7 +66,7 @@ export const fetchChats = (
           let participantsDetails: User[] = [];
 
           if (Array.isArray(chatData.participantsDetails)) {
-            participantsDetails = chatData.participantsDetails.map(
+            participantsDetails = chatData.participantsDetails?.map(
               (participant: Partial<User>) => {
                 if (!participant) {
                   return {} as User;
@@ -102,9 +102,9 @@ export const fetchChats = (
           return;
         }
 
-        const userPromises = chats.map(async chat => {
+        const userPromises = chats?.map(async chat => {
           const userDetails = await Promise.all(
-            chat.participants.map(async (participantId: string) => {
+            chat.participants?.map(async (participantId: string) => {
               const user = await fetchUser(participantId);
               return {uid: participantId, ...user};
             }),
@@ -135,10 +135,10 @@ export const listenToChats = (
     .orderBy('lastActive', 'desc')
     .onSnapshot(
       async snapshot => {
-        const chats = await Promise.all(snapshot.docs.map(async doc => {
+        const chats = await Promise.all(snapshot.docs?.map(async doc => {
           const chatData = doc.data();
           const participantsDetails = await Promise.all(
-            (chatData.participants || []).map(async (participantId: string) => {
+            (chatData.participants || [])?.map(async (participantId: string) => {
               const user = await fetchUser(participantId);
               return { uid: participantId, ...user };
             })
@@ -171,7 +171,7 @@ export const deleteChat = async (chatId: string, participants: string[]) => {
   try {
     const messagesRef = chatRef.collection(FIREBASE_COLLECTIONS.MESSAGES);
     messagesRef.get().then(querySnapshot => {
-      Promise.all(querySnapshot.docs.map(d => d.ref.delete()));
+      Promise.all(querySnapshot.docs?.map(d => d.ref.delete()));
     });
 
     await chatRef.delete();

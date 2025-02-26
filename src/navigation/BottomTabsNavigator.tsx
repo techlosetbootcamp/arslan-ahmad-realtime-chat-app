@@ -1,11 +1,9 @@
 import React from 'react';
 import {Image} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../screens/home/Home';
-import ContactsScreen from '../screens/contacts/Contacts';
-import {RootStackParamList} from '../types/navigation';
-import Settings from '../screens/settings/Settings';
 import {COLOR} from '../constants/colors';
+import {RootStackParamList} from '../types/navigation';
+import {BOTTOM_TABS_SCREENS} from '../constants/screens';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -42,9 +40,16 @@ const BottomTabsNavigator = () => {
           fontWeight: 'bold',
         },
       })}>
-      <Tab.Screen name="Home" component={Home} options={{title: 'Home'}} />
-      <Tab.Screen name="Contacts" component={ContactsScreen} options={{title: 'Contacts'}} />
-      <Tab.Screen name="Settings" component={Settings} options={{title: 'Settings'}} />
+      {BOTTOM_TABS_SCREENS.map(screen => {
+        return (
+          <Tab.Screen
+            key={screen.name}
+            name={screen.name as keyof RootStackParamList}
+            component={screen.component}
+            options={{title: screen.name}}
+          />
+        );
+      })}
     </Tab.Navigator>
   );
 };

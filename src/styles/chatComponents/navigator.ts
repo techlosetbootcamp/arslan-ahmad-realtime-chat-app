@@ -22,7 +22,7 @@ export const ChatNavigatorStyles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#ddd',
+    backgroundColor: COLOR.light_grey,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -41,7 +41,7 @@ export const ChatNavigatorStyles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 14,
-    color: '#666',
+    color: COLOR.pure_gray,
     marginTop: 4,
   },
 });

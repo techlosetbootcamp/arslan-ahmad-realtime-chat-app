@@ -42,7 +42,7 @@ export const fetchUserChats =
           resolve(_fetchedChats);
         });
       });
-      const chatMap = chats.reduce((acc: Record<string, Chat>, chat: Chat) => {
+      const chatMap = chats?.reduce((acc: Record<string, Chat>, chat: Chat) => {
         acc[chat.id] = chat;
         return acc;
       }, {} as Record<string, Chat>);
@@ -66,7 +66,7 @@ export const startChat =
           resolve(fetchedChats);
         });
       });
-      const existingChat = chats.find(chat =>
+      const existingChat = chats?.find(chat =>
         chat?.participants?.includes(contactId),
       );
       let chatId = existingChat?.id;

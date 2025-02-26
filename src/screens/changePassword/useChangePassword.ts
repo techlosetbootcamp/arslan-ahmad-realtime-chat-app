@@ -41,19 +41,19 @@ const useChangePassword = () => {
         showToast('Error', 'No email found for the user.', 'error');
         return;
       }
-      const credential = auth.EmailAuthProvider.credential(
+      const credential = auth?.EmailAuthProvider?.credential(
         user.email,
         currentPassword,
       );
-      await user.reauthenticateWithCredential(credential);
+      await user?.reauthenticateWithCredential(credential);
 
-      await user.updatePassword(newPassword);
+      await user?.updatePassword(newPassword);
 
       showToast('Success', 'Password updated successfully!', 'success');
       navigation.goBack();
     } catch (error) {
       if (error instanceof FirebaseError) {
-        if (error.code === 'auth/wrong-password') {
+        if (error?.code === 'auth/wrong-password') {
           showToast('Error', 'The current password is incorrect.', 'error');
         } else {
           showToast(

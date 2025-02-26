@@ -12,24 +12,24 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 }) => {
   const navigation = useNavigation();
   return (
-    <View style={ChatHeaderStyles.container}>
+    <View style={ChatHeaderStyles?.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <Image
-          source={Images.BlackBackIcon}
-          style={ChatHeaderStyles.backIcon}
+          source={Images?.BlackBackIcon}
+          style={ChatHeaderStyles?.backIcon}
         />
       </TouchableOpacity>
 
-      <View style={ChatHeaderStyles.userInfoContainer}>
+      <View style={ChatHeaderStyles?.userInfoContainer}>
         <View>
           <Image
-            source={profileImage ? {uri: profileImage} : Images.PlaceholderImg}
-            style={ChatHeaderStyles.profileImage}
+            source={profileImage ? {uri: profileImage} : Images?.PlaceholderImg}
+            style={ChatHeaderStyles?.profileImage}
           />
         </View>
         <View>
-          <Text style={ChatHeaderStyles.displayName}>{displayName}</Text>
-          {status && <Text style={ChatHeaderStyles.status}>{status}</Text>}
+          <Text style={ChatHeaderStyles?.displayName}>{displayName}</Text>
+          {status && <Text style={ChatHeaderStyles?.status}>{status}</Text>}
         </View>
       </View>
     </View>

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: COLOR.whitish_gray,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 10,
-    tintColor: '#888',
+    tintColor: COLOR.pure_gray,
   },
   input: {
     flex: 1,

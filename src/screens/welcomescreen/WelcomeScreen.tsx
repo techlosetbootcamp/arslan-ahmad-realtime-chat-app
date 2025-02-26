@@ -21,7 +21,11 @@ const Welcome = () => {
         color={COLOR.light_grey}
       />
 
-<IconButton loader={googleLoader} src={Images.GoogleIcon} onPress={handleGoogleSignIn} />
+      <IconButton
+        loader={googleLoader}
+        src={Images.GoogleIcon}
+        onPress={handleGoogleSignIn}
+      />
 
       <RulerText textColor="white" />
 
@@ -54,7 +58,7 @@ const Welcome = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#050821',
+    backgroundColor: COLOR.secondary,
     flex: 1,
     padding: 15,
     gap: 5,

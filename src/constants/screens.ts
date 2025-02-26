@@ -9,6 +9,7 @@ import ForgetPasswordScreen from '../screens/forgetPassword/ForgetPassword';
 import WelcomeScreen from '../screens/welcomescreen/WelcomeScreen';
 import ChangePasswordScreen from '../screens/changePassword/ChangePassword';
 import SearchScreen from '../screens/search/Search';
+import BottomTabsNavigator from '../navigation/BottomTabsNavigator';
 
 export {
   HomeScreen,
@@ -32,9 +33,15 @@ export const STACK_AUTH_SCREENS = [
 ];
 
 export const STACK_MAIN_SCREENS = [
-  {name: 'MainTabs', component: HomeScreen},
+  {name: 'MainTabs', component: BottomTabsNavigator},
   {name: 'Chat', component: ChatScreen},
   {name: 'Search', component: SearchScreen},
   {name: 'Profile', component: ProfileScreen},
   {name: 'ChangePassword', component: ChangePasswordScreen},
+];
+
+export const BOTTOM_TABS_SCREENS = [
+  {name: 'Home', component: HomeScreen},
+  {name: 'Contacts', component: ContactsScreen},
+  {name: 'Settings', component: SettingsScreen},
 ];

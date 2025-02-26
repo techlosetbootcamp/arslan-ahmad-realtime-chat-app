@@ -21,30 +21,28 @@ const Contacts: React.FC<ContactsProps> = ({sections}) => {
 
   return (
     <>
-    {loader && <Loader />}
+      {loader && <Loader />}
       <SectionList
         sections={sections}
-        keyExtractor={item => item.uid as string}
+        keyExtractor={item => item?.uid as string}
         ListEmptyComponent={ListEmptyComponent}
         renderItem={({item}) => (
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() =>
-              handleContactClick(item.uid as string, item as userProfile)
+              handleContactClick(item?.uid as string, item as userProfile)
             }
             style={styles.contactContainer}>
             <Image
               source={
-                item.photoURL
-                  ? {uri: item.photoURL}
-                  : Images.PlaceholderImg
+                item?.photoURL ? {uri: item?.photoURL} : Images.PlaceholderImg
               }
               style={styles.contactImage}
             />
             <View>
-              <Text style={styles.contactName}>{item.displayName}</Text>
-              {item.status && (
-                <Text style={styles.contactStatus}>{item.status}</Text>
+              <Text style={styles.contactName}>{item?.displayName}</Text>
+              {item?.status && (
+                <Text style={styles.contactStatus}>{item?.status}</Text>
               )}
             </View>
           </TouchableOpacity>

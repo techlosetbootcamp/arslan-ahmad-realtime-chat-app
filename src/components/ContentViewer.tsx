@@ -4,6 +4,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import useContentViewer from '../hooks/useContentViewer';
 import {ContentViewerStyles} from '../styles/contentViewer';
 import Images from '../constants/imgs';
+import {ContentViewerProps} from '../types/header';
+import {COLOR} from '../constants/colors';
 
 const Header: React.FC<ContentViewerProps> = ({children, title}) => {
   const {handlePressLeft, isFullNav, navigation, user, route} =
@@ -18,7 +20,7 @@ const Header: React.FC<ContentViewerProps> = ({children, title}) => {
           flex: 1,
           width: '100%',
         }}
-        colors={['#010102', '#192f6a', '#3b5998']}>
+        colors={COLOR.gradient_colors}>
         <View style={ContentViewerStyles.Maincontainer}>
           <View style={ContentViewerStyles.header}>
             <View style={ContentViewerStyles.childView}>

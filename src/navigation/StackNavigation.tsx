@@ -1,18 +1,8 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types/navigation';
-import BottomTabsNavigator from './BottomTabsNavigator';
 import useNavigationHook from '../hooks/useNavigationHook';
-import {
-  ChangePasswordScreen,
-  ChatScreen,
-  ForgetPasswordScreen,
-  ProfileScreen,
-  SearchScreen,
-  SignInScreen,
-  SignUpScreen,
-  WelcomeScreen,
-} from '../constants/screens';
+import {STACK_AUTH_SCREENS, STACK_MAIN_SCREENS} from '../constants/screens';
 import Loader from '../components/loader/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,28 +18,33 @@ const Navigation = () => {
       initialRouteName={user?.uid ? 'MainTabs' : 'WelcomeScreen'}>
       {user?.uid ? (
         <>
-          <Stack.Screen name="MainTabs" component={BottomTabsNavigator} />
-          <Stack.Screen name="Chat" component={ChatScreen} />
-          <Stack.Screen name="Search" component={SearchScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen
-            name="ChangePassword"
-            component={ChangePasswordScreen}
-          />
+          {STACK_MAIN_SCREENS.map(screen => {
+            return (
+              <Stack.Screen
+                key={screen.name}
+                name={screen.name as keyof RootStackParamList}
+                component={screen.component}
+              />
+            );
+          })}
         </>
       ) : (
         <>
-          <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen
-            name="ForgetPassword"
-            component={ForgetPasswordScreen}
-          />
+          {STACK_AUTH_SCREENS?.map(screen => {
+            return (
+              <Stack.Screen
+                key={screen.name}
+                name={screen.name as keyof RootStackParamList}
+                component={screen.component}
+              />
+            );
+          })}
         </>
       )}
     </Stack.Navigator>
-  ) : <Loader />;
+  ) : (
+    <Loader />
+  );
 };
 
 export default Navigation;

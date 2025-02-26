@@ -77,7 +77,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}) => {
           </View>
           <View style={{rowGap: 10, alignItems: 'center'}}>
             {item?.lastActive && (
-              <Text style={{color: '#ccc', fontSize: 12}}>
+              <Text style={{color: COLOR.gray, fontSize: 12}}>
                 {lastActivityTime}
               </Text>
             )}

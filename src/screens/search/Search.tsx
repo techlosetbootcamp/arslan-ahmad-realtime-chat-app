@@ -18,19 +18,19 @@ const Search = () => {
     useSearch();
 
   const RenderUserItem = ({item}: {item: User}) => {
-    const isContact = contacts.some(contact => contact.uid === item.uid);
+    const isContact = contacts?.some(contact => contact.uid === item.uid);
     return (
       <View style={styles.itemContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image
             source={
-              item.photoURL
-                ? {uri: item.photoURL}
+              item?.photoURL
+                ? {uri: item?.photoURL}
                 : Images.PlaceholderImg
             }
             style={styles.userImage}
           />
-          <Text style={styles.userName}>{item.displayName}</Text>
+          <Text style={styles.userName}>{item?.displayName}</Text>
         </View>
         {!isContact && (
           <TouchableOpacity
@@ -38,7 +38,7 @@ const Search = () => {
             onPress={() => handleAddContact(item?.uid || '')}
             style={styles.addContactButton}>
             <Image
-              source={Images.AddUserIcon}
+              source={Images?.AddUserIcon}
               style={{width: 25, height: 25}}
             />
           </TouchableOpacity>
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     borderRadius: 20,
-    backgroundColor: '#ccc',
+    backgroundColor: COLOR.light_grey,
     width: 40,
     height: 40,
   },
@@ -104,14 +104,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: COLOR.light_grey,
   },
   userImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
     marginRight: 10,
-    backgroundColor: '#ccc',
+    backgroundColor: COLOR.light_grey,
   },
   userName: {
     fontSize: 16,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 15,
-    color: '#888',
+    color: COLOR.pure_gray,
   },
 });
 

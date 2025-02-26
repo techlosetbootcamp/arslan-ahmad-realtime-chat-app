@@ -4,10 +4,10 @@ import {removeUserFromStorage, saveUserToStorage} from './async_storage';
 import {User} from '../types/firestoreService';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {UserState} from '../store/slices/user.slice';
 import {showToast} from '../components/Toast';
 import {GOOGLE_CLIENT_ID} from '@env';
 import { FIREBASE_COLLECTIONS } from '../constants/db_collections';
+import { UserState } from '../types/slices/user';
 
 export const login = async (
   email: string,

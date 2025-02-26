@@ -46,12 +46,7 @@ function InputField({
         keyboardType={type}
         autoCapitalize="none"
       />
-      {isError && (
-        <Text
-          style={styles.errorText}>
-          {isError}
-        </Text>
-      )}
+      {isError && <Text style={styles.errorText}>{isError}</Text>}
     </View>
   );
 }

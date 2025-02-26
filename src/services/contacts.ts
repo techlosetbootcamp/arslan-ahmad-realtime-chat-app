@@ -21,17 +21,17 @@ export const fetchContacts = (
 
     const unsubscribeContacts = firestore()
       .collection(FIREBASE_COLLECTIONS.USERS)
-      .where(firestore.FieldPath.documentId(), 'in', contactIds)
-      .onSnapshot(snapshot => {
+      ?.where(firestore.FieldPath.documentId(), 'in', contactIds)
+      ?.onSnapshot(snapshot => {
         const contacts = snapshot.docs?.map(doc => {
           const data = doc.data();
           return {
-            uid: doc.id,
-            displayName: data.displayName || '',
-            email: data.email || '',
-            photoURL: data.photoURL || null,
-            description: data.description || '',
-            status: data.status || null,
+            uid: doc?.id,
+            displayName: data?.displayName || '',
+            email: data?.email || '',
+            photoURL: data?.photoURL || null,
+            description: data?.description || '',
+            status: data?.status || null,
           };
         }) as User[];
 
@@ -48,15 +48,15 @@ export const addContact = async (userId: string, contactId: string) => {
   try {
     await firestore()
       .collection(FIREBASE_COLLECTIONS.USERS)
-      .doc(userId)
-      .update({
+      ?.doc(userId)
+      ?.update({
         contacts: firestore.FieldValue.arrayUnion(contactId),
       });
 
     await firestore()
       .collection(FIREBASE_COLLECTIONS.USERS)
-      .doc(contactId)
-      .update({
+      ?.doc(contactId)
+      ?.update({
         contacts: firestore.FieldValue.arrayUnion(userId),
       });
   } catch (error) {

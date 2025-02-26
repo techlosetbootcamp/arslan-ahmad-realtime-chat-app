@@ -36,7 +36,7 @@ export const addContact = createAsyncThunk<
   {state: RootState}
 >('contacts/addContact', async (uid, {getState, rejectWithValue}) => {
   const allUsers = getState().users.users;
-  const userToAdd = allUsers.find(user => user.uid === uid);
+  const userToAdd = allUsers?.find(user => user.uid === uid);
 
   if (!userToAdd) {
     console.error('User not found in users slice:', uid);
@@ -59,7 +59,7 @@ const contactsSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(addContact.fulfilled, (state, action) => {
       if (action.payload) {
-        const isAlreadyContact = state.contacts.some(
+        const isAlreadyContact = state.contacts?.some(
           contact => contact.uid === action.payload?.uid,
         );
 

@@ -5,7 +5,8 @@ import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {UseAuthReturn} from '../types/auth';
 import {useAppDispatch, useAppSelector} from './../store/store';
 import {login, signUp} from '../services/auth';
-import {setLoading, setUser, UserState} from '../store/slices/user.slice';
+import {setLoading, setUser} from '../store/slices/user.slice';
+import { UserState } from '../types/slices/user';
 
 const useAppAuth = (): UseAuthReturn => {
   const user = useAppSelector(state => state.user);
@@ -42,7 +43,7 @@ const useAppAuth = (): UseAuthReturn => {
       }
     } catch (err) {
       if (err instanceof FirebaseError) {
-        setError(mapFirebaseError(err.code));
+        setError(mapFirebaseError(err?.code));
       }
       console.error('Login Error:', err);
     } finally {
@@ -82,7 +83,7 @@ const useAppAuth = (): UseAuthReturn => {
       }
     } catch (err) {
       if (err instanceof FirebaseError) {
-        setError(mapFirebaseError(err.code));
+        setError(mapFirebaseError(err?.code));
       }
       console.error('Sign-Up Error:', err);
     } finally {

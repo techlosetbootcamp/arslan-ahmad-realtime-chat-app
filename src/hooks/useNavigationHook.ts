@@ -18,7 +18,7 @@ const useAppNavigate = () => {
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
       if (firebaseUser?.uid) {
-        dispatch(fetchUserData(firebaseUser.uid));
+        dispatch(fetchUserData(firebaseUser?.uid));
       }
       setIsAuthChecked(true);
     });
@@ -27,24 +27,24 @@ const useAppNavigate = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user.uid && !user.photoURL) {
-      dispatch(fetchUserData(user.uid));
+    if (user?.uid && !user?.photoURL) {
+      dispatch(fetchUserData(user?.uid));
     }
-  }, [dispatch, user.uid, user.photoURL]);
+  }, [dispatch, user?.uid, user?.photoURL]);
 
   useEffect(() => {
     if (!user?.uid) {
       return;
     }
 
-    if (user?.uid && usersInStore.length === 0) {
-      const unsubscribe = listenToUsers(user.uid, users => {
+    if (user?.uid && usersInStore?.length === 0) {
+      const unsubscribe = listenToUsers(user?.uid, users => {
         dispatch({type: 'users/setAllUsers', payload: users});
       });
 
       return () => unsubscribe();
     }
-  }, [user?.uid, usersInStore.length, dispatch]);
+  }, [user?.uid, usersInStore?.length, dispatch]);
 
   return {navigation, user, isAuthChecked};
 };

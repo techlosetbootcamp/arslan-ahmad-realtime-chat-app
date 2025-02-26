@@ -15,12 +15,12 @@ export const useMessageBubble = (
 
   const isFirstMessageInSequence =
     !previousMessage ||
-    previousMessage.senderId !== (isUserMessage ? 'user' : 'participant');
+    previousMessage?.senderId !== (isUserMessage ? 'user' : 'participant');
 
   const isLastMessageInSequence =
     !nextMessage ||
-    nextMessage.senderId !== (isUserMessage ? 'user' : 'participant');
-  !nextMessage || nextMessage.senderId !== previousMessage?.senderId;
+    nextMessage?.senderId !== (isUserMessage ? 'user' : 'participant');
+  !nextMessage || nextMessage?.senderId !== previousMessage?.senderId;
 
   return {
     isFirstMessageInSequence,

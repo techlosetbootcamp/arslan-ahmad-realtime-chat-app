@@ -5,14 +5,15 @@ import {useAppDispatch, useAppSelector} from '../../store/store';
 import {showToast} from '../../components/Toast';
 import {logoutUser} from '../../services/auth';
 import {clearUser, setLoading, setUser} from '../../store/slices/user.slice';
+import {FIREBASE_COLLECTIONS} from '../../constants/db_collections';
 
-const appProfile = () => {
+const useProfile = () => {
   const {isLoading, ...user} = useAppSelector(state => state.user);
   const [userData, setUserData] = useState({
-    name: user.displayName || '',
-    email: user.email || '',
-    status: user.status || '',
-    imageUri: user.photoURL || '',
+    name: user?.displayName || '',
+    email: user?.email || '',
+    status: user?.status || '',
+    imageUri: user?.photoURL || '',
   });
   const [updateLoader, setUpdateLoader] = useState(isLoading);
   const [logoutLoader, setLogoutLoader] = useState(false);
@@ -31,14 +32,14 @@ const appProfile = () => {
         includeBase64: true,
       });
 
-      if (response.didCancel) {
+      if (response?.didCancel) {
         console.error('User canceled image picker');
         setLoading(false);
         setUpdateLoader(false);
         return;
       }
 
-      if (response.errorCode) {
+      if (response?.errorCode) {
         showToast(
           'Image Picker Error',
           response.errorMessage || 'Unknown error',
@@ -49,7 +50,7 @@ const appProfile = () => {
         return;
       }
 
-      const imageBase64 = response.assets?.[0].base64;
+      const imageBase64 = response?.assets?.[0].base64;
       if (!imageBase64) {
         showToast('Error', 'Failed to get image data', 'error');
         setLoading(false);
@@ -65,19 +66,17 @@ const appProfile = () => {
         throw new Error('User ID is not available');
       }
 
-      await firestore().collection('users').doc(userId).set(
-        {
-          photoURL: imageDataUri,
-        },
-        {merge: true},
-      );
+      await firestore()
+        .collection(FIREBASE_COLLECTIONS.USERS)
+        ?.doc(userId)
+        ?.set(
+          {
+            photoURL: imageDataUri,
+          },
+          {merge: true},
+        );
 
       if (user) {
-        const updatedUser = {
-          ...user,
-          photoURL: imageDataUri,
-        };
-
         setUserData(prevState => ({
           ...prevState,
           imageUri: imageDataUri,
@@ -85,11 +84,11 @@ const appProfile = () => {
       }
 
       if (user?.uid) {
-        dispatch(setUser({...user, photoURL: imageDataUri, uid: user.uid}));
+        dispatch(setUser({...user, photoURL: imageDataUri, uid: user?.uid}));
       }
       setUpdateLoader(false);
-    } catch (error) {
-      console.error('Error handling image:', error);
+    } catch (imageError) {
+      console.error('Error handling image:', imageError);
       showToast('Error', 'Failed to upload image', 'error');
     } finally {
       setLoading(false);
@@ -105,26 +104,26 @@ const appProfile = () => {
       dispatch(
         setUser({
           uid: userId || '',
-          displayName: userData.name || '',
-          email: userData.email || '',
-          status: userData.status || '',
+          displayName: userData?.name || '',
+          email: userData?.email || '',
+          status: userData?.status || '',
         }),
       );
 
       if (userId) {
         await firestore()
-          .collection('users')
+          .collection(FIREBASE_COLLECTIONS.USERS)
           .doc(userId)
           .update({
-            displayName: userData.name || '',
-            email: userData.email || '',
-            status: userData.status || '',
+            displayName: userData?.name || '',
+            email: userData?.email || '',
+            status: userData?.status || '',
           });
       }
 
       showToast('Success', 'Profile updated successfully', 'success');
-    } catch (error) {
-      console.error('Failed to update profile (Profile.tsx):', error);
+    } catch (updateError) {
+      console.error('Failed to update profile (Profile.tsx):', updateError);
       showToast(
         'Failed to update profile',
         'There are some issue, that your profile is not updated. Please try again later.',
@@ -140,8 +139,8 @@ const appProfile = () => {
       setLogoutLoader(true);
       await logoutUser();
       dispatch(clearUser());
-    } catch (error) {
-      console.error('Failed to logout:', error);
+    } catch (logoutError) {
+      console.error('Failed to logout:', logoutError);
       showToast('Error', 'Failed to logout', 'error');
     } finally {
       setLogoutLoader(false);
@@ -160,4 +159,4 @@ const appProfile = () => {
   };
 };
 
-export default appProfile;
+export default useProfile;

@@ -17,23 +17,23 @@ const useHome = () => {
 
     setChatLoader(true);
 
-    const unsubscribe = fetchChats(user.uid, (_chats: Chat[]) => {
+    const unsubscribe = fetchChats(user?.uid, (_chats: Chat[]) => {
       try {
-        const chatMap = _chats.reduce((acc, chat) => {
-          acc[chat.id] = chat;
+        const chatMap = _chats?.reduce((acc, chat) => {
+          acc[chat?.id] = chat;
           return acc;
         }, {} as Record<string, Chat>);
 
         dispatch(setChats(chatMap));
       } catch (error) {
-        console.error('Error fetching chats:', error);
+        console?.error('Error fetching chats:', error);
       } finally {
         setChatLoader(false);
       }
     });
 
     return () => unsubscribe();
-  }, [user.uid, dispatch]);
+  }, [user?.uid, dispatch]);
 
   return {chats, chatLoader};
 };

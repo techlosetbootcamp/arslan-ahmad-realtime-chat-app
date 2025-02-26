@@ -18,10 +18,10 @@ const useAppSearch = () => {
   const handleSearch = (text: string) => {
     setSearchText(text);
 
-    const filtered = usersInStore.filter(
+    const filtered = usersInStore?.filter(
       (u: User) =>
-        u.displayName?.toLowerCase().includes(text.toLowerCase()) ||
-        u.email?.toLowerCase().includes(text.toLowerCase()),
+        u?.displayName?.toLowerCase()?.includes(text.toLowerCase()) ||
+        u?.email?.toLowerCase()?.includes(text.toLowerCase()),
     );
 
     setFilteredUsers(filtered);

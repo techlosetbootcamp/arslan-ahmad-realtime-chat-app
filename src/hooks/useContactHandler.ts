@@ -22,7 +22,7 @@ const useContactHandler = () => {
       setNewChatLoader(true);
       const userChats = user.chats || [];
 
-      const existingChat = userChats.find(chatId => chatId === contactId);
+      const existingChat = userChats?.find(chatId => chatId === contactId);
 
       if (existingChat) {
         navigation.navigate('Chat', {

@@ -1,5 +1,6 @@
 export const COLOR = {
   primary: '#3D4A7A',
+  secondary: '#050821',
   ghost: 'rgba(255, 255, 255, 0.4)',
   gray: 'rgb(188, 189, 189)',
   offwhite: 'rgb(243, 246, 246)',
@@ -14,4 +15,7 @@ export const COLOR = {
   green: 'rgb(43, 239, 131)',
   white: 'rgb(251, 250, 250)',
   pure_gray: 'gray',
+  whitish_gray: '#f0f0f0',
+  shadow_white: '#f8f8f8',
+  gradient_colors: ['#010102', '#192f6a', '#3b5998'],
 };

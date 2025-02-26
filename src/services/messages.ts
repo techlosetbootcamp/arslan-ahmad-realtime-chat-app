@@ -12,10 +12,10 @@ export const sendMessage = async (
 
   const chatRef = firestore()
     .collection(FIREBASE_COLLECTIONS.CHATS)
-    .doc(chatId);
+    ?.doc(chatId);
   const messageRef = chatRef
     .collection(FIREBASE_COLLECTIONS.MESSAGES)
-    .doc(message.id);
+    ?.doc(message.id);
 
   try {
     await messageRef.set({
@@ -44,10 +44,10 @@ export const sendMessage = async (
 export const fetchMessages = async (chatId: string): Promise<Message[]> => {
   const snapshot = await firestore()
     .collection(FIREBASE_COLLECTIONS.CHATS)
-    .doc(chatId)
+    ?.doc(chatId)
     .collection(FIREBASE_COLLECTIONS.MESSAGES)
-    .orderBy('timestamp', 'asc')
-    .get();
+    ?.orderBy('timestamp', 'asc')
+    ?.get();
 
   return snapshot.docs?.map(doc => {
     const data = doc.data();

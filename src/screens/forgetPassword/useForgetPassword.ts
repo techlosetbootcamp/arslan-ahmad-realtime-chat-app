@@ -13,7 +13,7 @@ const useForgetPassword = () => {
     }
 
     try {
-      await auth().sendPasswordResetEmail(email);
+      await auth()?.sendPasswordResetEmail(email);
       showToast(
         'Success',
         'A password reset link has been sent to your email address.',
@@ -21,12 +21,12 @@ const useForgetPassword = () => {
       );
     } catch (err) {
       if (
-        (err as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        (err as FirebaseAuthTypes.NativeFirebaseAuthError)?.code ===
         'auth/user-not-found'
       ) {
         showToast('Error', 'No user found with this email address.', 'error');
       } else if (
-        (err as FirebaseAuthTypes.NativeFirebaseAuthError).code ===
+        (err as FirebaseAuthTypes.NativeFirebaseAuthError)?.code ===
         'auth/invalid-email'
       ) {
         showToast('Error', 'The email address is not valid.', 'error');

@@ -56,7 +56,7 @@ const useInputValidation = (
         error = 'Please enter a valid email address.';
       }
     } else {
-      if (title.toLowerCase().includes('password')) {
+      if (title.toLowerCase()?.includes('password')) {
         const {hasNumber, hasAlphabet, hasSpecialChar} = validatePassword(text);
 
         if (!hasNumber) {

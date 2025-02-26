@@ -20,15 +20,15 @@ const Settings = () => {
           <Image
             source={
               user.photoURL
-                ? {uri: user.photoURL}
+                ? {uri: user?.photoURL}
                 : Images.PlaceholderImg
             }
             style={styles.userImage}
           />
           <View>
-            <Text style={styles.userName}>{user.displayName}</Text>
+            <Text style={styles.userName}>{user?.displayName}</Text>
             {user.status && (
-              <Text style={styles.userStatus}>{user.status}</Text>
+              <Text style={styles.userStatus}>{user?.status}</Text>
             )}
           </View>
         </TouchableOpacity>
