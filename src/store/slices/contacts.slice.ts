@@ -2,12 +2,7 @@ import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {User} from '../../types/firestoreService';
 import {RootState} from '../store';
 import { fetchContacts } from '../../services/contacts';
-
-interface ContactsState {
-  contacts: User[];
-  loading: boolean;
-  error: string | null;
-}
+import { ContactsState } from '../../types/slices/contacts';
 
 const initialState: ContactsState = {
   contacts: [],

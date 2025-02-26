@@ -1,7 +1,7 @@
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {User} from './firestoreService';
 
-export interface UseAuthReturn {
+export type UseAuthReturn = {
   user: User | null;
   loading: boolean;
   error: string | null;
@@ -14,9 +14,9 @@ export interface UseAuthReturn {
     password: string,
     name: string,
   ) => Promise<FirebaseAuthTypes.UserCredential | void>;
-}
+};
 
-export interface GoogleUser {
+export type GoogleUser = {
   user: {
     id: string;
     name: string;
@@ -25,4 +25,4 @@ export interface GoogleUser {
     familyName?: string;
     givenName?: string;
   };
-}
+};

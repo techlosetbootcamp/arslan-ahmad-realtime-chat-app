@@ -1,5 +1,4 @@
-export interface SearchBarProps {
-    searchText: string;
-    setSearchText: React.Dispatch<React.SetStateAction<string>>;
-  }
-  
+export type SearchBarProps = {
+  searchText: string;
+  setSearchText: React.Dispatch<React.SetStateAction<string>>;
+};

@@ -1,13 +1,14 @@
+import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {useAppSelector} from '../../store/store';
 import {User} from '../../types/firestoreService';
 import {ChatNavigatorStyles} from '../../styles/chatComponents/navigator';
-import appNavigate from '../../hooks/useNavigationHook';
+import useNavigate from '../../hooks/useNavigationHook';
 import {ChatItem} from '../../types/chat';
 
 export const useRenderChatItem = () => {
   const user = useAppSelector(state => state.user);
-  const {navigation} = appNavigate();
+  const {navigation} = useNavigate();
 
   return ({item}: {item: ChatItem}) => {
     const participants = item.participantsDetails?.filter(

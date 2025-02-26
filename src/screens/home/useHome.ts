@@ -11,13 +11,15 @@ const useHome = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!user.uid) return;
+    if (!user.uid) {
+      return;
+    }
 
     setChatLoader(true);
 
-    const unsubscribe = fetchChats(user.uid, (chats: Chat[]) => {
+    const unsubscribe = fetchChats(user.uid, (_chats: Chat[]) => {
       try {
-        const chatMap = chats.reduce((acc, chat) => {
+        const chatMap = _chats.reduce((acc, chat) => {
           acc[chat.id] = chat;
           return acc;
         }, {} as Record<string, Chat>);

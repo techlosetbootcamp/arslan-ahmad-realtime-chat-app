@@ -1,4 +1,4 @@
-interface ContentViewerProps {
+export type ContentViewerProps = {
   title: string;
   children: React.ReactNode;
 }

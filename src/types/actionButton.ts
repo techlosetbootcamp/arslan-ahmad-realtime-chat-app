@@ -1,4 +1,4 @@
-export interface ActionButtonProps {
+export type ActionButtonProps = {
   onClick: () => void;
   loader?: boolean;
   children: string;

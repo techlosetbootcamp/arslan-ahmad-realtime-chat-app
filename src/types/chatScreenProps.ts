@@ -16,6 +16,6 @@ export type ChatScreenProps = {
 
 type ChatScreenRouteProp = RouteProp<RootStackParamList, 'Chat'>;
 
-export interface ChatProps {
+export type ChatProps = {
   route: ChatScreenRouteProp;
 }

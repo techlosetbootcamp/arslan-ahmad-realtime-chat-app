@@ -46,7 +46,11 @@ const SignIn: React.FC = () => {
           </View>
 
           <View style={{flex: 6}}>
-          <IconButton loader={googleLoader} src={Images.GoogleIcon} onPress={handleGoogleSignIn} />
+            <IconButton
+              loader={googleLoader}
+              src={Images.GoogleIcon}
+              onPress={handleGoogleSignIn}
+            />
             <View style={styles.gapVertical}>
               <RulerText />
             </View>
@@ -85,15 +89,7 @@ const SignIn: React.FC = () => {
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => navigation.navigate('ForgetPassword')}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginTop: 15,
-                  color: COLOR.blue,
-                  fontWeight: 600,
-                }}>
-                Forgot password?
-              </Text>
+              <Text style={styles.forgetText}>Forgot password?</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -114,6 +110,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: COLOR.ghost,
     alignSelf: 'center',
+  },
+  forgetText: {
+    textAlign: 'center',
+    marginTop: 15,
+    color: COLOR.blue,
+    fontWeight: 600,
   },
   gapVertical: {marginTop: 10},
 });

@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {Message} from '../types/firestoreService';
+import {FIREBASE_COLLECTIONS} from '../constants/db_collections';
 
 export const sendMessage = async (
   receiverId: string,
@@ -9,8 +10,12 @@ export const sendMessage = async (
   const chatId =
     senderId < receiverId ? senderId + receiverId : receiverId + senderId;
 
-  const chatRef = firestore().collection('chats').doc(chatId);
-  const messageRef = chatRef.collection('messages').doc(message.id);
+  const chatRef = firestore()
+    .collection(FIREBASE_COLLECTIONS.CHATS)
+    .doc(chatId);
+  const messageRef = chatRef
+    .collection(FIREBASE_COLLECTIONS.MESSAGES)
+    .doc(message.id);
 
   try {
     await messageRef.set({
@@ -38,9 +43,9 @@ export const sendMessage = async (
 
 export const fetchMessages = async (chatId: string): Promise<Message[]> => {
   const snapshot = await firestore()
-    .collection('chats')
+    .collection(FIREBASE_COLLECTIONS.CHATS)
     .doc(chatId)
-    .collection('messages')
+    .collection(FIREBASE_COLLECTIONS.MESSAGES)
     .orderBy('timestamp', 'asc')
     .get();
 
@@ -62,9 +67,9 @@ export const listenToMessages = (
   callback: (messages: Message[]) => void,
 ) => {
   return firestore()
-    ?.collection('chats')
+    ?.collection(FIREBASE_COLLECTIONS.CHATS)
     ?.doc(chatId)
-    ?.collection('messages')
+    ?.collection(FIREBASE_COLLECTIONS.MESSAGES)
     ?.orderBy('timestamp', 'asc')
     ?.onSnapshot(
       snapshot => {
@@ -93,9 +98,9 @@ export const deleteMessage = async (
   messageId: string,
 ): Promise<void> => {
   const messageRef = firestore()
-    ?.collection('chats')
+    ?.collection(FIREBASE_COLLECTIONS.CHATS)
     ?.doc(chatId)
-    ?.collection('messages')
+    ?.collection(FIREBASE_COLLECTIONS.MESSAGES)
     ?.doc(messageId);
 
   await messageRef.delete();

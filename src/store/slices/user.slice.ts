@@ -2,32 +2,9 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppThunk} from '../store';
 import {createUser, fetchUser} from '../../services/user';
 import {User} from '../../types/firestoreService';
+import { Chat, Participant, UserState } from '../../types/slices/user';
 
-export interface UserState {
-  uid: string | null;
-  displayName: string | null;
-  email: string | null;
-  photoURL?: string | null;
-  description: string | null;
-  status: string | null;
-  contacts: string[];
-  chats: string[];
-  isLoading: boolean;
-}
 
-interface Chat {
-  participantsDetails?: Participant[];
-  id: string;
-  lastMessage: string;
-  lastMessageTimestamp: number;
-}
-
-interface Participant {
-  createdAt?: {toMillis: () => number} | null;
-  uid: string;
-  displayName: string;
-  email: string;
-}
 const initialState: UserState = {
   uid: null,
   displayName: null,

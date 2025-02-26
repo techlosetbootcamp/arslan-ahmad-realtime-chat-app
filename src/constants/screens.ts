@@ -11,15 +11,30 @@ import ChangePasswordScreen from '../screens/changePassword/ChangePassword';
 import SearchScreen from '../screens/search/Search';
 
 export {
-    HomeScreen,
-    ProfileScreen,
-    ChatScreen,
-    SettingsScreen,
-    SignInScreen,
-    SignUpScreen,
-    ContactsScreen,
-    ForgetPasswordScreen,
-    WelcomeScreen,
-    ChangePasswordScreen,
-    SearchScreen,
+  HomeScreen,
+  ProfileScreen,
+  ChatScreen,
+  SettingsScreen,
+  SignInScreen,
+  SignUpScreen,
+  ContactsScreen,
+  ForgetPasswordScreen,
+  WelcomeScreen,
+  ChangePasswordScreen,
+  SearchScreen,
 };
+
+export const STACK_AUTH_SCREENS = [
+  {name: 'WelcomeScreen', component: WelcomeScreen},
+  {name: 'SignUp', component: SignUpScreen},
+  {name: 'SignIn', component: SignInScreen},
+  {name: 'ForgetPassword', component: ForgetPasswordScreen},
+];
+
+export const STACK_MAIN_SCREENS = [
+  {name: 'MainTabs', component: HomeScreen},
+  {name: 'Chat', component: ChatScreen},
+  {name: 'Search', component: SearchScreen},
+  {name: 'Profile', component: ProfileScreen},
+  {name: 'ChangePassword', component: ChangePasswordScreen},
+];

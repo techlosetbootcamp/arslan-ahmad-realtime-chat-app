@@ -10,7 +10,7 @@ const initialState = {
   confirmPassword: '',
 };
 
-const appChangePassword = () => {
+const useChangePassword = () => {
   const [passwords, setPasswords] = useState(initialState);
   const {navigation} = useNavigate();
   const user = auth().currentUser;
@@ -71,4 +71,4 @@ const appChangePassword = () => {
   return {passwords, setPasswords, handlePasswordReset};
 };
 
-export default appChangePassword;
+export default useChangePassword;

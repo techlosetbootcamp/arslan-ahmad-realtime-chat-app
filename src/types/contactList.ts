@@ -1,5 +1,5 @@
-import { User } from "./firestoreService";
+import { User } from './firestoreService';
 
-export interface ContactsProps {
+export type ContactsProps = {
   sections: {title: string; data: User[]}[];
 }

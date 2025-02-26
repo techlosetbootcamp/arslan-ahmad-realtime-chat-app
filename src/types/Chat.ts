@@ -15,7 +15,7 @@ export type ChatProps = {
   route?: ChatScreenRouteProp;
 };
 
-export interface ChatItem {
+export type ChatItem = {
   id: string;
   lastActive: string;
   lastMessage: string;

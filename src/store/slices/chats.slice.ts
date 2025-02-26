@@ -8,12 +8,7 @@ import {
 } from '../../services/chats';
 import {Chat, Message} from '../../types/firestoreService';
 import {Timestamp} from '@react-native-firebase/firestore';
-
-interface ChatState {
-  chats: Record<string, Chat>;
-  messages: Record<string, Message[]>;
-  error: string | null;
-}
+import { ChatState } from '../../types/slices/chat';
 
 const initialState: ChatState = {
   chats: {},

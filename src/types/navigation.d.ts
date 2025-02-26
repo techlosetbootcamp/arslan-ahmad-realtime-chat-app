@@ -1,4 +1,4 @@
-import { userProfile } from "./profile";
+import { userProfile } from './profile';
 
 export type RootStackParamList = {
   WelcomeScreen: undefined;

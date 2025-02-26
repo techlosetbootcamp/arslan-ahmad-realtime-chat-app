@@ -7,6 +7,7 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {UserState} from '../store/slices/user.slice';
 import {showToast} from '../components/Toast';
 import {GOOGLE_CLIENT_ID} from '@env';
+import { FIREBASE_COLLECTIONS } from '../constants/db_collections';
 
 export const login = async (
   email: string,
@@ -21,7 +22,7 @@ export const login = async (
 
     if (firebaseUser) {
       const userDoc = await firestore()
-        .collection('users')
+        .collection(FIREBASE_COLLECTIONS.USERS)
         .doc(firebaseUser.uid)
         .get();
 
@@ -109,7 +110,7 @@ export const signUp = async (
       contacts: [],
     };
 
-    await firestore().collection('users').doc(userId).set(userDoc);
+    await firestore().collection(FIREBASE_COLLECTIONS.USERS).doc(userId).set(userDoc);
 
     await saveUserToStorage(userDoc);
     showToast('Success', 'Account created successfully... 🤠', 'success');
@@ -159,7 +160,7 @@ export const signInWithGoogle = async () => {
     const userCredential = await auth().signInWithCredential(googleCredential);
     const {uid, email, displayName, photoURL} = userCredential.user;
 
-    const userDocRef = firestore().collection('users').doc(uid);
+    const userDocRef = firestore().collection(FIREBASE_COLLECTIONS.USERS).doc(uid);
     const userDocSnapshot = await userDocRef.get();
 
     let userData: User;

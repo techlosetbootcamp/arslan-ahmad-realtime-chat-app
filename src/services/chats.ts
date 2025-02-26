@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {fetchUser} from './user';
 import {Chat, User} from '../types/firestoreService';
+import { FIREBASE_COLLECTIONS } from '../constants/db_collections';
 
 export const createNewChat = async (
   participants: string[],
@@ -8,8 +9,8 @@ export const createNewChat = async (
   const [user1, user2] = participants.sort();
   const chatId = user1 + user2;
 
-  const chatRef = firestore().collection('chats').doc(chatId);
-  const usersRef = firestore().collection('users');
+  const chatRef = firestore().collection(FIREBASE_COLLECTIONS.CHATS).doc(chatId);
+  const usersRef = firestore().collection(FIREBASE_COLLECTIONS.USERS);
 
   try {
     const chatDoc = await chatRef.get();
@@ -44,7 +45,7 @@ export const fetchChats = (
   callback: (chats: Chat[]) => void,
 ) => {
   const unsubscribe = firestore()
-    .collection('chats')
+    .collection(FIREBASE_COLLECTIONS.CHATS)
     .where('participants', 'array-contains', userId)
     .orderBy('lastActive', 'desc')
     .onSnapshot(
@@ -129,7 +130,7 @@ export const listenToChats = (
   callback: (chats: Chat[]) => void
 ) => {
   return firestore()
-    .collection('chats')
+    .collection(FIREBASE_COLLECTIONS.CHATS)
     .where('participants', 'array-contains', userId)
     .orderBy('lastActive', 'desc')
     .onSnapshot(
@@ -164,11 +165,11 @@ export const listenToChats = (
 
 
 export const deleteChat = async (chatId: string, participants: string[]) => {
-  const chatRef = firestore().collection('chats').doc(chatId);
-  const usersRef = firestore().collection('users');
+  const chatRef = firestore().collection(FIREBASE_COLLECTIONS.CHATS).doc(chatId);
+  const usersRef = firestore().collection(FIREBASE_COLLECTIONS.USERS);
 
   try {
-    const messagesRef = chatRef.collection('messages');
+    const messagesRef = chatRef.collection(FIREBASE_COLLECTIONS.MESSAGES);
     messagesRef.get().then(querySnapshot => {
       Promise.all(querySnapshot.docs.map(d => d.ref.delete()));
     });

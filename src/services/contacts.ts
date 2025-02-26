@@ -1,24 +1,26 @@
 import firestore from '@react-native-firebase/firestore';
 import {User} from '../types/firestoreService';
+import {FIREBASE_COLLECTIONS} from '../constants/db_collections';
 
 export const fetchContacts = (
   userId: string,
   callback: (contacts: User[]) => void,
 ) => {
-  const userDocRef = firestore().collection('users').doc(userId);
+  const userDocRef = firestore()
+    .collection(FIREBASE_COLLECTIONS.USERS)
+    .doc(userId);
 
-  const unsubscribe = userDocRef.onSnapshot(
-    async userDoc => {
-      const userData = userDoc.data();
-      const contactIds = userData?.contacts || [];
+  const unsubscribe = userDocRef.onSnapshot(async userDoc => {
+    const userData = userDoc.data();
+    const contactIds = userData?.contacts || [];
 
-      if (contactIds.length === 0) {
-        callback([]);
-        return;
-      }
+    if (contactIds.length === 0) {
+      callback([]);
+      return;
+    }
 
-      const unsubscribeContacts = firestore()
-      .collection('users')
+    const unsubscribeContacts = firestore()
+      .collection(FIREBASE_COLLECTIONS.USERS)
       .where(firestore.FieldPath.documentId(), 'in', contactIds)
       .onSnapshot(snapshot => {
         const contacts = snapshot.docs?.map(doc => {
@@ -35,24 +37,24 @@ export const fetchContacts = (
 
         callback(contacts);
       });
-    
-      return unsubscribeContacts;
-    });
-  
-    return () => unsubscribe();
-  };
+
+    return unsubscribeContacts;
+  });
+
+  return () => unsubscribe();
+};
 
 export const addContact = async (userId: string, contactId: string) => {
   try {
     await firestore()
-      .collection('users')
+      .collection(FIREBASE_COLLECTIONS.USERS)
       .doc(userId)
       .update({
         contacts: firestore.FieldValue.arrayUnion(contactId),
       });
 
     await firestore()
-      .collection('users')
+      .collection(FIREBASE_COLLECTIONS.USERS)
       .doc(contactId)
       .update({
         contacts: firestore.FieldValue.arrayUnion(userId),

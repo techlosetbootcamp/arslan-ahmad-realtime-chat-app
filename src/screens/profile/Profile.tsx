@@ -2,7 +2,6 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -11,9 +10,10 @@ import InputField from '../../components/InputField';
 import ActionButton from '../../components/actionButton/ActionButton';
 import ContentViewer from '../../components/ContentViewer';
 import {ScrollView} from 'react-native-gesture-handler';
-import {COLOR} from '../../constants/colors';
 import useProfile from './useProfile';
 import Images from '../../constants/imgs';
+import {profileStyles} from '../../styles/profile';
+import { COLOR } from '../../constants/colors';
 
 const Profile: React.FC = () => {
   const {
@@ -34,10 +34,10 @@ const Profile: React.FC = () => {
           <TouchableOpacity
             onPress={handlePickAndUploadImage}
             activeOpacity={0.8}
-            style={styles.header}>
+            style={profileStyles.header}>
             {
               <Image
-                style={styles.profileImage}
+                style={profileStyles.profileImage}
                 source={
                   userData.imageUri
                     ? {uri: userData.imageUri}
@@ -46,8 +46,11 @@ const Profile: React.FC = () => {
               />
             }
 
-            <View style={styles.editButton}>
-              <Image source={Images?.EditIcon} style={{width: 10, height: 10}} />
+            <View style={profileStyles.editButton}>
+              <Image
+                source={Images?.EditIcon}
+                style={{width: 10, height: 10}}
+              />
             </View>
           </TouchableOpacity>
 
@@ -73,7 +76,7 @@ const Profile: React.FC = () => {
               val={userData.status}
               setVal={value => handleInputChange('status', value)}
             />
-            {error && <Text style={styles.error}>{error}</Text>}
+            {error && <Text style={profileStyles.error}>{error}</Text>}
           </KeyboardAvoidingView>
 
           <View style={{flex: 2, rowGap: 10}}>
@@ -87,7 +90,7 @@ const Profile: React.FC = () => {
 
             <ActionButton
               onClick={handleLogout}
-              color="tomato"
+              color={COLOR.red}
               loader={logoutLoader}
               onLoadText="Logging out...">
               Logout
@@ -98,49 +101,5 @@ const Profile: React.FC = () => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    flex: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    width: '40%',
-    alignSelf: 'center',
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  nameText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: '#3D4A7A',
-  },
-  emailText: {
-    fontSize: 16,
-    color: '#3D4A7A',
-    marginBottom: 10,
-  },
-  error: {
-    color: 'red',
-    fontSize: 14,
-    marginTop: 10,
-  },
-  editButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 15,
-    width: 15,
-    height: 15,
-    borderRadius: 10,
-    padding: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLOR.black,
-  },
-});
 
 export default Profile;

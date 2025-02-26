@@ -14,7 +14,7 @@ import {COLOR} from '../../constants/colors';
 import Images from '../../constants/imgs';
 import {ChatItem} from '../../types/chat';
 
-interface ChatSwipeActionsProps {
+type ChatSwipeActionsProps = {
   item: ChatItem;
   dragAnimatedValue: Animated.AnimatedInterpolation<string | number>;
 }

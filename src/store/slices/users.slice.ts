@@ -1,12 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 import {fetchUsers} from '../../services/user';
 import {User} from '../../types/firestoreService';
-
-interface UsersState {
-  users: User[];
-  isLoading: boolean;
-  error: string | null;
-}
+import {UsersState} from '../../types/slices/users';
 
 const initialState: UsersState = {
   users: [],

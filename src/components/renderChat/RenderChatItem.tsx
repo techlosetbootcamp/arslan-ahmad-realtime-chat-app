@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Swipeable} from 'react-native-gesture-handler';
 import {User} from '../../types/firestoreService';
 import {useAppSelector} from '../../store/store';
@@ -11,9 +11,9 @@ import ChatSwipeActions from './ChatSwipeActions';
 
 import {ChatItem} from '../../types/chat';
 
-interface RenderChatItemProps {
+type RenderChatItemProps = {
   item: ChatItem;
-}
+};
 
 const RenderChatItem: React.FC<RenderChatItemProps> = ({item}) => {
   const {navigation} = appNavigate();
@@ -82,16 +82,7 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}) => {
               </Text>
             )}
             {item.unreadMessages !== 0 && (
-              <Text
-                style={{
-                  backgroundColor: COLOR.red,
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 20,
-                  color: COLOR.white,
-                }}>
-                {item.unreadMessages}
-              </Text>
+              <Text style={styles.unreadMessages}>{item.unreadMessages}</Text>
             )}
           </View>
         </View>
@@ -99,5 +90,15 @@ const RenderChatItem: React.FC<RenderChatItemProps> = ({item}) => {
     </Swipeable>
   );
 };
+
+const styles = StyleSheet.create({
+  unreadMessages: {
+    backgroundColor: COLOR.red,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 20,
+    color: COLOR.white,
+  },
+});
 
 export default RenderChatItem;

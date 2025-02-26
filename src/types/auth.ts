@@ -1,7 +1,7 @@
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {User} from './firestoreService';
 
-export interface UseAuthReturn {
+export type UseAuthReturn = {
   user: User | null;
   loading: boolean;
   error: string | null;

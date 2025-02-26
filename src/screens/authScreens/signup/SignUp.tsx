@@ -1,14 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import IconButton from '../../../components/IconButton';
-import RulerText from '../../../components/RulerText';
 import InputField from '../../../components/InputField';
 import {ScrollView} from 'react-native-gesture-handler';
 import ActionButton from '../../../components/actionButton/ActionButton';
 import AuthHeaderSection from '../../../components/AuthSectionHeader';
-import Images from '../../../constants/imgs';
-import {COLOR} from '../../../constants/colors';
-import Loader from '../../../components/loader/Loader';
 import useSignup from './useSignup';
 
 const SignIn: React.FC = () => {
@@ -17,15 +12,7 @@ const SignIn: React.FC = () => {
 
   return (
     <>
-      <ScrollView
-        showsVerticalScrollIndicator={true}
-        style={{
-          flex: 1,
-          flexDirection: 'column',
-          paddingHorizontal: 20,
-          paddingVertical: 60,
-          columnGap: 40,
-        }}>
+      <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
         <AuthHeaderSection
           title="Sign up with Email"
           subText="Get chatting with friends and family today by signing up for our chat
@@ -33,8 +20,7 @@ const SignIn: React.FC = () => {
           styleSubTitle={{width: '80%'}}
         />
 
-        <View style={{flex: 6, paddingHorizontal: 10, paddingVertical: 10}}>
-
+        <View style={styles.fieldsContainer}>
           <View style={{gap: 25}}>
             <InputField
               val={userData.name}
@@ -75,13 +61,13 @@ const SignIn: React.FC = () => {
           </View>
         </View>
 
-        <View style={{flex: 2, marginTop: 20, paddingVertical: 10}}>
+        <View style={styles.bottomText}>
           <ActionButton
             onClick={SignUphandler}
             loader={loading}
             error={error}
             onLoadText="Adding yourself...">
-            Reginster Me
+            Create an Account
           </ActionButton>
         </View>
       </ScrollView>
@@ -92,6 +78,13 @@ const SignIn: React.FC = () => {
 export default SignIn;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    paddingVertical: 60,
+    columnGap: 40,
+  },
   ghostIcon: {
     paddingVertical: 5,
     width: 40,
@@ -102,5 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     alignSelf: 'center',
   },
+  fieldsContainer: {flex: 6, paddingHorizontal: 10, paddingVertical: 10},
+  bottomText: {flex: 2, marginTop: 20, paddingVertical: 10},
   gapVertical: {marginTop: 10},
 });

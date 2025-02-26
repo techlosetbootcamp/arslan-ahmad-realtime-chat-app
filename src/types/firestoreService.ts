@@ -1,6 +1,6 @@
 import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
-export interface User {
+export type User = {
   uid: string | null;
   displayName: string | null;
   email: string | null;
@@ -10,20 +10,20 @@ export interface User {
   contacts?: string[];
 }
 
-export interface FirestoreMessage {
+export type FirestoreMessage = {
   id?: string;
   senderId: string;
   text: string;
   timestamp: FirebaseFirestoreTypes.Timestamp | null;
 }
 
-export interface FirestoreChat {
+export type FirestoreChat = {
   id?: string;
   members: string[];
   messages?: FirestoreMessage[];
 }
 
-export interface Message {
+export type Message = {
   id: string;
   senderId: string;
   text: string;
@@ -35,7 +35,7 @@ export interface Message {
   };
 }
 
-export interface Chat {
+export type Chat = {
   id: string;
   participants: string[];
   lastMessage: string;

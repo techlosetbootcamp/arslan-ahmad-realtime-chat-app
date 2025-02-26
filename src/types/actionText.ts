@@ -1,4 +1,4 @@
-import { TextStyle } from "react-native";
+import { TextStyle } from 'react-native';
 
 export type ActionTextProps = {
   onPress: () => void;

@@ -1,6 +1,6 @@
-import { KeyboardType } from "react-native";
+import {KeyboardType} from 'react-native';
 
-export interface InputFieldProps {
+export type InputFieldProps = {
   type?: KeyboardType;
   title: string;
   placeholder?: string;
@@ -8,4 +8,4 @@ export interface InputFieldProps {
   setVal: (val: string) => void;
   setError?: (val: string) => void;
   val: string;
-}
+};
