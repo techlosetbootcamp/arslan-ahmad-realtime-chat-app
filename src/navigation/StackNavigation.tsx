@@ -18,7 +18,7 @@ const Navigation = () => {
       initialRouteName={user?.uid ? 'MainTabs' : 'WelcomeScreen'}>
       {user?.uid ? (
         <>
-          {STACK_MAIN_SCREENS.map(screen => {
+          {STACK_MAIN_SCREENS?.map(screen => {
             return (
               <Stack.Screen
                 key={screen.name}

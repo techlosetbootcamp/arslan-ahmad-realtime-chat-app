@@ -40,7 +40,7 @@ const BottomTabsNavigator = () => {
           fontWeight: 'bold',
         },
       })}>
-      {BOTTOM_TABS_SCREENS.map(screen => {
+      {BOTTOM_TABS_SCREENS?.map(screen => {
         return (
           <Tab.Screen
             key={screen.name}

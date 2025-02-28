@@ -37,7 +37,7 @@ export const listenToUsers = (
     .onSnapshot(
       snapshot => {
         const users = snapshot.docs
-          .map(doc => {
+          ?.map(doc => {
             const data = doc.data();
             return {
               uid: doc.id,
